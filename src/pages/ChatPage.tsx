@@ -24,8 +24,6 @@ const ChatPage: React.FC<ChatPageProps> = ({
 	isTyping,
 	handleSendMessage,
 }) => {
-	console.log("activeChatId", activeChatId);
-	console.log("checking chats", chatThreads);
 	// const [isTyping, setIsTyping] = useState(false);
 	// const [allChats, setAllChats] = useState<Message[]>([]);
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
