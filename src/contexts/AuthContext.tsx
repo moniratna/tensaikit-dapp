@@ -73,13 +73,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		setLoading(true);
 		try {
 			// TODO: Replace with actual API endpoint
-			const response = await fetch("http://localhost:8080/v1/api/signin", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ email, password }),
-			});
+			const response = await fetch(
+				`${import.meta.env.VITE_BACKEND_URL}/v1/api/signin`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ email, password }),
+				}
+			);
 
 			if (response.ok) {
 				const data = await response.json();
@@ -100,13 +103,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		setLoading(true);
 		try {
 			// TODO: Replace with actual API endpoint
-			const response = await fetch("/api/auth/signup", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ email, password, name }),
-			});
+			const response = await fetch(
+				`${import.meta.env.VITE_BACKEND_URL}/v1/api/signup`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ email, password, name }),
+				}
+			);
 
 			if (response.ok) {
 				const data = await response.json();
