@@ -97,7 +97,7 @@ const MainPage: React.FC = () => {
 					activeChatId === "new" && tempThreadId === null
 						? undefined
 						: tempThreadId || Number(activeChatId),
-				agentType: agentType,
+				// agentType: agentType,
 			},
 			{
 				onSuccess: (data: any) => {
@@ -148,10 +148,9 @@ const MainPage: React.FC = () => {
 				token: localStorage.getItem("authToken") || "",
 				prompt: content,
 				threadId:
-					(activeChatId === "new" || activeChatId === "agentType") &&
-					tempThreadId === null
+					activeChatId === "new" || activeChatId === "agentType"
 						? undefined
-						: tempThreadId || Number(activeChatId),
+						: Number(activeChatId),
 				agentType: agentType,
 			},
 			{
@@ -169,7 +168,7 @@ const MainPage: React.FC = () => {
 					setAllChats([...finalMessages]);
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);
-					setTempThreadId(data.data.threadId);
+					// setTempThreadId(data.data.threadId);
 					if (!hasFetchedOnce) {
 						refetchThreads();
 					}

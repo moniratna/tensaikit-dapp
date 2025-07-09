@@ -5,7 +5,6 @@ import { Bot } from "lucide-react";
 import iconLogo from "../assets/iconYellow.png";
 import { useAuth } from "../contexts/AuthContext";
 import useChatMessages from "../hooks/useGetMessages";
-import { useInView } from "react-intersection-observer";
 
 interface ChatPageProps {
 	activeChatId: string | null;
@@ -20,13 +19,13 @@ const ChatPage: React.FC<ChatPageProps> = ({
 }) => {
 	// const [isTyping, setIsTyping] = useState(false);
 	// const [allChats, setAllChats] = useState<Message[]>([]);
-	const messagesEndRef = useRef<HTMLDivElement | null>(null);
+	// const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const { allChats, setAllChats } = useAuth();
 	// const [tempThreadId, setTempThreadId] = useState<number | null>(null);
 	const {
 		data: messages,
 		isLoading: isLoadingMessages,
-		isFetchingNextPage,
+		// isFetchingNextPage,
 		fetchNextPage,
 		isFetching,
 		hasNextPage,
@@ -39,6 +38,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 			? true
 			: false
 	);
+	console.log(messages?.pageParams);
 	const threadMessages = messages?.pages.flatMap((page) => page.messages);
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages) {
@@ -49,18 +49,53 @@ const ChatPage: React.FC<ChatPageProps> = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLoadingMessages, activeChatId, messages]);
+	// useEffect(() => {
+	// 	if (messagesEndRef.current) {
+	// 		messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+	// 	}
+	// }, [allChats]);
+	// useEffect(() => {
+	// 	if (!isLoadingMessages && threadMessages && messagesEndRef.current) {
+	// 		messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+	// 	}
+	// }, [isLoadingMessages, threadMessages]);
+	// const { ref, inView } = useInView();
+
+	// useEffect(() => {
+	// 	if (inView && !isFetching && hasNextPage) {
+	// 		fetchNextPage();
+	// 	}
+	// }, [fetchNextPage, inView, isFetching, hasNextPage]);
+
+	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	useEffect(() => {
-		if (messagesEndRef.current) {
-			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-		}
-	}, [allChats]);
-	const { ref, inView } = useInView();
+		const container = scrollContainerRef.current;
+		if (!container || !hasNextPage || isFetching) return;
+
+		const handleScroll = () => {
+			if (container.scrollTop < 100) {
+				console.log("I am triggering top");
+				fetchNextPage();
+			}
+		};
+
+		container.addEventListener("scroll", handleScroll);
+		return () => container.removeEventListener("scroll", handleScroll);
+	}, [fetchNextPage, hasNextPage, isFetching]);
 
 	useEffect(() => {
-		if (inView && !isFetching && hasNextPage) {
-			fetchNextPage();
+		if (
+			allChats.length <= 10 &&
+			// !isLoadingMessages &&
+			// threadMessages?.length &&
+			scrollContainerRef.current
+			// messages?.pageParams.length === 1
+		) {
+			console.log("I am triggering bottom");
+			const container = scrollContainerRef.current;
+			container.scrollTop = container.scrollHeight;
 		}
-	}, [fetchNextPage, inView, isFetching, hasNextPage]);
+	}, [allChats]);
 
 	if (!activeChatId || activeChatId === "agentType") {
 		return (
@@ -94,8 +129,23 @@ const ChatPage: React.FC<ChatPageProps> = ({
 			{/* Chat Header */}
 
 			{/* Messages */}
-			<div className="flex-1 overflow-y-auto">
-				<div className="flex flex-col gap-4 p-6">
+			{/* <div className="flex-1 overflow-y-auto" ref={scrollContainerRef}>
+				<div className="flex flex-col-reverse gap-4 p-6">
+					{!isLoadingMessages &&
+						allChats.map(
+							(message) => {
+								return (
+									<div key={message.id}>
+										<ChatMessage message={message} />
+									</div>
+								);
+							}
+							// <ChatMessage key={message.id} message={message} />
+						)}
+				</div> */}
+
+			<div className="flex-1 overflow-y-auto" ref={scrollContainerRef}>
+				<div className="flex flex-col-reverse gap-4 p-6">
 					{!isLoadingMessages &&
 						allChats.map((message) => (
 							<ChatMessage key={message.id} message={message} />
@@ -126,10 +176,10 @@ const ChatPage: React.FC<ChatPageProps> = ({
 						</div>
 					</div>
 				)}
-				<div ref={ref} className="w-full text-center text-white">
+				{/* <div ref={ref} className="w-full text-center text-white">
 					{isFetchingNextPage && hasNextPage ? "Loading..." : <></>}
-				</div>
-				<div ref={messagesEndRef} />
+				</div> */}
+				{/* <div ref={messagesEndRef} /> */}
 			</div>
 
 			{/* Chat Input */}

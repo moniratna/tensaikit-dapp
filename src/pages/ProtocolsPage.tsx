@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
 import useFetchAgents from "../hooks/useFetchAgents";
 import { useAuth } from "../contexts/AuthContext";
@@ -28,17 +28,16 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 	const handleStartAgent = (protocol: string) => {
 		if (protocol) {
 			setSelectedAgent(protocol.toLowerCase());
+			setActiveChatId("agentType");
 		}
 	};
-	useEffect(() => {
-		setActiveChatId("agentType");
-	});
 
 	const searchPrompts = (prompt: string, protocol: string) => {
 		setAutoSearch(true);
 		setSearchQuery(prompt);
 		setAgentType(protocol.toLowerCase());
 		setSelectedAgent(protocol.toLowerCase());
+		setActiveChatId("agentType");
 		// if (prompt.trim() && activeChatId !== null) {
 		// 	handleSendMessage(prompt.trim());
 		// }

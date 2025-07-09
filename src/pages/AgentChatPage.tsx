@@ -4,7 +4,6 @@ import ChatInput from "../components/ChatInput";
 import { Bot } from "lucide-react";
 import iconLogo from "../assets/iconYellow.png";
 import { useAuth } from "../contexts/AuthContext";
-import { useInView } from "react-intersection-observer";
 import useGEtAgentMessages from "../hooks/useGetAgentMessages";
 
 interface ChatPageProps {
@@ -18,13 +17,13 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	isTyping,
 	handleSendMessage,
 }) => {
-	const messagesEndRef = useRef<HTMLDivElement | null>(null);
+	// const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const { allChats, setAllChats, setActiveChatId, setAgentType } = useAuth();
 	// const [tempThreadId, setTempThreadId] = useState<number | null>(null);
 	const {
 		data: messages,
 		isLoading: isLoadingMessages,
-		isFetchingNextPage,
+		// isFetchingNextPage,
 		fetchNextPage,
 		isFetching,
 		hasNextPage,
@@ -40,22 +39,51 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLoadingMessages, messages]);
-	useEffect(() => {
-		if (messagesEndRef.current) {
-			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-		}
-	}, [allChats]);
-	const { ref, inView } = useInView();
+	// useEffect(() => {
+	// 	if (messagesEndRef.current) {
+	// 		messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+	// 	}
+	// }, [allChats]);
+	// const { ref, inView } = useInView();
 
-	useEffect(() => {
-		if (inView && !isFetching && hasNextPage) {
-			fetchNextPage();
-		}
-	}, [fetchNextPage, inView, isFetching, hasNextPage]);
+	// useEffect(() => {
+	// 	if (inView && !isFetching && hasNextPage) {
+	// 		fetchNextPage();
+	// 	}
+	// }, [fetchNextPage, inView, isFetching, hasNextPage]);
 	useEffect(() => {
 		setActiveChatId("agentType");
 		setAgentType(agentType);
 	});
+	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+	useEffect(() => {
+		const container = scrollContainerRef.current;
+		if (!container || !hasNextPage || isFetching) return;
+
+		const handleScroll = () => {
+			if (container.scrollTop < 100) {
+				console.log("I am triggering top");
+				fetchNextPage();
+			}
+		};
+
+		container.addEventListener("scroll", handleScroll);
+		return () => container.removeEventListener("scroll", handleScroll);
+	}, [fetchNextPage, hasNextPage, isFetching]);
+
+	useEffect(() => {
+		if (
+			allChats.length <= 10 &&
+			// !isLoadingMessages &&
+			// threadMessages?.length &&
+			scrollContainerRef.current
+			// messages?.pageParams.length === 1
+		) {
+			const container = scrollContainerRef.current;
+			container.scrollTop = container.scrollHeight;
+		}
+	}, [allChats]);
+
 	if (!agentType) {
 		return (
 			<div className="flex-1 flex items-center justify-center bg-[#1B012F]">
@@ -102,8 +130,8 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 			</div> */}
 
 			{/* Messages */}
-			<div className="flex-1 overflow-y-auto">
-				<div className="flex flex-col gap-4 p-6">
+			<div className="flex-1 overflow-y-auto" ref={scrollContainerRef}>
+				<div className="flex flex-col-reverse gap-4 p-6">
 					{!isLoadingMessages &&
 						allChats.map((message) => (
 							<ChatMessage key={message.id} message={message} />
@@ -134,10 +162,10 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 						</div>
 					</div>
 				)}
-				<div ref={ref} className="w-full text-center text-white">
+				{/* <div ref={ref} className="w-full text-center text-white">
 					{isFetchingNextPage && hasNextPage ? "Loading..." : <></>}
 				</div>
-				<div ref={messagesEndRef} />
+				<div ref={messagesEndRef} /> */}
 			</div>
 
 			{/* Chat Input */}
