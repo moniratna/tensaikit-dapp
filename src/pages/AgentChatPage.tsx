@@ -4,24 +4,22 @@ import ChatInput from "../components/ChatInput";
 import { Bot } from "lucide-react";
 import iconLogo from "../assets/iconYellow.png";
 import { useAuth } from "../contexts/AuthContext";
-import useChatMessages from "../hooks/useGetMessages";
 import { useInView } from "react-intersection-observer";
+import useGEtAgentMessages from "../hooks/useGetAgentMessages";
 
 interface ChatPageProps {
-	activeChatId: string | null;
+	agentType: string;
 	isTyping: boolean;
 	handleSendMessage: (content: string) => void;
 }
 
-const ChatPage: React.FC<ChatPageProps> = ({
-	activeChatId,
+const AgentChatPage: React.FC<ChatPageProps> = ({
+	agentType,
 	isTyping,
 	handleSendMessage,
 }) => {
-	// const [isTyping, setIsTyping] = useState(false);
-	// const [allChats, setAllChats] = useState<Message[]>([]);
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
-	const { allChats, setAllChats } = useAuth();
+	const { allChats, setAllChats, setActiveChatId, setAgentType } = useAuth();
 	// const [tempThreadId, setTempThreadId] = useState<number | null>(null);
 	const {
 		data: messages,
@@ -30,21 +28,18 @@ const ChatPage: React.FC<ChatPageProps> = ({
 		fetchNextPage,
 		isFetching,
 		hasNextPage,
-	} = useChatMessages(
-		Number(activeChatId),
+	} = useGEtAgentMessages(
+		agentType,
 		localStorage.getItem("authToken") || "",
-		activeChatId !== "new" && activeChatId !== undefined ? true : false
+		agentType !== "" && agentType !== null ? true : false
 	);
 	const threadMessages = messages?.pages.flatMap((page) => page.messages);
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages) {
 			setAllChats(threadMessages);
 		}
-		if (activeChatId === "new") {
-			setAllChats([]);
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isLoadingMessages, activeChatId, messages]);
+	}, [isLoadingMessages, messages]);
 	useEffect(() => {
 		if (messagesEndRef.current) {
 			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -57,90 +52,12 @@ const ChatPage: React.FC<ChatPageProps> = ({
 			fetchNextPage();
 		}
 	}, [fetchNextPage, inView, isFetching, hasNextPage]);
-
-	// const { data: threads } = useThreads(
-	// 	localStorage.getItem("authToken") || "",
-	// 	true
-	// );
-	// const allThreads = threads
-	// 	? threads.pages.flatMap((d: any) => d.threads)
-	// 	: [];
-	// const activeChat = activeChatId
-	// 	? allThreads.find((chat) => chat.id === activeChatId)
-	// 	: null;
-	// const { data: messages, isLoading: isLoadingMessages } = useChatMessages(
-	// 	Number(activeChatId),
-	// 	localStorage.getItem("authToken") || "",
-	// 	activeChatId !== "new" && activeChatId !== undefined ? true : false
-	// );
-	// const threadMessages = messages?.pages.flatMap((page) => page.messages);
-	// useEffect(() => {
-	// 	if (!isLoadingMessages && threadMessages) {
-	// 		setAllChats(threadMessages);
-	// 	}
-	// 	if (activeChatId === "new") {
-	// 		setAllChats([]);
-	// 	}
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [isLoadingMessages, activeChatId]);
-	// const { mutate: chatAgent, data: agentData } = useChatAgent();
-	// const { refetch: refetchThreads } = useThreads(
-	// 	localStorage.getItem("authToken") || "",
-	// 	true
-	// );
-	// console.log("checking agent data", agentData);
-	// const handleSendMessage = async (content: string) => {
-	// 	console.log(activeChatId, "activeChatId");
-	// 	if (!activeChatId) return;
-
-	// 	const userMessage: any = {
-	// 		id: Date.now().toString(),
-	// 		content,
-	// 		sender: "user",
-	// 		createdAt: new Date(),
-	// 	};
-
-	// 	// Add user message to chat
-	// 	const currentMessages = threadMessages || [];
-	// 	const updatedMessages = [...currentMessages, userMessage];
-	// 	onUpdateChat(activeChatId, updatedMessages);
-	// 	setAllChats((prev) => [...prev, userMessage]);
-	// 	// Simulate AI response
-	// 	setIsTyping(true);
-
-	// 	// TODO: Replace with actual API call to your backend
-	// 	chatAgent(
-	// 		{
-	// 			token: localStorage.getItem("authToken") || "",
-	// 			prompt: content,
-	// 			threadId:
-	// 				activeChatId === "new" && tempThreadId === null
-	// 					? undefined
-	// 					: tempThreadId,
-	// 		},
-	// 		{
-	// 			onSuccess: (data: any) => {
-	// 				console.log("checking new chat data", data);
-	// 				const assistantMessage: any = {
-	// 					id: (Date.now() + 1).toString(),
-	// 					content: data.data.data,
-	// 					sender: "agent",
-	// 					createdAt: new Date(),
-	// 					type: data.data.type,
-	// 				};
-
-	// 				const finalMessages = [...updatedMessages, assistantMessage];
-	// 				onUpdateChat(activeChatId, finalMessages);
-	// 				setAllChats((prev) => [...prev, assistantMessage]);
-	// 				setIsTyping(false);
-	// 				setTempThreadId(data.data.threadId);
-	// 				refetchThreads();
-	// 			},
-	// 		}
-	// 	);
-	// };
+	useEffect(() => {
+		setActiveChatId("agentType");
+		setAgentType(agentType);
+	});
 	console.log("allchats data", allChats);
-	if (!activeChatId) {
+	if (!agentType) {
 		return (
 			<div className="flex-1 flex items-center justify-center bg-[#1B012F]">
 				<div className="text-center space-y-6 max-w-md">
@@ -231,4 +148,4 @@ const ChatPage: React.FC<ChatPageProps> = ({
 	);
 };
 
-export default ChatPage;
+export default AgentChatPage;

@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
 import useFetchAgents from "../hooks/useFetchAgents";
 import { useAuth } from "../contexts/AuthContext";
 
 interface ProtocolPageProps {
-	handleNewChat: () => void;
 	setAutoSearch: (value: boolean) => void;
 	setSearchQuery: (query: string) => void;
 	setAgentType: (type: string) => void;
 }
 const ProtocolsPage: React.FC<ProtocolPageProps> = ({
-	handleNewChat,
 	setAutoSearch,
 	setSearchQuery,
 	setAgentType,
@@ -19,7 +17,7 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 	const retriveToken = localStorage.getItem("authToken");
 	const { data: agentData } = useFetchAgents(retriveToken);
 	const [expandedPrompts, setExpandedPrompts] = useState<number[]>([]);
-	const { setActiveChatId } = useAuth();
+	const { setActiveChatId, setSelectedAgent } = useAuth();
 	const togglePrompts = (agentId: number) => {
 		setExpandedPrompts((prev) =>
 			prev.includes(agentId)
@@ -29,16 +27,18 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 	};
 	const handleStartAgent = (protocol: string) => {
 		if (protocol) {
-			setActiveChatId("new");
-			handleNewChat();
-			setAgentType(protocol.toLowerCase());
+			setSelectedAgent(protocol.toLowerCase());
 		}
 	};
+	useEffect(() => {
+		setActiveChatId("agentType");
+	});
+
 	const searchPrompts = (prompt: string, protocol: string) => {
-		handleNewChat();
 		setAutoSearch(true);
 		setSearchQuery(prompt);
 		setAgentType(protocol.toLowerCase());
+		setSelectedAgent(protocol.toLowerCase());
 		// if (prompt.trim() && activeChatId !== null) {
 		// 	handleSendMessage(prompt.trim());
 		// }

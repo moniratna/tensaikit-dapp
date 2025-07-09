@@ -4,6 +4,7 @@ import { Menu as HeadlessMenu, Transition } from "@headlessui/react";
 import logoWordMark from "../assets/logoWordMark.png";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
+import katana from "../assets/katana.webp";
 
 const Navbar = () => {
 	const { user, logout, setIsOpenSidebar, isOpenSidebar } = useAuth();
@@ -44,6 +45,9 @@ const Navbar = () => {
 								-4
 							)}`}
 					</p>
+				</div>
+				<div className="text-xs text-gray-400 flex items-center space-x-1 cursor-pointer">
+					<img src={katana} className="h-5 w-5 rounded-lg" />
 				</div>
 
 				{/* Dropdown */}

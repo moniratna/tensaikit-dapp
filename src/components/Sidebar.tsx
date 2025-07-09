@@ -6,6 +6,7 @@ import useThreads from "../hooks/useThreads";
 import useFetchAgents from "../hooks/useFetchAgents";
 import { toast } from "sonner";
 import useDeleteThread from "../hooks/useDeleteThread";
+import { useAuth } from "../contexts/AuthContext";
 
 interface SidebarProps {
 	activeChatId: string | null;
@@ -22,6 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 	activeTab,
 	onTabChange,
 }) => {
+	const { setSelectedAgent, selectedAgent } = useAuth();
 	const [searchQuery, setSearchQuery] = useState("");
 	const { data: protocolData } = useFetchAgents(
 		localStorage.getItem("authToken") || ""
@@ -71,7 +73,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 						Chats
 					</button>
 					<button
-						onClick={() => onTabChange("protocols")}
+						onClick={() => {
+							onTabChange("protocols");
+							setSelectedAgent("");
+						}}
 						className={`flex-1 flex items-center justify-center py-2 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${
 							activeTab === "protocols"
 								? "bg-[#ffc300] text-black"
@@ -201,7 +206,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 						<div className="space-y-3">
 							{protocolData &&
 								protocolData.agents.map((agent: any) => (
-									<div className="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer">
+									<div
+										className={
+											selectedAgent === agent.name.toLowerCase()
+												? "bg-[#fcc300] rounded-lg p-4 hover:bg-[#fbb300] transition-colors cursor-pointer text-black"
+												: `bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer`
+										}
+										onClick={() => {
+											console.log("clicked on selected agent");
+											setSelectedAgent(agent.name.toLowerCase());
+										}}
+									>
 										<div className="flex items-center space-x-3">
 											<div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
 												{/* <span className="text-sm font-bold">M</span> */}

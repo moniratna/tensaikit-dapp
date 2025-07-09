@@ -8,6 +8,7 @@ type GetQuotesVariables = {
 	sellTokenId: string;
 	buyTokenId: string;
 	amountIn: number;
+	messageId: number;
 };
 
 const useSwapToken = () => {
@@ -17,8 +18,9 @@ const useSwapToken = () => {
 			sellTokenId,
 			buyTokenId,
 			amountIn,
+			messageId,
 		}: GetQuotesVariables) => {
-			return swapExecute(token, sellTokenId, buyTokenId, amountIn);
+			return swapExecute(token, sellTokenId, buyTokenId, amountIn, messageId);
 		},
 	});
 };
@@ -27,7 +29,8 @@ const swapExecute = async (
 	token: string | null | undefined,
 	tokenIn: string,
 	tokenOut: string,
-	amount: number
+	amount: number,
+	messageId: number
 ) => {
 	try {
 		console.log("am i getting called with");
@@ -38,6 +41,7 @@ const swapExecute = async (
 				tokenIn: tokenIn,
 				tokenOut: tokenOut,
 				amount: amount,
+				messageId: messageId,
 			},
 			{
 				headers: {

@@ -6,7 +6,7 @@ import React, {
 	useEffect,
 	ReactNode,
 } from "react";
-import { User, AuthContextType } from "../types";
+import { User, AuthContextType, Message } from "../types";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -28,6 +28,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [activeChatId, setActiveChatId] = useState<string | null>(null);
 	const [isOpenSidebar, setIsOpenSidebar] = useState(true);
 	const [agentType, setAgentType] = useState<string>("");
+	const [allChats, setAllChats] = useState<Message[]>([]);
+	const [selectedAgent, setSelectedAgent] = useState<string>("");
 	useEffect(() => {
 		// Check for existing token and validate session
 		const token = localStorage.getItem("authToken");
@@ -171,6 +173,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		setIsOpenSidebar,
 		agentType,
 		setAgentType,
+		allChats,
+		setAllChats,
+		selectedAgent,
+		setSelectedAgent,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

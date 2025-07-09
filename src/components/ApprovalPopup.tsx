@@ -71,7 +71,13 @@ const renderTokenDropdown = (
 	);
 };
 
-export default function ApprovalPopup({ onClose }: { onClose: () => void }) {
+export default function ApprovalPopup({
+	onClose,
+	messageId,
+}: {
+	onClose: () => void;
+	messageId: number;
+}) {
 	const retriveToken = localStorage.getItem("authToken");
 	const { data: tokenData, isLoading } = useFetchTokens(retriveToken);
 	console.log(isLoading, tokenData);
@@ -218,6 +224,7 @@ export default function ApprovalPopup({ onClose }: { onClose: () => void }) {
 				sellTokenId: selectedSell.id,
 				buyTokenId: selectedBuy.id,
 				amountIn: Number(amountIn),
+				messageId: messageId,
 			},
 			{
 				onSuccess: (data) => {

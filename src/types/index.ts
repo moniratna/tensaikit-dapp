@@ -13,6 +13,7 @@ export interface Message {
 	createdAt: Date;
 	type: string;
 	threadId: number;
+	txnHash?: string;
 }
 
 export interface ChatThread {
@@ -48,4 +49,8 @@ export interface AuthContextType {
 	setIsOpenSidebar: (isOpen: boolean) => void;
 	agentType: string;
 	setAgentType: (type: string) => void;
+	allChats: Message[];
+	setAllChats: (messages: Message[]) => void;
+	selectedAgent: string;
+	setSelectedAgent: (agent: string) => void;
 }

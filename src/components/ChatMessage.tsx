@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Message } from "../types";
-import { User, Bot, Copy, ThumbsUp, ThumbsDown } from "lucide-react";
+import { User, Bot, Copy } from "lucide-react";
 import ApprovalPopup from "./ApprovalPopup";
 
 interface ChatMessageProps {
@@ -76,6 +76,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 				>
 					<div className="prose dark:prose-invert max-w-none">
 						{message.type === "SushiSwapQuoteActions_get_swap_quote" &&
+						(message.txnHash === null || message.txnHash === undefined) &&
 						showPopup ? (
 							<>
 								<p className="whitespace-pre-wrap m-0">
@@ -86,8 +87,26 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 													Show Approval Popup
 												</button> */}
 									{/* {showPopup && ( */}
-									<ApprovalPopup onClose={() => setShowPopup(false)} />
+									<ApprovalPopup
+										onClose={() => setShowPopup(false)}
+										messageId={Number(message.id)}
+									/>
 									{/* )} */}
+								</p>
+							</>
+						) : message.type === "SushiSwapQuoteActions_get_swap_quote" &&
+						  message.txnHash !== null ? (
+							<>
+								<p>
+									Your transaction has been confirmed on the blockchain.
+									<a
+										href={`https://explorer.tatara.katana.network/tx/${message.txnHash}`}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="text-blue-500 underline text-sm"
+									>
+										View on Explorer
+									</a>
 								</p>
 							</>
 						) : null}
