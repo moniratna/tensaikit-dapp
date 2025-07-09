@@ -26,7 +26,6 @@ const getTokens = async (token: string | null | undefined) => {
 			}
 		);
 		const res_data = response.data;
-		console.log(res_data);
 		return { data: res_data.data };
 	} catch (error: any) {
 		console.error("Fetch thread list failed:", error);

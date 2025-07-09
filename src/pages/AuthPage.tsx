@@ -41,26 +41,6 @@ const AuthPage: React.FC = () => {
 		}
 	};
 
-	const handleGoogleLogin = async () => {
-		try {
-			<GoogleLogin
-				onSuccess={(credentialResponse) => {
-					if (credentialResponse.credential) {
-						loginWithGoogle(credentialResponse.credential);
-					} else {
-						setError("Google authentication failed. No credential received.");
-					}
-				}}
-				onError={() => {
-					console.log("Login Failed");
-				}}
-			/>;
-			// await loginWithGoogle();
-		} catch (err) {
-			setError("Google authentication failed. Please try again.");
-		}
-	};
-
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-[#1B012F] via-[#1B012F] to-indigo-50 flex items-center justify-center p-4">
 			<div className="max-w-md w-full space-y-8">
@@ -95,7 +75,6 @@ const AuthPage: React.FC = () => {
 						Continue with Google */}
 						<GoogleLogin
 							onSuccess={(credentialResponse) => {
-								console.log("checking google", credentialResponse);
 								if (credentialResponse.credential) {
 									loginWithGoogle(credentialResponse.credential);
 								} else {

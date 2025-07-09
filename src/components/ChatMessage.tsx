@@ -8,7 +8,6 @@ interface ChatMessageProps {
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
-	console.log("inside message page", message);
 	const isUser = message.sender === "user";
 	const [showPopup, setShowPopup] = useState(true);
 	const copyToClipboard = () => {

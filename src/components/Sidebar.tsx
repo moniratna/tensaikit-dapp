@@ -207,13 +207,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 							{protocolData &&
 								protocolData.agents.map((agent: any) => (
 									<div
+										key={agent.id}
 										className={
 											selectedAgent === agent.name.toLowerCase()
 												? "bg-[#fcc300] rounded-lg p-4 hover:bg-[#fbb300] transition-colors cursor-pointer text-black"
 												: `bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer`
 										}
 										onClick={() => {
-											console.log("clicked on selected agent");
 											setSelectedAgent(agent.name.toLowerCase());
 										}}
 									>

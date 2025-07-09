@@ -56,7 +56,6 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 		setActiveChatId("agentType");
 		setAgentType(agentType);
 	});
-	console.log("allchats data", allChats);
 	if (!agentType) {
 		return (
 			<div className="flex-1 flex items-center justify-center bg-[#1B012F]">
@@ -104,9 +103,6 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 
 			{/* Messages */}
 			<div className="flex-1 overflow-y-auto">
-				<div ref={ref} className="w-full text-center text-white">
-					{isFetchingNextPage && hasNextPage ? "Loading..." : <></>}
-				</div>
 				<div className="flex flex-col gap-4 p-6">
 					{!isLoadingMessages &&
 						allChats.map((message) => (
@@ -138,7 +134,9 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 						</div>
 					</div>
 				)}
-
+				<div ref={ref} className="w-full text-center text-white">
+					{isFetchingNextPage && hasNextPage ? "Loading..." : <></>}
+				</div>
 				<div ref={messagesEndRef} />
 			</div>
 

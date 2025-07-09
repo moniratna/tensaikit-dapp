@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const getThreads = async (page: number, token: string) => {
 	try {
-		console.log("Page, Token:", page, token);
 		const response = await fetch(
 			`${import.meta.env.VITE_BACKEND_URL}/v1/api/get-threads?page=${page}`,
 			{
@@ -14,7 +13,6 @@ const getThreads = async (page: number, token: string) => {
 			}
 		);
 		const data = await response.json();
-		console.log("Fetched threads:", data);
 		return { threads: data.data };
 	} catch (error: any) {
 		console.error("Error fetching threads:", error);

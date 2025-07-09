@@ -10,6 +10,7 @@ import Alert from "./Alert";
 import useFetchTokens from "../hooks/useFetchTokens";
 import useGetQuotes from "../hooks/useGetQuotes";
 import useSwapToken from "../hooks/useSwapToken";
+import { toast } from "sonner";
 // import Link from "next/link";
 
 const renderTokenDropdown = (
@@ -18,9 +19,9 @@ const renderTokenDropdown = (
 	setSelectedToken: (symbol: string) => void,
 	open: boolean,
 	setSelectedTokenData: (data: any) => void,
-	setOpen: (value: boolean) => void
+	setOpen: (value: boolean) => void,
+	disableToken: string
 ) => {
-	console.log("token list", tokenList);
 	const selected: any = tokenList.find((t: any) => t.symbol === selectedToken);
 
 	return (
@@ -45,26 +46,32 @@ const renderTokenDropdown = (
 			</button>
 			{open && (
 				<div className="absolute z-20 top-8 left-0 bg-[#1a1c2b] rounded-md shadow-lg border border-gray-600 w-28">
-					{tokenList.map((token: any) => (
-						<button
-							key={token.symbol}
-							className="w-full text-left px-3 py-2 hover:bg-gray-700 flex items-center gap-2"
-							onClick={() => {
-								setSelectedToken(token.symbol);
-								setSelectedTokenData(token);
-								setOpen(false);
-							}}
-						>
-							<img
-								src={token.icon}
-								alt={token.symbol}
-								className="w-4 h-4"
-								width={16}
-								height={16}
-							/>
-							{token.symbol}
-						</button>
-					))}
+					{tokenList.map((token: any) => {
+						return (
+							<>
+								{token.symbol.toUpperCase() !== disableToken && (
+									<button
+										key={token.symbol}
+										className="w-full text-left px-3 py-2 hover:bg-gray-700 flex items-center gap-2"
+										onClick={() => {
+											setSelectedToken(token.symbol);
+											setSelectedTokenData(token);
+											setOpen(false);
+										}}
+									>
+										<img
+											src={token.icon}
+											alt={token.symbol}
+											className="w-4 h-4"
+											width={16}
+											height={16}
+										/>
+										{token.symbol}
+									</button>
+								)}
+							</>
+						);
+					})}
 				</div>
 			)}
 		</div>
@@ -80,7 +87,6 @@ export default function ApprovalPopup({
 }) {
 	const retriveToken = localStorage.getItem("authToken");
 	const { data: tokenData, isLoading } = useFetchTokens(retriveToken);
-	console.log(isLoading, tokenData);
 	const [sellToken, setSellToken] = useState("ETH");
 	const [buyToken, setBuyToken] = useState("AUSD");
 	const [buyOpen, setBuyOpen] = useState(false);
@@ -98,6 +104,7 @@ export default function ApprovalPopup({
 	const [selectedBuy, setSelectedBuy] = useState<TokenType | null>(null);
 	const [inputError, setInputError] = useState("");
 	const [txnHash, setTxnHash] = useState<string | null>(null);
+	const [isSwapping, setIsSwapping] = useState(false);
 	const {
 		mutate: fetchQuote,
 		data: quoteData,
@@ -121,9 +128,7 @@ export default function ApprovalPopup({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [tokenData]);
-	console.log("selected sell", selectedSell);
-	console.log("selected buy", selectedBuy);
-	console.log("quote data", quoteData);
+
 	useEffect(() => {
 		// implement debounce for fetching quote
 		if (selectedSell && selectedBuy) {
@@ -137,7 +142,6 @@ export default function ApprovalPopup({
 					},
 					{
 						onSuccess: (data) => {
-							console.log("Quote fetched successfully:", data.data);
 							// Handle the quote data as needed
 							setAmountOut(
 								Number(data.data.assumedAmountOut) /
@@ -170,7 +174,6 @@ export default function ApprovalPopup({
 				},
 				{
 					onSuccess: (data) => {
-						console.log("Quote fetched successfully (interval):", data.data);
 						setAmountOut(
 							Number(data.data.assumedAmountOut) /
 								10 **
@@ -199,12 +202,9 @@ export default function ApprovalPopup({
 			setInputError("Only numbers are accepted");
 		}
 	};
-	const {
-		mutate: swapExecute,
-		isSuccess: swapSuccess,
-		data: swapData,
-	} = useSwapToken();
+	const { mutate: swapExecute, isSuccess: swapSuccess } = useSwapToken();
 	const handleSwap = () => {
+		setIsSwapping(true);
 		if (!selectedSell || !selectedBuy) {
 			return (
 				<Alert
@@ -231,12 +231,17 @@ export default function ApprovalPopup({
 					const match = data.data.match(/0x[a-fA-F0-9]{64}/);
 					const txHash = match ? match[0] : null;
 					setTxnHash(txHash);
+					toast.success("Swap successful!");
+					setIsSwapping(false);
+				},
+				onError: (error) => {
+					console.error("Error swapping tokens:", error);
+					toast.error("Swap failed!");
+					setIsSwapping(false);
 				},
 			}
 		);
 	};
-	console.log("checking swap success", swapData, swapSuccess);
-	console.log("quote data", quoteData);
 	return (
 		<>
 			{isLoading && (
@@ -248,12 +253,12 @@ export default function ApprovalPopup({
 				<div className="z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
 					<div className="bg-[#0e0f1a] rounded-2xl w-full max-w-sm p-6 shadow-xl relative text-white">
 						{/* Close Button */}
-						<button
+						{/* <button
 							onClick={onClose}
 							className="absolute top-4 right-4 text-gray-400 hover:text-white"
 						>
 							<X />
-						</button>
+						</button> */}
 
 						{/* Success Content */}
 						<div className="flex flex-col items-center text-center space-y-4">
@@ -290,12 +295,12 @@ export default function ApprovalPopup({
 								</a>
 							)}
 
-							<button
+							{/* <button
 								onClick={onClose}
 								className="mt-4 w-full bg-green-700 hover:bg-green-600 py-2 rounded-md text-white"
 							>
 								Close
-							</button>
+							</button> */}
 						</div>
 					</div>
 				</div>
@@ -343,7 +348,8 @@ export default function ApprovalPopup({
 													setSellToken,
 													sellOpen,
 													setSelectedSell,
-													setSellOpen
+													setSellOpen,
+													buyToken
 												)}
 											</div>
 										</div>
@@ -366,7 +372,8 @@ export default function ApprovalPopup({
 												setBuyToken,
 												buyOpen,
 												setSelectedBuy,
-												setBuyOpen
+												setBuyOpen,
+												sellToken
 											)}
 										</div>
 										{/* <div className="text-sm text-gray-400 mt-1">$10.00</div> */}
@@ -438,19 +445,40 @@ export default function ApprovalPopup({
 										</div>
 									</div>
 
-									{/* Recipient */}
-									{/* <div className="text-xs text-gray-500 mt-2 text-center">
-								Recipient: 0x34cA...aaE3
-							</div> */}
-
 									<button
-										className={`mt-4 w-full bg-blue-800 text-black hover:bg-blue-600 py-2 rounded-md border border-gray-600 ${
+										className={`mt-4 w-full bg-[#fcc300] text-black hover:bg-[#faa300] py-2 rounded-md border border-gray-600 flex items-center justify-center gap-2 ${
 											quoteSuccess ? "cursor-pointer" : "cursor-not-allowed"
+										} ${
+											isSwapping
+												? "cursor-not-allowed bg-gray-600 hover:bg-gray-600"
+												: ""
 										}`}
 										onClick={handleSwap}
-										disabled={quoteSuccess ? false : true}
+										disabled={isSwapping}
 									>
-										Place Swap
+										{isSwapping && (
+											<svg
+												className="animate-spin h-5 w-5 text-white"
+												xmlns="http://www.w3.org/2000/svg"
+												fill="none"
+												viewBox="0 0 24 24"
+											>
+												<circle
+													className="opacity-25"
+													cx="12"
+													cy="12"
+													r="10"
+													stroke="currentColor"
+													strokeWidth="4"
+												></circle>
+												<path
+													className="opacity-75"
+													fill="currentColor"
+													d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
+												></path>
+											</svg>
+										)}
+										{isSwapping ? "Swapping..." : "Place Swap"}
 									</button>
 								</div>
 							</div>

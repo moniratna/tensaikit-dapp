@@ -5,7 +5,6 @@ const getAgentMessages = async (
 	token: string
 ) => {
 	try {
-		console.log("Page, Token:", page, token);
 		const response = await fetch(
 			`${
 				import.meta.env.VITE_BACKEND_URL

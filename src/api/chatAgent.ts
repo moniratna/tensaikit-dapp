@@ -22,9 +22,7 @@ const chatAgent = async (
 				},
 			}
 		);
-		console.log("check non response", response);
 		const res_data = await response.json();
-		console.log("checking chat response", res_data);
 		return { data: res_data };
 	} catch (error: any) {
 		console.error("Fetch thread list failed:", error);

@@ -30,7 +30,6 @@ const getQuotes = async (
 	amount: number
 ) => {
 	try {
-		console.log("am i getting called with");
 		const retriveToken = localStorage.getItem("authToken");
 		const response = await axios.post(
 			`${import.meta.env.VITE_BACKEND_URL}/v1/api/get-swap-quote`,
@@ -46,7 +45,6 @@ const getQuotes = async (
 				},
 			}
 		);
-		console.log("Quote response:", response.data);
 		const res_data = response.data;
 		return { data: res_data.data };
 	} catch (error: any) {

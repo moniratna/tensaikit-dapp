@@ -70,9 +70,7 @@ const MainPage: React.FC = () => {
 		localStorage.getItem("authToken") || "",
 		true
 	);
-	console.log("temp threadId", tempThreadId, activeChatId);
 	const handleSendMessage = async (content: string, agentType?: string) => {
-		console.log(activeChatId, "activeChatId");
 		if (!activeChatId) return;
 
 		const userMessage: any = {
@@ -86,7 +84,7 @@ const MainPage: React.FC = () => {
 		const currentMessages = allChats || [];
 		const updatedMessages = [...currentMessages, userMessage];
 		setAllChats([...allChats, userMessage]);
-		console.log("checking updated messages", updatedMessages);
+
 		// Simulate AI response
 		setIsTyping(true);
 
@@ -103,7 +101,6 @@ const MainPage: React.FC = () => {
 			},
 			{
 				onSuccess: (data: any) => {
-					console.log("checking new chat data", data);
 					const assistantMessage: any = {
 						id: data.data.messageId,
 						content: data.data.data,
@@ -113,7 +110,7 @@ const MainPage: React.FC = () => {
 					};
 
 					const finalMessages = [...updatedMessages, assistantMessage];
-					console.log("checking final messages", finalMessages);
+
 					setAllChats([...finalMessages]);
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);
@@ -141,7 +138,7 @@ const MainPage: React.FC = () => {
 		const currentMessages = allChats || [];
 		const updatedMessages = [...currentMessages, userMessage];
 		setAllChats(updatedMessages);
-		console.log("checking updated messages", updatedMessages);
+
 		// Simulate AI response
 		setIsTyping(true);
 
@@ -159,7 +156,6 @@ const MainPage: React.FC = () => {
 			},
 			{
 				onSuccess: (data: any) => {
-					console.log("checking new chat data", data);
 					const assistantMessage: any = {
 						id: data.data.messageId,
 						content: data.data.data,
@@ -169,7 +165,7 @@ const MainPage: React.FC = () => {
 					};
 
 					const finalMessages = [...updatedMessages, assistantMessage];
-					console.log("checking final messages", finalMessages);
+
 					setAllChats([...finalMessages]);
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);

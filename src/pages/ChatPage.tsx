@@ -33,7 +33,11 @@ const ChatPage: React.FC<ChatPageProps> = ({
 	} = useChatMessages(
 		Number(activeChatId),
 		localStorage.getItem("authToken") || "",
-		activeChatId !== "new" && activeChatId !== undefined ? true : false
+		activeChatId !== "new" &&
+			activeChatId !== undefined &&
+			activeChatId !== "agentType"
+			? true
+			: false
 	);
 	const threadMessages = messages?.pages.flatMap((page) => page.messages);
 	useEffect(() => {
@@ -58,89 +62,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 		}
 	}, [fetchNextPage, inView, isFetching, hasNextPage]);
 
-	// const { data: threads } = useThreads(
-	// 	localStorage.getItem("authToken") || "",
-	// 	true
-	// );
-	// const allThreads = threads
-	// 	? threads.pages.flatMap((d: any) => d.threads)
-	// 	: [];
-	// const activeChat = activeChatId
-	// 	? allThreads.find((chat) => chat.id === activeChatId)
-	// 	: null;
-	// const { data: messages, isLoading: isLoadingMessages } = useChatMessages(
-	// 	Number(activeChatId),
-	// 	localStorage.getItem("authToken") || "",
-	// 	activeChatId !== "new" && activeChatId !== undefined ? true : false
-	// );
-	// const threadMessages = messages?.pages.flatMap((page) => page.messages);
-	// useEffect(() => {
-	// 	if (!isLoadingMessages && threadMessages) {
-	// 		setAllChats(threadMessages);
-	// 	}
-	// 	if (activeChatId === "new") {
-	// 		setAllChats([]);
-	// 	}
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [isLoadingMessages, activeChatId]);
-	// const { mutate: chatAgent, data: agentData } = useChatAgent();
-	// const { refetch: refetchThreads } = useThreads(
-	// 	localStorage.getItem("authToken") || "",
-	// 	true
-	// );
-	// console.log("checking agent data", agentData);
-	// const handleSendMessage = async (content: string) => {
-	// 	console.log(activeChatId, "activeChatId");
-	// 	if (!activeChatId) return;
-
-	// 	const userMessage: any = {
-	// 		id: Date.now().toString(),
-	// 		content,
-	// 		sender: "user",
-	// 		createdAt: new Date(),
-	// 	};
-
-	// 	// Add user message to chat
-	// 	const currentMessages = threadMessages || [];
-	// 	const updatedMessages = [...currentMessages, userMessage];
-	// 	onUpdateChat(activeChatId, updatedMessages);
-	// 	setAllChats((prev) => [...prev, userMessage]);
-	// 	// Simulate AI response
-	// 	setIsTyping(true);
-
-	// 	// TODO: Replace with actual API call to your backend
-	// 	chatAgent(
-	// 		{
-	// 			token: localStorage.getItem("authToken") || "",
-	// 			prompt: content,
-	// 			threadId:
-	// 				activeChatId === "new" && tempThreadId === null
-	// 					? undefined
-	// 					: tempThreadId,
-	// 		},
-	// 		{
-	// 			onSuccess: (data: any) => {
-	// 				console.log("checking new chat data", data);
-	// 				const assistantMessage: any = {
-	// 					id: (Date.now() + 1).toString(),
-	// 					content: data.data.data,
-	// 					sender: "agent",
-	// 					createdAt: new Date(),
-	// 					type: data.data.type,
-	// 				};
-
-	// 				const finalMessages = [...updatedMessages, assistantMessage];
-	// 				onUpdateChat(activeChatId, finalMessages);
-	// 				setAllChats((prev) => [...prev, assistantMessage]);
-	// 				setIsTyping(false);
-	// 				setTempThreadId(data.data.threadId);
-	// 				refetchThreads();
-	// 			},
-	// 		}
-	// 	);
-	// };
-	console.log("allchats data", allChats);
-	if (!activeChatId) {
+	if (!activeChatId || activeChatId === "agentType") {
 		return (
 			<div className="flex-1 flex items-center justify-center bg-[#1B012F]">
 				<div className="text-center space-y-6 max-w-md">
@@ -170,20 +92,6 @@ const ChatPage: React.FC<ChatPageProps> = ({
 	return (
 		<div className="flex-1 flex flex-col bg-[#1B012F] overflow-auto">
 			{/* Chat Header */}
-			{/* <div className="border-b border-gray-200 px-6 py-4 bg-[#1B012F]">
-				<div className="flex items-center justify-between">
-					<div>
-						<h2 className="text-lg font-semibold text-white">
-							{activeChat?.title || "New Chat"}
-						</h2>
-						<p className="text-sm text-gray-500">AI Assistant • Online</p>
-					</div>
-					<div className="flex items-center space-x-2">
-						<div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-						<span className="text-sm text-gray-500">Connected</span>
-					</div>
-				</div>
-			</div> */}
 
 			{/* Messages */}
 			<div className="flex-1 overflow-y-auto">
