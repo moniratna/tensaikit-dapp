@@ -37,7 +37,12 @@ export interface Protocol {
 export interface AuthContextType {
 	user: User | null;
 	login: (email: string, password: string) => Promise<void>;
-	signup: (email: string, password: string, name: string) => Promise<void>;
+	signup: (
+		email: string,
+		password: string,
+		firstName: string,
+		lastName: string
+	) => Promise<void>;
 	loginWithGoogle: (threadId: string) => Promise<void>;
 	logout: () => void;
 	loading: boolean;

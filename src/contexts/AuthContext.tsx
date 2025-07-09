@@ -7,6 +7,7 @@ import React, {
 	ReactNode,
 } from "react";
 import { User, AuthContextType, Message } from "../types";
+import { toast } from "sonner";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -99,7 +100,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		}
 	};
 
-	const signup = async (email: string, password: string, name: string) => {
+	const signup = async (
+		email: string,
+		password: string,
+		firstName: string,
+		lastName: string
+	) => {
 		setLoading(true);
 		try {
 			// TODO: Replace with actual API endpoint
@@ -110,7 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({ email, password, name }),
+					body: JSON.stringify({ email, password, firstName, lastName }),
 				}
 			);
 
@@ -118,6 +124,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				const data = await response.json();
 				localStorage.setItem("authToken", data.token);
 				setUser(data.user);
+				toast.success("Signup successful! Please login to continue.");
 			} else {
 				throw new Error("Signup failed");
 			}

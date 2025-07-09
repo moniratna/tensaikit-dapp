@@ -187,9 +187,6 @@ const ChatPage: React.FC<ChatPageProps> = ({
 
 			{/* Messages */}
 			<div className="flex-1 overflow-y-auto">
-				<div ref={ref} className="w-full text-center text-white">
-					{isFetchingNextPage && hasNextPage ? "Loading..." : <></>}
-				</div>
 				<div className="flex flex-col gap-4 p-6">
 					{!isLoadingMessages &&
 						allChats.map((message) => (
@@ -221,7 +218,9 @@ const ChatPage: React.FC<ChatPageProps> = ({
 						</div>
 					</div>
 				)}
-
+				<div ref={ref} className="w-full text-center text-white">
+					{isFetchingNextPage && hasNextPage ? "Loading..." : <></>}
+				</div>
 				<div ref={messagesEndRef} />
 			</div>
 

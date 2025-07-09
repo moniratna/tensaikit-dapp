@@ -2,18 +2,18 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { Mail, Lock, User, Chrome } from "lucide-react";
+import { Mail, Lock, User } from "lucide-react";
 import iconYellow from "../assets/iconYellow.png";
 import { GoogleLogin } from "@react-oauth/google";
 
 const AuthPage: React.FC = () => {
-	const { user, setUser, login, signup, loginWithGoogle, loading, setLoading } =
-		useAuth();
+	const { user, login, signup, loginWithGoogle, loading } = useAuth();
 	const [isLogin, setIsLogin] = useState(true);
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
-		name: "",
+		firstName: "",
+		lastName: "",
 	});
 	const [error, setError] = useState("");
 
@@ -29,7 +29,12 @@ const AuthPage: React.FC = () => {
 			if (isLogin) {
 				await login(formData.email, formData.password);
 			} else {
-				await signup(formData.email, formData.password, formData.name);
+				await signup(
+					formData.email,
+					formData.password,
+					formData.firstName,
+					formData.lastName
+				);
 			}
 		} catch (err) {
 			setError("Authentication failed. Please try again.");
@@ -123,7 +128,7 @@ const AuthPage: React.FC = () => {
 									htmlFor="name"
 									className="block text-sm font-medium text-gray-700 mb-1"
 								>
-									Full Name
+									First Name
 								</label>
 								<div className="relative">
 									<User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -131,9 +136,33 @@ const AuthPage: React.FC = () => {
 										id="name"
 										type="text"
 										required={!isLogin}
-										value={formData.name}
+										value={formData.firstName}
 										onChange={(e) =>
-											setFormData({ ...formData, name: e.target.value })
+											setFormData({ ...formData, firstName: e.target.value })
+										}
+										className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										placeholder="Enter your full name"
+									/>
+								</div>
+							</div>
+						)}
+						{!isLogin && (
+							<div>
+								<label
+									htmlFor="name"
+									className="block text-sm font-medium text-gray-700 mb-1"
+								>
+									Last Name
+								</label>
+								<div className="relative">
+									<User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+									<input
+										id="name"
+										type="text"
+										required={!isLogin}
+										value={formData.lastName}
+										onChange={(e) =>
+											setFormData({ ...formData, lastName: e.target.value })
 										}
 										className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 										placeholder="Enter your full name"
