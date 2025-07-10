@@ -19,7 +19,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 }) => {
 	// const [isTyping, setIsTyping] = useState(false);
 	// const [allChats, setAllChats] = useState<Message[]>([]);
-	// const messagesEndRef = useRef<HTMLDivElement | null>(null);
+	const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const { allChats, setAllChats } = useAuth();
 	// const [tempThreadId, setTempThreadId] = useState<number | null>(null);
 	const {
@@ -49,11 +49,11 @@ const ChatPage: React.FC<ChatPageProps> = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLoadingMessages, activeChatId, messages]);
-	// useEffect(() => {
-	// 	if (messagesEndRef.current) {
-	// 		messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-	// 	}
-	// }, [allChats]);
+	useEffect(() => {
+		if (messagesEndRef.current) {
+			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+		}
+	}, [isTyping]);
 	// useEffect(() => {
 	// 	if (!isLoadingMessages && threadMessages && messagesEndRef.current) {
 	// 		messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -176,10 +176,8 @@ const ChatPage: React.FC<ChatPageProps> = ({
 						</div>
 					</div>
 				)}
-				{/* <div ref={ref} className="w-full text-center text-white">
-					{isFetchingNextPage && hasNextPage ? "Loading..." : <></>}
-				</div> */}
-				{/* <div ref={messagesEndRef} /> */}
+
+				<div ref={messagesEndRef} />
 			</div>
 
 			{/* Chat Input */}

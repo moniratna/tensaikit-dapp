@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ChatThread } from "../types";
 import Sidebar from "../components/Sidebar";
 import ChatPage from "./ChatPage";
@@ -64,7 +64,14 @@ const MainPage: React.FC = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [autoSearch, searchQuery]);
-
+	const scrollContainerRef = useRef<HTMLDivElement>(null);
+	const scrollToBottom = () => {
+		if (scrollContainerRef.current) {
+			scrollContainerRef.current.scrollIntoView({
+				behavior: "smooth", // or "auto"
+			});
+		}
+	};
 	const { mutate: chatAgent } = useChatAgent();
 	const { refetch: refetchThreads } = useThreads(
 		localStorage.getItem("authToken") || "",
@@ -82,8 +89,9 @@ const MainPage: React.FC = () => {
 
 		// Add user message to chat
 		const currentMessages = allChats || [];
-		const updatedMessages = [...currentMessages, userMessage];
-		setAllChats([...allChats, userMessage]);
+		const updatedMessages = [userMessage, ...currentMessages];
+		setAllChats([...updatedMessages]);
+		scrollToBottom();
 
 		// Simulate AI response
 		setIsTyping(true);
@@ -109,9 +117,10 @@ const MainPage: React.FC = () => {
 						type: data.data.type,
 					};
 
-					const finalMessages = [...updatedMessages, assistantMessage];
+					const finalMessages = [assistantMessage, ...updatedMessages];
 
 					setAllChats([...finalMessages]);
+					scrollToBottom();
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);
 					setTempThreadId(data.data.threadId);
@@ -136,8 +145,9 @@ const MainPage: React.FC = () => {
 
 		// Add user message to chat
 		const currentMessages = allChats || [];
-		const updatedMessages = [...currentMessages, userMessage];
-		setAllChats(updatedMessages);
+		const updatedMessages = [userMessage, ...currentMessages];
+		setAllChats([...updatedMessages]);
+		scrollToBottom();
 
 		// Simulate AI response
 		setIsTyping(true);
@@ -163,9 +173,10 @@ const MainPage: React.FC = () => {
 						type: data.data.type,
 					};
 
-					const finalMessages = [...updatedMessages, assistantMessage];
+					const finalMessages = [assistantMessage, ...updatedMessages];
 
 					setAllChats([...finalMessages]);
+					scrollToBottom();
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);
 					// setTempThreadId(data.data.threadId);
