@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
 import React, {
 	createContext,
@@ -31,6 +32,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [agentType, setAgentType] = useState<string>("");
 	const [allChats, setAllChats] = useState<Message[]>([]);
 	const [selectedAgent, setSelectedAgent] = useState<string>("");
+	const [successSignup, setSuccessSignup] = useState(false);
+	const [isLogin, setIsLogin] = useState(true);
 	useEffect(() => {
 		// Check for existing token and validate session
 		const token = localStorage.getItem("authToken");
@@ -119,17 +122,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 					body: JSON.stringify({ email, password, firstName, lastName }),
 				}
 			);
-
-			if (response.ok) {
-				const data = await response.json();
-				localStorage.setItem("authToken", data.token);
-				setUser(data.user);
-				toast.success("Signup successful! Please login to continue.");
-			} else {
-				throw new Error("Signup failed");
+			if (!response.ok) {
+				// Try to extract error message from response
+				const errorData = await response.json().catch(() => null);
+				const message =
+					errorData?.message ||
+					errorData?.error ||
+					`Signup failed with status ${response.status}`;
+				throw new Error(message);
 			}
-		} catch (error) {
+			await response.json();
+			setIsLogin(true);
+			// localStorage.setItem("authToken", data.token);
+			// setUser(data);
+			setSuccessSignup(true);
+			toast.success("Signup successful! Please login to continue.");
+		} catch (error: any) {
 			console.error("Signup error:", error);
+			toast.error(error.message || "Something went wrong during signup.");
 			throw error;
 		} finally {
 			setLoading(false);
@@ -190,6 +200,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		setAllChats,
 		selectedAgent,
 		setSelectedAgent,
+		successSignup,
+		isLogin,
+		setIsLogin,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

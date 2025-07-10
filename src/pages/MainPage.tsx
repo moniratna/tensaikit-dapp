@@ -25,7 +25,7 @@ const MainPage: React.FC = () => {
 	const [autoSearch, setAutoSearch] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [isTyping, setIsTyping] = useState(false);
-	const [tempThreadId, setTempThreadId] = useState<number | null>(null);
+
 	const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
 
 	const handleNewChat = () => {
@@ -39,7 +39,6 @@ const MainPage: React.FC = () => {
 
 		setActiveChatId(newChat.id);
 		setActiveTab("chat");
-		setTempThreadId(null);
 		setHasFetchedOnce(false);
 		setAgentType("default");
 	};
@@ -64,6 +63,7 @@ const MainPage: React.FC = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [autoSearch, searchQuery]);
+	console.log("activeChatId", activeChatId);
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 	const scrollToBottom = () => {
 		if (scrollContainerRef.current) {
@@ -101,10 +101,7 @@ const MainPage: React.FC = () => {
 			{
 				token: localStorage.getItem("authToken") || "",
 				prompt: content,
-				threadId:
-					activeChatId === "new" && tempThreadId === null
-						? undefined
-						: tempThreadId || Number(activeChatId),
+				threadId: activeChatId === "new" ? undefined : Number(activeChatId),
 				// agentType: agentType,
 			},
 			{
@@ -123,7 +120,7 @@ const MainPage: React.FC = () => {
 					scrollToBottom();
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);
-					setTempThreadId(data.data.threadId);
+
 					if (!hasFetchedOnce) {
 						refetchThreads();
 					}

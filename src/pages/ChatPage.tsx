@@ -127,7 +127,26 @@ const ChatPage: React.FC<ChatPageProps> = ({
 	return (
 		<div className="flex-1 flex flex-col bg-[#1B012F] overflow-auto">
 			{/* Chat Header */}
-
+			{!isLoadingMessages && allChats.length === 0 && (
+				<div className="flex-1 flex items-center justify-center bg-[#1B012F]">
+					<div className="text-center space-y-6 max-w-md">
+						<div className="space-y-3">
+							<h2 className="text-2xl font-bold text-[#ffc300]">
+								Start a new conversation
+							</h2>
+							<p className="text-gray-600 leading-relaxed">
+								Your AI-powered assistant for DeFi protocols and blockchain
+								interactions. Start a new conversation to begin exploring the
+								decentralized finance ecosystem.
+							</p>
+						</div>
+						<div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+							{/* <Sparkles className="h-4 w-4" /> */}
+							{/* <span>Powered by advanced AI technology</span> */}
+						</div>
+					</div>
+				</div>
+			)}
 			{/* Messages */}
 			{/* <div className="flex-1 overflow-y-auto" ref={scrollContainerRef}>
 				<div className="flex flex-col-reverse gap-4 p-6">

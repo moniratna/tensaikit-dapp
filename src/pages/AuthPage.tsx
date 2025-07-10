@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
@@ -7,8 +8,9 @@ import iconYellow from "../assets/iconYellow.png";
 import { GoogleLogin } from "@react-oauth/google";
 
 const AuthPage: React.FC = () => {
-	const { user, login, signup, loginWithGoogle, loading } = useAuth();
-	const [isLogin, setIsLogin] = useState(true);
+	const { user, login, signup, loginWithGoogle, loading, isLogin, setIsLogin } =
+		useAuth();
+
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
@@ -36,8 +38,9 @@ const AuthPage: React.FC = () => {
 					formData.lastName
 				);
 			}
-		} catch (err) {
-			setError("Authentication failed. Please try again.");
+		} catch (err: any) {
+			console.log("checkign error", err);
+			setError(err.message);
 		}
 	};
 
@@ -60,11 +63,11 @@ const AuthPage: React.FC = () => {
 				</div>
 
 				<div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
-					{error && (
+					{/* {error && (
 						<div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
 							{error}
 						</div>
-					)}
+					)} */}
 
 					<button
 						// onClick={handleGoogleLogin}
@@ -112,7 +115,7 @@ const AuthPage: React.FC = () => {
 								<div className="relative">
 									<User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
 									<input
-										id="name"
+										id="firstName"
 										type="text"
 										required={!isLogin}
 										value={formData.firstName}
@@ -128,7 +131,7 @@ const AuthPage: React.FC = () => {
 						{!isLogin && (
 							<div>
 								<label
-									htmlFor="name"
+									htmlFor="lastName"
 									className="block text-sm font-medium text-gray-700 mb-1"
 								>
 									Last Name

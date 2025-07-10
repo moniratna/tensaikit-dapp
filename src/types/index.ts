@@ -58,4 +58,7 @@ export interface AuthContextType {
 	setAllChats: (messages: Message[]) => void;
 	selectedAgent: string;
 	setSelectedAgent: (agent: string) => void;
+	successSignup: boolean;
+	isLogin: boolean;
+	setIsLogin: (isLogin: boolean) => void;
 }
