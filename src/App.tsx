@@ -1,13 +1,40 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthPage from "./pages/AuthPage";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "sonner";
+import {
+	MutationCache,
+	QueryCache,
+	QueryClient,
+	QueryClientProvider,
+} from "@tanstack/react-query";
+import { toast, Toaster } from "sonner";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import AppLayout from "./components/AppLayout";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	queryCache: new QueryCache({
+		onError: (error: any) => {
+			console.log("Query error:", error.message);
+			if (error.message === "Unauthorized") {
+				toast.error("Session expired. Please log in again.");
+				localStorage.removeItem("authToken");
+				window.location.href = "/auth"; // Or use router.navigate('/auth')
+			}
+		},
+	}),
+	mutationCache: new MutationCache({
+		onError: (error: any) => {
+			console.log("Query error:", error.message);
+			if (error.message === "Unauthorized") {
+				toast.error("Session expired. Please log in again.");
+				localStorage.removeItem("authToken");
+				window.location.href = "/auth"; // Or use router.navigate('/auth')
+			}
+		},
+	}),
+});
 function App() {
 	return (
 		<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>

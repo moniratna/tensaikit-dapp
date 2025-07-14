@@ -14,11 +14,16 @@ const getMessages = async (threadId: number, page: number, token: string) => {
 				},
 			}
 		);
+		console.log("checking response", response);
+		if (response.status === 401) {
+			throw "Unauthorized";
+		}
 		const data = await response.json();
 		return { messages: data.data };
 	} catch (error: any) {
+		console.log("error error", error);
 		console.error("Error fetching threads:", error);
-		throw new Error(error.message || "Failed to fetch threads");
+		throw new Error(error || "Failed to fetch threads");
 	}
 };
 export default getMessages;

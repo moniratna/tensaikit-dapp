@@ -12,11 +12,16 @@ const getThreads = async (page: number, token: string) => {
 				},
 			}
 		);
+		if (response.status === 401) {
+			throw "Unauthorized";
+		}
 		const data = await response.json();
+		console.log(data, response);
 		return { threads: data.data };
 	} catch (error: any) {
+		console.log(error);
 		console.error("Error fetching threads:", error);
-		throw new Error(error.message || "Failed to fetch threads");
+		throw new Error(error);
 	}
 };
 export default getThreads;

@@ -22,11 +22,14 @@ const chatAgent = async (
 				},
 			}
 		);
+		if (response.status === 401) {
+			throw "Unauthorized";
+		}
 		const res_data = await response.json();
 		return { data: res_data };
 	} catch (error: any) {
 		console.error("Fetch thread list failed:", error);
-		throw error;
+		throw new Error(error);
 	}
 };
 

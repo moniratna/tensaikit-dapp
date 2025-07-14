@@ -32,11 +32,14 @@ const deleteThread = async (
 				},
 			}
 		);
+		if (response.status === 401) {
+			throw "Unauthorized";
+		}
 		const res_data = response.data;
 		return { data: res_data.data };
 	} catch (error: any) {
 		console.error("delete thread list failed:", error);
-		throw error;
+		throw new Error(error);
 	}
 };
 

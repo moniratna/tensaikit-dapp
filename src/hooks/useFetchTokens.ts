@@ -25,11 +25,14 @@ const getTokens = async (token: string | null | undefined) => {
 				},
 			}
 		);
+		if (response.status === 401) {
+			throw "Unauthorized";
+		}
 		const res_data = response.data;
 		return { data: res_data.data };
 	} catch (error: any) {
 		console.error("Fetch thread list failed:", error);
-		throw error;
+		throw new Error(error);
 	}
 };
 

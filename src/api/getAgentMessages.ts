@@ -18,12 +18,15 @@ const getAgentMessages = async (
 				},
 			}
 		);
+		if (response.status === 401) {
+			throw "Unauthorized";
+		}
 		const data = await response.json();
 
 		return { messages: data.data };
 	} catch (error: any) {
 		console.error("Error fetching getAgentMessages:", error);
-		throw new Error(error.message || "Failed to fetch threads");
+		throw new Error(error || "Failed to fetch threads");
 	}
 };
 export default getAgentMessages;

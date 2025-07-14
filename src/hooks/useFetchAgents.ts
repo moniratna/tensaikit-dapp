@@ -15,21 +15,25 @@ const useFetchAgents = (token: string | null | undefined) => {
 const getAgentList = async (token: string | null | undefined) => {
 	try {
 		const retriveToken = localStorage.getItem("authToken");
-		const response = await axios.post(
+		const response = await fetch(
 			`${import.meta.env.VITE_BACKEND_URL}/v1/api/explore-agents`,
-			{},
 			{
+				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${token ? token : retriveToken}`,
 				},
+				body: JSON.stringify({}),
 			}
 		);
+		if (response.status === 401) {
+			throw "Unauthorized";
+		}
 		const res_data = response.data;
 		return { agents: res_data.data };
 	} catch (error: any) {
 		console.error("Fetch thread list failed:", error);
-		throw error;
+		throw new Error(error);
 	}
 };
 
