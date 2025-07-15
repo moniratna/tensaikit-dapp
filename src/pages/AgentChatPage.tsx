@@ -44,17 +44,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
 		}
 	}, [isTyping]);
-	// const { ref, inView } = useInView();
 
-	// useEffect(() => {
-	// 	if (inView && !isFetching && hasNextPage) {
-	// 		fetchNextPage();
-	// 	}
-	// }, [fetchNextPage, inView, isFetching, hasNextPage]);
-	// useEffect(() => {
-	// 	setActiveChatId("agentType");
-	// 	setAgentType(agentType);
-	// });
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	useEffect(() => {
 		const container = scrollContainerRef.current;
@@ -67,18 +57,12 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 			}
 		};
 
-		container.addEventListener("scroll", handleScroll);
-		return () => container.removeEventListener("scroll", handleScroll);
+		container.addEventListener("scrollend", handleScroll);
+		return () => container.removeEventListener("scrollend", handleScroll);
 	}, [fetchNextPage, hasNextPage, isFetching]);
 
 	useEffect(() => {
-		if (
-			allChats.length <= 10 &&
-			// !isLoadingMessages &&
-			// threadMessages?.length &&
-			scrollContainerRef.current
-			// messages?.pageParams.length === 1
-		) {
+		if (allChats.length <= 10 && scrollContainerRef.current) {
 			const container = scrollContainerRef.current;
 			container.scrollTop = container.scrollHeight;
 		}
