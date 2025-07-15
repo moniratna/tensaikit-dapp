@@ -51,17 +51,17 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	// 		fetchNextPage();
 	// 	}
 	// }, [fetchNextPage, inView, isFetching, hasNextPage]);
-	useEffect(() => {
-		setActiveChatId("agentType");
-		setAgentType(agentType);
-	});
+	// useEffect(() => {
+	// 	setActiveChatId("agentType");
+	// 	setAgentType(agentType);
+	// });
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	useEffect(() => {
 		const container = scrollContainerRef.current;
 		if (!container || !hasNextPage || isFetching) return;
 
 		const handleScroll = () => {
-			if (container.scrollTop < 100) {
+			if (container.scrollTop < 500) {
 				console.log("I am triggering top");
 				fetchNextPage();
 			}
