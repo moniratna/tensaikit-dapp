@@ -23,13 +23,13 @@ const getAgentList = async (token: string | null | undefined) => {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${token ? token : retriveToken}`,
 				},
-				body: JSON.stringify({}),
+				body: null,
 			}
 		);
 		if (response.status === 401) {
 			throw "Unauthorized";
 		}
-		const res_data = response.data;
+		const res_data = await response.json();
 		return { agents: res_data.data };
 	} catch (error: any) {
 		console.error("Fetch thread list failed:", error);
