@@ -5,6 +5,7 @@ import { Bot } from "lucide-react";
 import iconLogo from "../assets/iconYellow.png";
 import { useAuth } from "../contexts/AuthContext";
 import useChatMessages from "../hooks/useGetMessages";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 interface ChatPageProps {
 	activeChatId: string | null;
@@ -25,9 +26,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 	const {
 		data: messages,
 		isLoading: isLoadingMessages,
-		// isFetchingNextPage,
 		fetchNextPage,
-		isFetching,
 		hasNextPage,
 	} = useChatMessages(
 		Number(activeChatId),
@@ -50,52 +49,11 @@ const ChatPage: React.FC<ChatPageProps> = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLoadingMessages, activeChatId, messages]);
 	useEffect(() => {
-		if (messagesEndRef.current) {
-			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-		}
-	}, [isTyping]);
-	// useEffect(() => {
-	// 	if (!isLoadingMessages && threadMessages && messagesEndRef.current) {
-	// 		messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-	// 	}
-	// }, [isLoadingMessages, threadMessages]);
-	// const { ref, inView } = useInView();
-
-	// useEffect(() => {
-	// 	if (inView && !isFetching && hasNextPage) {
-	// 		fetchNextPage();
-	// 	}
-	// }, [fetchNextPage, inView, isFetching, hasNextPage]);
-
-	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-	useEffect(() => {
-		const container = scrollContainerRef.current;
-		if (!container || !hasNextPage || isFetching) return;
-
-		const handleScroll = () => {
-			if (container.scrollTop < 100) {
-				console.log("I am triggering top");
-				fetchNextPage();
-			}
-		};
-
-		container.addEventListener("scroll", handleScroll);
-		return () => container.removeEventListener("scroll", handleScroll);
-	}, [fetchNextPage, hasNextPage, isFetching]);
-
-	useEffect(() => {
-		if (
-			allChats.length <= 10 &&
-			// !isLoadingMessages &&
-			// threadMessages?.length &&
-			scrollContainerRef.current
-			// messages?.pageParams.length === 1
-		) {
-			console.log("I am triggering bottom");
-			const container = scrollContainerRef.current;
+		const container = messagesEndRef.current;
+		if (container) {
 			container.scrollTop = container.scrollHeight;
 		}
-	}, [allChats]);
+	}, [isTyping]);
 
 	if (!activeChatId || activeChatId === "agentType") {
 		return (
@@ -125,7 +83,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 	}
 
 	return (
-		<div className="flex-1 flex flex-col bg-[#1B012F] overflow-auto">
+		<div className="flex-1 flex flex-col bg-[#1B012F] overflow-hidden w-full">
 			{/* Chat Header */}
 			{!isLoadingMessages && allChats.length === 0 && (
 				<div className="flex-1 flex items-center justify-center bg-[#1B012F]">
@@ -147,33 +105,51 @@ const ChatPage: React.FC<ChatPageProps> = ({
 					</div>
 				</div>
 			)}
-			{/* Messages */}
-			{/* <div className="flex-1 overflow-y-auto" ref={scrollContainerRef}>
-				<div className="flex flex-col-reverse gap-4 p-6">
-					{!isLoadingMessages &&
-						allChats.map(
-							(message) => {
-								return (
-									<div key={message.id}>
-										<ChatMessage message={message} />
-									</div>
-								);
-							}
-							// <ChatMessage key={message.id} message={message} />
-						)}
-				</div> */}
 
-			<div className="flex-1 overflow-y-auto" ref={scrollContainerRef}>
-				<div className="flex flex-col-reverse gap-4 p-6">
-					{!isLoadingMessages &&
-						allChats.map((message) => (
+			<div
+				id="scrollableDiv"
+				style={{
+					overflowY: "scroll",
+					display: "flex",
+					flexDirection: "column-reverse",
+					margin: "auto",
+					width: "100%",
+					height: "100%",
+				}}
+				className="flex-1 overflow-y-auto w-fit"
+				ref={messagesEndRef}
+				// onScroll={handleScroll}
+			>
+				<div className="flex flex-col-reverse gap-4 p-6 w-full">
+					<InfiniteScroll
+						dataLength={allChats.length}
+						next={fetchNextPage}
+						hasMore={!!hasNextPage}
+						style={{
+							display: "flex",
+							flexDirection: "column-reverse",
+							overflow: "visible",
+							width: "100%",
+						}}
+						loader={
+							<p className="text-center text-white">
+								Loading older messages...
+							</p>
+						}
+						scrollableTarget="scrollableDiv"
+						inverse={true} // <- Important: for bottom-up
+					>
+						{allChats.map((message) => (
 							<ChatMessage key={message.id} message={message} />
 						))}
+						{/* <div ref={messagesEndRef} /> */}
+					</InfiniteScroll>
 				</div>
-
+			</div>
+			<div className="flex-shrink-0 px-12 py-5">
 				{isTyping && (
-					<div className="flex gap-4 p-6 bg-[#1B012F]">
-						<div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center">
+					<div className="flex gap-4">
+						<div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-[#fcc300] to-[#fbb300] flex items-center justify-center">
 							<Bot className="h-4 w-4 text-white" />
 						</div>
 						<div className="flex-1">
@@ -183,22 +159,13 @@ const ChatPage: React.FC<ChatPageProps> = ({
 							</div>
 							<div className="flex space-x-1">
 								<div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-								<div
-									className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-									style={{ animationDelay: "0.1s" }}
-								></div>
-								<div
-									className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-									style={{ animationDelay: "0.2s" }}
-								></div>
+								<div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"></div>
+								<div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"></div>
 							</div>
 						</div>
 					</div>
 				)}
-
-				<div ref={messagesEndRef} />
 			</div>
-
 			{/* Chat Input */}
 			<ChatInput onSendMessage={handleSendMessage} disabled={isTyping} />
 		</div>

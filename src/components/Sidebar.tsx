@@ -23,13 +23,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 	activeTab,
 	onTabChange,
 }) => {
-	const {
-		setSelectedAgent,
-		selectedAgent,
-		setActiveChatId,
-		setAgentType,
-		agentType,
-	} = useAuth();
+	const { setSelectedAgent, selectedAgent, setActiveChatId, setAgentType } =
+		useAuth();
 	const [searchQuery, setSearchQuery] = useState("");
 	const { data: protocolData } = useFetchAgents(
 		localStorage.getItem("authToken") || ""
@@ -222,7 +217,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 										onClick={() => {
 											setSelectedAgent(agent.name.toLowerCase());
 											setActiveChatId("agentType");
-											setAgentType(agentType);
+											setAgentType(agent.name.toLowerCase());
 										}}
 									>
 										<div className="flex items-center space-x-3">

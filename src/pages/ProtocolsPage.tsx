@@ -17,7 +17,8 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 	const retriveToken = localStorage.getItem("authToken");
 	const { data: agentData } = useFetchAgents(retriveToken);
 	const [expandedPrompts, setExpandedPrompts] = useState<number[]>([]);
-	const { setActiveChatId, setSelectedAgent } = useAuth();
+	const { setActiveChatId, setSelectedAgent, setAllChats, allChats } =
+		useAuth();
 	const togglePrompts = (agentId: number) => {
 		setExpandedPrompts((prev) =>
 			prev.includes(agentId)
@@ -29,6 +30,7 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 		if (protocol) {
 			setSelectedAgent(protocol.toLowerCase());
 			setActiveChatId("agentType");
+			setAgentType(protocol.toLowerCase());
 		}
 	};
 

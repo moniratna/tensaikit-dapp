@@ -8,7 +8,9 @@ import katana from "../assets/katana.webp";
 
 const Navbar = () => {
 	const { user, logout, setIsOpenSidebar, isOpenSidebar } = useAuth();
-
+	const copyToClipboard = (content: string) => {
+		navigator.clipboard.writeText(content);
+	};
 	return (
 		<header className="fixed top-0 left-0 right-0 z-50 bg-[#1B012F] text-white shadow-md px-4 py-3 flex items-center justify-between">
 			{/* Left: Logo & Sidebar Toggle */}
@@ -68,7 +70,15 @@ const Navbar = () => {
 						<HeadlessMenu.Items className="absolute right-0 mt-2 w-48 origin-top-right bg-white text-black divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black/5 focus:outline-none z-50">
 							<div className="px-4 py-3 text-sm">
 								<p className="font-medium truncate">{user?.name || "User"}</p>
-								<p className="text-gray-500 truncate">{user?.email}</p>
+								<p
+									className="text-gray-500 truncate"
+									title={user?.email.toLowerCase()}
+									onClick={() =>
+										copyToClipboard(user?.email.toLowerCase() || "")
+									}
+								>
+									{user?.email.toLowerCase()}
+								</p>
 							</div>
 							<div className="p-1">
 								<HeadlessMenu.Item>

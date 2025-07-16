@@ -11,74 +11,8 @@ import useFetchTokens from "../hooks/useFetchTokens";
 import useGetQuotes from "../hooks/useGetQuotes";
 import useSwapToken from "../hooks/useSwapToken";
 import { toast } from "sonner";
-// import Link from "next/link";
 
-const renderTokenDropdown = (
-	tokenList: [],
-	selectedToken: string,
-	setSelectedToken: (symbol: string) => void,
-	open: boolean,
-	setSelectedTokenData: (data: any) => void,
-	setOpen: (value: boolean) => void,
-	disableToken: string
-) => {
-	const selected: any = tokenList.find((t: any) => t.symbol === selectedToken);
-
-	return (
-		<div className="relative">
-			<button
-				className="flex items-center gap-1 text-sm text-white bg-gray-700 px-2 py-1 rounded-md"
-				onClick={() => setOpen(!open)}
-			>
-				{selected && (
-					<>
-						{/* <img
-							src={selected.icon}
-							className="w-4 h-4"
-							width={16}
-							height={16}
-							alt={selected.symbol}
-						/> */}
-						<span>{selected.symbol}</span>
-					</>
-				)}
-				<ChevronDown className="w-4 h-4" />
-			</button>
-			{open && (
-				<div className="absolute h-40 w-auto z-20 top-8 left-0 bg-[#1a1c2b] rounded-md shadow-lg border border-gray-600 overflow-auto">
-					{tokenList.map((token: any) => {
-						return (
-							<>
-								{token.symbol.toUpperCase() !== disableToken && (
-									<button
-										key={token.symbol}
-										className="w-full text-left px-3 py-2 hover:bg-gray-700 flex items-center gap-2"
-										onClick={() => {
-											setSelectedToken(token.symbol);
-											setSelectedTokenData(token);
-											setOpen(false);
-										}}
-									>
-										{/* <img
-											src={token.icon}
-											alt={token.symbol}
-											className="w-4 h-4"
-											width={16}
-											height={16}
-										/> */}
-										{token.symbol}
-									</button>
-								)}
-							</>
-						);
-					})}
-				</div>
-			)}
-		</div>
-	);
-};
-
-export default function ApprovalPopup({
+export default function MorphoPopup({
 	onClose,
 	messageId,
 }: {
@@ -307,19 +241,19 @@ export default function ApprovalPopup({
 			) : (
 				<>
 					{!isLoading && (
-						<div className="z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm w-auto rounded-xl">
+						<div className="z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm w-full rounded-xl">
 							<div className="bg-[#0e0f1a] rounded-2xl w-full max-w-md p-6 shadow-xl relative text-white">
 								{/* Close Button */}
-								<button
+								{/* <button
 									onClick={onClose}
 									className="absolute top-4 right-4 text-gray-400 hover:text-white"
 								>
 									<X />
-								</button>
+								</button> */}
 
 								{/* Swap Panel */}
 								<div className="space-y-4">
-									<p className="text-xl font-semibold mb-2">Swap</p>
+									<p className="text-xl font-semibold mb-2">Dynamic Approval</p>
 
 									{/* Sell box */}
 									<div className="bg-[#1a1c2b] rounded-lg p-4 border">
@@ -329,9 +263,12 @@ export default function ApprovalPopup({
 								</div> */}
 										<div className="flex justify-between items-center text-lg font-medium">
 											<div>
+												<span className="text-gray-400 text-sm">
+													Market Address
+												</span>
 												<input
 													type="text"
-													className="bg-transparent border-none outline-none text-white w-24"
+													className="bg-transparent border-none outline-none text-white w-80"
 													value={amountIn}
 													onChange={handleAmountChange}
 												/>
@@ -339,17 +276,6 @@ export default function ApprovalPopup({
 													<p className="text-red-400 text-xs mt-1">
 														{inputError}
 													</p>
-												)}
-											</div>
-											<div>
-												{renderTokenDropdown(
-													!isLoading && tokenData && tokenData.data,
-													sellToken,
-													setSellToken,
-													sellOpen,
-													setSelectedSell,
-													setSellOpen,
-													buyToken
 												)}
 											</div>
 										</div>
@@ -363,88 +289,27 @@ export default function ApprovalPopup({
 									<span className="text-sm text-gray-400">Balance: 0.00</span>
 								</div> */}
 										<div className="flex justify-between items-center text-lg font-medium">
-											<span className="bg-transparent border-none outline-none text-white w-24">
-												{amountOut.toFixed(8)}
-											</span>
-											{renderTokenDropdown(
-												!isLoading && tokenData && tokenData.data,
-												buyToken,
-												setBuyToken,
-												buyOpen,
-												setSelectedBuy,
-												setBuyOpen,
-												sellToken
-											)}
+											<div>
+												<span className="text-gray-400 text-sm">
+													Market Address
+												</span>
+												<input
+													type="text"
+													className="bg-transparent border-none outline-none text-white w-80"
+													value={amountIn}
+													onChange={handleAmountChange}
+												/>
+												{inputError && (
+													<p className="text-red-400 text-xs mt-1">
+														{inputError}
+													</p>
+												)}
+											</div>
 										</div>
 										{/* <div className="text-sm text-gray-400 mt-1">$10.00</div> */}
 									</div>
 
 									{/* Breakdown */}
-									<div className="bg-[#1a1c2b] rounded-lg p-4 space-y-1 text-sm text-gray-400">
-										<div className="flex justify-between">
-											<span>Price impact</span>
-											<span>
-												{quoteSuccess ? (
-													quoteData.data.priceImpact.toFixed(4)
-												) : (
-													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
-												)}
-											</span>
-										</div>
-
-										<div className="flex justify-between w-auto">
-											<span>Max. received</span>
-											<span> </span>
-											<span>
-												{quoteSuccess ? (
-													`${(
-														Number(quoteData.data.assumedAmountOut) /
-														10 **
-															Number(
-																quoteData.data.tokens[
-																	quoteData.data.tokens.length - 1
-																].decimals
-															)
-													).toFixed(8)} ${buyToken}`
-												) : (
-													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
-												)}
-											</span>
-										</div>
-
-										<div className="flex justify-between">
-											<span>Fee (0.25%)</span>
-											<span>
-												{quoteSuccess ? (
-													"0.25%"
-												) : (
-													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
-												)}
-											</span>
-										</div>
-
-										<div className="flex justify-between">
-											<span>Gas fee</span>
-											<span>
-												{quoteSuccess ? (
-													quoteData.data.gasSpent
-												) : (
-													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
-												)}
-											</span>
-										</div>
-
-										<div className="flex justify-between">
-											<span>Routing source</span>
-											<span>
-												{quoteSuccess ? (
-													"SushiSwap API"
-												) : (
-													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
-												)}
-											</span>
-										</div>
-									</div>
 
 									<button
 										className={`mt-4 w-full bg-[#fcc300] text-black hover:bg-[#faa300] py-2 rounded-md border border-gray-600 flex items-center justify-center gap-2 ${
@@ -479,7 +344,7 @@ export default function ApprovalPopup({
 												></path>
 											</svg>
 										)}
-										{isSwapping ? "Swapping..." : "Place Swap"}
+										{isSwapping ? "Approving..." : "Approve"}
 									</button>
 								</div>
 							</div>

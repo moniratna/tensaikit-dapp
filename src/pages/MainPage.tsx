@@ -27,6 +27,7 @@ const MainPage: React.FC = () => {
 	const [isTyping, setIsTyping] = useState(false);
 
 	const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
+	const [userPrompt, setUserPrompt] = useState<any>(null);
 
 	const handleNewChat = () => {
 		const newChat: ChatThread = {
@@ -57,6 +58,13 @@ const MainPage: React.FC = () => {
 
 	useEffect(() => {
 		if (autoSearch && searchQuery !== "") {
+			const userMessage: any = {
+				id: Date.now().toString(),
+				content: searchQuery.trim(),
+				sender: "user",
+				createdAt: new Date(),
+			};
+			setUserPrompt(userMessage);
 			handleSendAgentMessage(searchQuery.trim(), agentType);
 			setAutoSearch(false);
 			setSearchQuery("");
@@ -212,6 +220,7 @@ const MainPage: React.FC = () => {
 								agentType={selectedAgent}
 								isTyping={isTyping}
 								handleSendMessage={handleSendAgentMessage}
+								userPrompt={userPrompt === null ? null : userPrompt}
 							/>
 						) : (
 							<ProtocolsPage
