@@ -27,45 +27,45 @@ const renderTokenDropdown = (
 	return (
 		<div className="relative">
 			<button
-				className="flex items-center gap-1 text-sm text-white bg-gray-700 px-2 py-1 rounded-md"
+				className="flex items-center gap-1 text-sm text-white bg-gray-700 px-2 py-1 rounded-lg"
 				onClick={() => setOpen(!open)}
 			>
 				{selected && (
 					<>
-						{/* <img
-							src={selected.icon}
+						<img
+							src={`https://cdn.sushi.com/image/upload/f_auto,c_limit,w_40/d_unknown.png/tokens/747474/${selected.address}.jpg`}
 							className="w-4 h-4"
 							width={16}
 							height={16}
 							alt={selected.symbol}
-						/> */}
+						/>
 						<span>{selected.symbol}</span>
 					</>
 				)}
 				<ChevronDown className="w-4 h-4" />
 			</button>
 			{open && (
-				<div className="absolute h-40 w-auto z-20 top-8 left-0 bg-[#1a1c2b] rounded-md shadow-lg border border-gray-600 overflow-auto">
+				<div className="absolute h-40 w-auto z-20 top-8 left-0 bg-[#1a1c2b] rounded-md shadow-lg border border-gray-400 overflow-auto">
 					{tokenList.map((token: any) => {
 						return (
 							<>
 								{token.symbol.toUpperCase() !== disableToken && (
 									<button
 										key={token.symbol}
-										className="w-full text-left px-3 py-2 hover:bg-gray-700 flex items-center gap-2"
+										className="w-full text-sm text-center px-2 py-2 hover:bg-[#fcc300] hover:text-black flex items-center gap-2"
 										onClick={() => {
 											setSelectedToken(token.symbol);
 											setSelectedTokenData(token);
 											setOpen(false);
 										}}
 									>
-										{/* <img
-											src={token.icon}
+										<img
+											src={`https://cdn.sushi.com/image/upload/f_auto,c_limit,w_40/d_unknown.png/tokens/747474/${token.address}.jpg`}
 											alt={token.symbol}
-											className="w-4 h-4"
+											className="w-4 h-4 rounded-full"
 											width={16}
 											height={16}
-										/> */}
+										/>
 										{token.symbol}
 									</button>
 								)}
@@ -94,9 +94,8 @@ export default function ApprovalPopup({
 	const [amountIn, setAmountIn] = useState("1");
 	const [amountOut, setAmountOut] = useState(0);
 	type TokenType = {
-		id: string;
+		address: string;
 		symbol: string;
-		icon: string;
 		// add other properties if needed
 	};
 
@@ -137,18 +136,18 @@ export default function ApprovalPopup({
 					{
 						token: retriveToken,
 						amountIn: Number(amountIn),
-						sellTokenId: selectedSell.id,
-						buyTokenId: selectedBuy.id,
+						sellTokenId: selectedSell.address,
+						buyTokenId: selectedBuy.address,
 					},
 					{
 						onSuccess: (data) => {
 							// Handle the quote data as needed
 							setAmountOut(
 								Number(data.data.assumedAmountOut) /
-								10 **
-								Number(
-									data.data.tokens[data.data.tokens.length - 1].decimals
-								)
+									10 **
+										Number(
+											data.data.tokens[data.data.tokens.length - 1].decimals
+										)
 							);
 						},
 						onError: (error) => {
@@ -169,15 +168,15 @@ export default function ApprovalPopup({
 				{
 					token: retriveToken,
 					amountIn: Number(amountIn),
-					sellTokenId: selectedSell.id,
-					buyTokenId: selectedBuy.id,
+					sellTokenId: selectedSell.address,
+					buyTokenId: selectedBuy.address,
 				},
 				{
 					onSuccess: (data) => {
 						setAmountOut(
 							Number(data.data.assumedAmountOut) /
-							10 **
-							Number(data.data.tokens[data.data.tokens.length - 1].decimals)
+								10 **
+									Number(data.data.tokens[data.data.tokens.length - 1].decimals)
 						);
 					},
 					onError: (error) => {
@@ -221,8 +220,8 @@ export default function ApprovalPopup({
 		swapExecute(
 			{
 				token: retriveToken,
-				sellTokenId: selectedSell.id,
-				buyTokenId: selectedBuy.id,
+				sellTokenId: selectedSell.address,
+				buyTokenId: selectedBuy.address,
 				amountIn: Number(amountIn),
 				messageId: messageId,
 			},
@@ -244,7 +243,6 @@ export default function ApprovalPopup({
 	};
 	return (
 		<>
-
 			{isLoading ? (
 				<div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
 					<div className="text-white">Loading...</div>
@@ -405,11 +403,11 @@ export default function ApprovalPopup({
 													`${(
 														Number(quoteData.data.assumedAmountOut) /
 														10 **
-														Number(
-															quoteData.data.tokens[
-																quoteData.data.tokens.length - 1
-															].decimals
-														)
+															Number(
+																quoteData.data.tokens[
+																	quoteData.data.tokens.length - 1
+																].decimals
+															)
 													).toFixed(8)} ${buyToken}`
 												) : (
 													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
@@ -452,11 +450,13 @@ export default function ApprovalPopup({
 									</div>
 
 									<button
-										className={`mt-4 w-full bg-[#fcc300] text-black hover:bg-[#faa300] py-2 rounded-md border border-gray-600 flex items-center justify-center gap-2 ${quoteSuccess ? "cursor-pointer" : "cursor-not-allowed"
-											} ${isSwapping
+										className={`mt-4 w-full bg-[#fcc300] text-black hover:bg-[#faa300] py-2 rounded-md border border-gray-600 flex items-center justify-center gap-2 ${
+											quoteSuccess ? "cursor-pointer" : "cursor-not-allowed"
+										} ${
+											isSwapping
 												? "cursor-not-allowed bg-gray-600 hover:bg-gray-600"
 												: ""
-											}`}
+										}`}
 										onClick={handleSwap}
 										disabled={isSwapping}
 									>

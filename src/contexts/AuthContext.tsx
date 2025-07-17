@@ -93,10 +93,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				localStorage.setItem("authToken", data.accessToken);
 				setUser(data.data);
 			} else {
-				throw new Error("Login failed");
+				const data = await response.json();
+
+				throw new Error(data.error);
 			}
-		} catch (error) {
+		} catch (error: any) {
 			console.error("Login error:", error);
+			toast.error(error.message || "Login failed");
 			throw error;
 		} finally {
 			setLoading(false);

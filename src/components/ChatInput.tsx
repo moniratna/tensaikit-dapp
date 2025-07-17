@@ -13,7 +13,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
 }) => {
 	const [message, setMessage] = useState("");
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
-	const { agentType } = useAuth();
+	const { agentType, allChats } = useAuth();
 	useEffect(() => {
 		if (textareaRef.current) {
 			textareaRef.current.style.height = "auto";
@@ -26,8 +26,16 @@ const ChatInput: React.FC<ChatInputProps> = ({
 		if (message.trim() && !disabled) {
 			onSendMessage(message.trim(), agentType);
 			setMessage("");
+			if (textareaRef.current) {
+				textareaRef.current.focus();
+			}
 		}
 	};
+	useEffect(() => {
+		if (textareaRef.current) {
+			textareaRef.current.focus();
+		}
+	}, [allChats]);
 
 	const handleKeyPress = (e: React.KeyboardEvent) => {
 		if (e.key === "Enter" && !e.shiftKey) {
