@@ -57,28 +57,84 @@ const ChatPage: React.FC<ChatPageProps> = ({
 
 	if (!activeChatId || activeChatId === "agentType") {
 		return (
-			<div className="flex-1 flex items-center justify-center bg-[#1B012F]">
-				<div className="text-center space-y-6 max-w-md">
-					<div className="w-24 h-24 bg-gradient-to-r rounded-3xl flex items-center justify-center mx-auto shadow-lg">
-						{/* <Bot className="h-12 w-12 text-white" /> */}
-						<img src={iconLogo} alt="AgentKit Logo" className="h-24 w-24" />
-					</div>
-					<div className="space-y-3">
-						<h2 className="text-2xl font-bold text-[#ffc300]">
-							Welcome to Agent Kit
-						</h2>
-						<p className="text-gray-600 leading-relaxed">
-							Your AI-powered assistant for DeFi protocols and blockchain
-							interactions. Start a new conversation to begin exploring the
-							decentralized finance ecosystem.
-						</p>
-					</div>
-					<div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
-						{/* <Sparkles className="h-4 w-4" /> */}
-						{/* <span>Powered by advanced AI technology</span> */}
+			<>
+				<div className="flex items-center justify-center bg-[#1B012F]">
+					<div className="text-center space-y-6 max-w-md">
+						<div className="w-24 h-24 bg-gradient-to-r rounded-3xl flex items-center justify-center mx-auto shadow-lg">
+							{/* <Bot className="h-12 w-12 text-white" /> */}
+							<img src={iconLogo} alt="AgentKit Logo" className="h-24 w-24" />
+						</div>
+						<div className="space-y-3">
+							<h2 className="text-2xl font-bold text-[#ffc300]">
+								Welcome to Agent Kit
+							</h2>
+							<p className="text-gray-600 leading-relaxed">
+								Your AI-powered assistant for DeFi protocols and blockchain
+								interactions. Start a new conversation to begin exploring the
+								decentralized finance ecosystem.
+							</p>
+						</div>
+						<div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+							{/* <Sparkles className="h-4 w-4" /> */}
+							{/* <span>Powered by advanced AI technology</span> */}
+						</div>
 					</div>
 				</div>
-			</div>
+				<div className="flex flex-col items-center justify-center bg-[#1B012F]">
+					<h2 className="text-2xl font-bold text-[#ffc300]">
+						What can you do?
+					</h2>
+					<div className="flex mt-10 space-x-20">
+						<div
+							// key={protocol.id}
+							className="w-[50%] bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
+						>
+							<div className="text-left space-y-6 max-w-md p-5">
+
+								<div className="space-y-3">
+									<h2 className="text-2xl text-center font-bold text-[#ffc300]">
+										Chat Mode
+									</h2>
+									<ul className="list-disc text-gray-400 leading-relaxed ml-5">
+										<li>Chat with AI using natural language</li>
+										<li>Get your wallet related details</li>
+										<li>Transfer tokens</li>
+									</ul>
+								</div>
+								<div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+									{/* <Sparkles className="h-4 w-4" /> */}
+									{/* <span>Powered by advanced AI technology</span> */}
+								</div>
+							</div>
+						</div>
+						<div
+							// key={protocol.id}
+							className="w-[50%] bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
+						>
+							<div className="text-left space-y-6 p-5 max-w-md">
+
+								<div className="space-y-3">
+									<h2 className="text-2xl text-center font-bold text-[#ffc300]">
+										Sushi Agent Mode
+									</h2>
+									<ul className="list-disc text-gray-400 leading-relaxed ml-5">
+										<li>Chat with Sushi Agent using natural language</li>
+										<li>Generates a quote for swapping two tokens.</li>
+										<li>Executes a token swap on SushiSwap </li>
+									</ul>
+								</div>
+								<div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+									{/* <Sparkles className="h-4 w-4" /> */}
+									{/* <span>Powered by advanced AI technology</span> */}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="flex-1 flex gap-36 items-center justify-center bg-[#1B012F]">
+
+				</div>
+			</>
 		);
 	}
 
@@ -118,7 +174,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 				}}
 				className="flex-1 overflow-y-auto w-fit"
 				ref={messagesEndRef}
-				// onScroll={handleScroll}
+			// onScroll={handleScroll}
 			>
 				<div className="flex flex-col-reverse gap-4 p-6 w-full">
 					<InfiniteScroll

@@ -63,7 +63,7 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 						agentData.agents.map((protocol: any) => (
 							<div
 								key={protocol.id}
-								className="bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
+								className="p-2 bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
 							>
 								{/* Card Header */}
 								<div className="p-6 bg-gradient-to-r">
@@ -100,7 +100,7 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 
 								{/* Card Content */}
 								<div className="p-2 space-y-2">
-									<p className="text-gray-500 leading-relaxed">
+									<p className={`${protocol.name === "Morpho" ? "blur-sm" : "blur-none"} text-gray-500 leading-relaxed`}>
 										{protocol.description}
 									</p>
 
@@ -140,7 +140,7 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 										<h4 className="font-semibold text-gray-400 mb-3">
 											Key Features
 										</h4>
-										<div className="grid grid-cols-2 gap-2">
+										<div className={`${protocol.name === "Morpho" ? "blur-sm" : "blur-none"} grid grid-cols-2 gap-2`}>
 											{protocol.features.map((feature: any, index: any) => (
 												<div
 													key={index}
@@ -164,7 +164,7 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 											View Analytics
 										</button> */}
 										<div>
-											<div className="flex items-center justify-between mb-3">
+											<div className={`${protocol.name === "Morpho" ? "blur-sm" : "blur-none"} flex items-center justify-between mb-3`}>
 												<h4 className="text-gray-400 text-sm font-medium">
 													Suggested Prompts
 												</h4>
@@ -176,16 +176,15 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 												>
 													<span className="text-xs">See More</span>
 													<ChevronDown
-														className={`w-3 h-3 ml-1 transition-transform ${
-															expandedPrompts.includes(protocol.id)
-																? "rotate-180"
-																: ""
-														}`}
+														className={`w-3 h-3 ml-1 transition-transform ${expandedPrompts.includes(protocol.id)
+															? "rotate-180"
+															: ""
+															}`}
 													/>
 												</button>
 											</div>
 
-											<div className="grid grid-cols-1 gap-2">
+											<div className={`${protocol.name === "Morpho" ? "blur-sm" : "blur-none"} grid grid-cols-1 gap-2`}>
 												{protocol.prompts
 													.slice(
 														0,
@@ -213,10 +212,11 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 									</div>
 									<div className="flex justify-center pt-4">
 										<button
-											className="bg-[#fcc300] text-black px-4 py-3 rounded-lg font-medium hover:bg-[#fbb300] transition-colors"
+											className={`${protocol.name === "Morpho" ? "bg-gray-400 hover:bg-gray-400" : "bg-[#fcc300]"}  text-black px-4 py-3 rounded-lg font-medium hover:bg-[#fbb300] transition-colors`}
 											onClick={() => handleStartAgent(protocol.name)}
+											disabled={protocol.name === "Morpho"}
 										>
-											Start Agent
+											{protocol.name === "Morpho" ? "Coming Soon!" : "Start Agent"}
 										</button>
 									</div>
 								</div>
@@ -226,7 +226,7 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 
 				{/* Coming Soon Section */}
 			</div>
-		</div>
+		</div >
 	);
 };
 

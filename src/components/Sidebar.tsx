@@ -64,11 +64,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<div className="flex bg-gray-800 rounded-lg p-1">
 					<button
 						onClick={() => onTabChange("chat")}
-						className={`flex-1 flex items-center justify-center py-1 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${
-							activeTab === "chat"
-								? "bg-[#ffc300] text-black"
-								: "text-gray-300 hover:text-white hover:bg-gray-700"
-						}`}
+						className={`flex-1 flex items-center justify-center py-1 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${activeTab === "chat"
+							? "bg-[#ffc300] text-black"
+							: "text-gray-300 hover:text-white hover:bg-gray-700"
+							}`}
 					>
 						<MessageSquare className="h-4 w-4 mr-2" />
 						Chats
@@ -78,11 +77,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 							onTabChange("protocols");
 							setSelectedAgent("");
 						}}
-						className={`flex-1 flex items-center justify-center py-2 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${
-							activeTab === "protocols"
-								? "bg-[#ffc300] text-black"
-								: "text-gray-300 hover:text-white hover:bg-gray-700"
-						}`}
+						className={`flex-1 flex items-center justify-center py-2 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${activeTab === "protocols"
+							? "bg-[#ffc300] text-black"
+							: "text-gray-300 hover:text-white hover:bg-gray-700"
+							}`}
 					>
 						<Grid3X3 className="h-4 w-4 mr-2" />
 						Protocols
@@ -125,11 +123,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<button
 									key={chat.id}
 									onClick={() => onChatSelect(chat.id)}
-									className={`w-full text-left p-1 rounded-md transition-colors focus:outline-none focus:ring-0 ${
-										activeChatId === chat.id
-											? "bg-gray-800 text-gray-200"
-											: "hover:bg-gray-800 text-gray-300"
-									}`}
+									className={`w-full text-left p-1 rounded-md transition-colors focus:outline-none focus:ring-0 ${activeChatId === chat.id
+										? "bg-gray-800 text-gray-200"
+										: "hover:bg-gray-800 text-gray-300"
+										}`}
 								>
 									<div className="font-medium text-sm truncate mb-1 hover:pr-5 ">
 										{chat.title}
@@ -206,7 +203,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 						<div className="space-y-3">
 							{protocolData &&
-								protocolData.agents.map((agent: any) => (
+								protocolData.agents.filter((agent: any) => agent.name !== "Morpho").map((agent: any) => (
 									<div
 										key={agent.id}
 										className={

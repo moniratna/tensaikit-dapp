@@ -145,10 +145,10 @@ export default function ApprovalPopup({
 							// Handle the quote data as needed
 							setAmountOut(
 								Number(data.data.assumedAmountOut) /
-									10 **
-										Number(
-											data.data.tokens[data.data.tokens.length - 1].decimals
-										)
+								10 **
+								Number(
+									data.data.tokens[data.data.tokens.length - 1].decimals
+								)
 							);
 						},
 						onError: (error) => {
@@ -176,8 +176,8 @@ export default function ApprovalPopup({
 					onSuccess: (data) => {
 						setAmountOut(
 							Number(data.data.assumedAmountOut) /
-								10 **
-									Number(data.data.tokens[data.data.tokens.length - 1].decimals)
+							10 **
+							Number(data.data.tokens[data.data.tokens.length - 1].decimals)
 						);
 					},
 					onError: (error) => {
@@ -244,9 +244,14 @@ export default function ApprovalPopup({
 	};
 	return (
 		<>
-			{isLoading && (
+
+			{isLoading ? (
 				<div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
 					<div className="text-white">Loading...</div>
+				</div>
+			) : (
+				<div className="p-2 w-auto">
+					Select the tokens and enter the amount you want to swap.
 				</div>
 			)}
 			{swapSuccess ? (
@@ -400,11 +405,11 @@ export default function ApprovalPopup({
 													`${(
 														Number(quoteData.data.assumedAmountOut) /
 														10 **
-															Number(
-																quoteData.data.tokens[
-																	quoteData.data.tokens.length - 1
-																].decimals
-															)
+														Number(
+															quoteData.data.tokens[
+																quoteData.data.tokens.length - 1
+															].decimals
+														)
 													).toFixed(8)} ${buyToken}`
 												) : (
 													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
@@ -447,13 +452,11 @@ export default function ApprovalPopup({
 									</div>
 
 									<button
-										className={`mt-4 w-full bg-[#fcc300] text-black hover:bg-[#faa300] py-2 rounded-md border border-gray-600 flex items-center justify-center gap-2 ${
-											quoteSuccess ? "cursor-pointer" : "cursor-not-allowed"
-										} ${
-											isSwapping
+										className={`mt-4 w-full bg-[#fcc300] text-black hover:bg-[#faa300] py-2 rounded-md border border-gray-600 flex items-center justify-center gap-2 ${quoteSuccess ? "cursor-pointer" : "cursor-not-allowed"
+											} ${isSwapping
 												? "cursor-not-allowed bg-gray-600 hover:bg-gray-600"
 												: ""
-										}`}
+											}`}
 										onClick={handleSwap}
 										disabled={isSwapping}
 									>
