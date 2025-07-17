@@ -76,7 +76,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 						}`}
 					>
 						<div className="prose dark:prose-invert max-w-none">
-							{message.type === "SushiSwapQuoteActions_get_swap_quote" &&
+							{(message.type === "SushiSwapQuoteActions_get_swap_quote" ||
+								message.type ===
+									"MorphoWriteActionProvider_supply_loan_asset") &&
 							(message.txnHash === null || message.txnHash === undefined) &&
 							showPopup ? (
 								<>
@@ -88,10 +90,23 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 													Show Approval Popup
 												</button> */}
 										{/* {showPopup && ( */}
-										<MorphoPopup
-											onClose={() => setShowPopup(false)}
-											messageId={Number(message.id)}
-										/>
+										{
+											// message.type ===
+											// "MorphoWriteActionProvider_supply_loan_asset" ? (
+											// 	<MorphoPopup
+											// 		onClose={() => setShowPopup(false)}
+											// 		messageId={Number(message.id)}
+											// 	/>
+											// )
+											// :
+											message.type ===
+											"SushiSwapQuoteActions_get_swap_quote" ? (
+												<ApprovalPopup
+													onClose={() => setShowPopup(false)}
+													messageId={Number(message.id)}
+												/>
+											) : null
+										}
 										{/* )} */}
 									</p>
 								</>
@@ -111,7 +126,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 									</p>
 								</>
 							) : null}
-							{message.type !== "SushiSwapQuoteActions_get_swap_quote"
+							{message.type !== "SushiSwapQuoteActions_get_swap_quote" &&
+							message.type !== "MorphoWriteActionProvider_supply_loan_asset"
 								? message.content.split("\n").map((line, index) => (
 										<p key={index} className={index > 0 ? "mt-2" : ""}>
 											{line}
