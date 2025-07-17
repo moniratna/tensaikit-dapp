@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Message } from "../types";
 import { User, Bot, Copy } from "lucide-react";
 import ApprovalPopup from "./ApprovalPopup";
+import MorphoPopup from "./morphoPopup";
 
 interface ChatMessageProps {
 	message: Message;
@@ -87,7 +88,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 													Show Approval Popup
 												</button> */}
 										{/* {showPopup && ( */}
-										<ApprovalPopup
+										<MorphoPopup
 											onClose={() => setShowPopup(false)}
 											messageId={Number(message.id)}
 										/>
