@@ -14,6 +14,7 @@ export interface Message {
 	type: string;
 	threadId: number;
 	txnHash?: string;
+	userPrompt?: string;
 }
 
 export interface ChatThread {

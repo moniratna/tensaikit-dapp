@@ -96,9 +96,11 @@ const renderTokenDropdown = (
 export default function ApprovalPopup({
 	onClose,
 	messageId,
+	setPopupOpened,
 }: {
 	onClose: () => void;
 	messageId: number;
+	setPopupOpened: (value: boolean) => void;
 }) {
 	const retriveToken = localStorage.getItem("authToken");
 	const { data: tokenData, isLoading } = useFetchTokens(retriveToken);
@@ -132,7 +134,9 @@ export default function ApprovalPopup({
 
 	console.log("sell token price", sellTokenPrice);
 	console.log("buy token price", buyTokenPrice);
-
+	useEffect(() => {
+		setPopupOpened(true);
+	});
 	useEffect(() => {
 		if (tokenData && tokenData.data) {
 			const initialSellToken = tokenData.data.find(
@@ -181,10 +185,10 @@ export default function ApprovalPopup({
 							// Handle the quote data as needed
 							setAmountOut(
 								Number(data.data.assumedAmountOut) /
-								10 **
-								Number(
-									data.data.tokens[data.data.tokens.length - 1].decimals
-								)
+									10 **
+										Number(
+											data.data.tokens[data.data.tokens.length - 1].decimals
+										)
 							);
 						},
 						onError: (error) => {
@@ -212,8 +216,8 @@ export default function ApprovalPopup({
 					onSuccess: (data) => {
 						setAmountOut(
 							Number(data.data.assumedAmountOut) /
-							10 **
-							Number(data.data.tokens[data.data.tokens.length - 1].decimals)
+								10 **
+									Number(data.data.tokens[data.data.tokens.length - 1].decimals)
 						);
 					},
 					onError: (error) => {
@@ -501,11 +505,13 @@ export default function ApprovalPopup({
 									</div>
 
 									<button
-										className={`mt-4 w-full bg-[#fcc300] text-black hover:bg-[#faa300] py-2 rounded-md border border-gray-600 flex items-center justify-center gap-2 ${quoteSuccess ? "cursor-pointer" : "cursor-not-allowed"
-											} ${isSwapping
+										className={`mt-4 w-full bg-[#fcc300] text-black hover:bg-[#faa300] py-2 rounded-md border border-gray-600 flex items-center justify-center gap-2 ${
+											quoteSuccess ? "cursor-pointer" : "cursor-not-allowed"
+										} ${
+											isSwapping
 												? "cursor-not-allowed bg-gray-600 hover:bg-gray-600"
 												: ""
-											}`}
+										}`}
 										onClick={handleSwap}
 										disabled={isSwapping}
 									>

@@ -54,8 +54,9 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 			container.scrollTop = container.scrollHeight;
 		}
 	}, [isTyping]);
+
 	console.log("checkin all chats inside protocol", allChats);
-	if (!agentType) {
+	if (!agentType && allChats.length === 0) {
 		return (
 			<div className="flex-1 flex items-center justify-center bg-[#1B012F]">
 				{/* Initial empty state */}
@@ -65,11 +66,11 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 					</div>
 					<div className="space-y-3">
 						<h2 className="text-2xl font-bold text-[#ffc300]">
-							Welcome to Agent Kit
+							Welcome to Tensai DeFi Agent
 						</h2>
 						<p className="text-gray-600 leading-relaxed">
 							Your AI-powered assistant for DeFi protocols and blockchain
-							interactions.
+							interactions on Katana.
 						</p>
 					</div>
 				</div>
@@ -80,7 +81,26 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	return (
 		<div className="flex-1 flex flex-col bg-[#1B012F] overflow-hidden w-full">
 			{/* Chat messages */}
-
+			{!isLoadingMessages && allChats.length === 0 && (
+				<div className="flex-1 flex items-center justify-center bg-[#1B012F]">
+					<div className="text-center space-y-6 max-w-md">
+						<div className="space-y-3">
+							<h2 className="text-2xl font-bold text-[#ffc300]">
+								Start a new conversation
+							</h2>
+							<p className="text-gray-600 leading-relaxed">
+								Your AI-powered assistant for DeFi protocols and blockchain
+								interactions on Katana. Start a new conversation to begin
+								exploring the decentralized finance ecosystem.
+							</p>
+						</div>
+						<div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+							{/* <Sparkles className="h-4 w-4" /> */}
+							{/* <span>Powered by advanced AI technology</span> */}
+						</div>
+					</div>
+				</div>
+			)}
 			<div
 				// ref={scrollContainerRef}
 				id="scrollableDiv"
@@ -115,7 +135,11 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 						inverse={true} // <- Important: for bottom-up
 					>
 						{allChats.map((message) => (
-							<ChatMessage key={message.id} message={message} />
+							<ChatMessage
+								key={message.id}
+								message={message}
+								page="agentChat"
+							/>
 						))}
 					</InfiniteScroll>
 				</div>

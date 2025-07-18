@@ -63,11 +63,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 				{/* Tab Navigation */}
 				<div className="flex bg-gray-800 rounded-lg p-1">
 					<button
-						onClick={() => onTabChange("chat")}
-						className={`flex-1 flex items-center justify-center py-1 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${activeTab === "chat"
-							? "bg-[#ffc300] text-black"
-							: "text-gray-300 hover:text-white hover:bg-gray-700"
-							}`}
+						onClick={() => {
+							onTabChange("chat");
+							setSelectedAgent("");
+							setActiveChatId(null);
+						}}
+						className={`flex-1 flex items-center justify-center py-1 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${
+							activeTab === "chat"
+								? "bg-[#ffc300] text-black"
+								: "text-gray-300 hover:text-white hover:bg-gray-700"
+						}`}
 					>
 						<MessageSquare className="h-4 w-4 mr-2" />
 						Chats
@@ -77,10 +82,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 							onTabChange("protocols");
 							setSelectedAgent("");
 						}}
-						className={`flex-1 flex items-center justify-center py-2 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${activeTab === "protocols"
-							? "bg-[#ffc300] text-black"
-							: "text-gray-300 hover:text-white hover:bg-gray-700"
-							}`}
+						className={`flex-1 flex items-center justify-center py-2 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${
+							activeTab === "protocols"
+								? "bg-[#ffc300] text-black"
+								: "text-gray-300 hover:text-white hover:bg-gray-700"
+						}`}
 					>
 						<Grid3X3 className="h-4 w-4 mr-2" />
 						Protocols
@@ -123,10 +129,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<button
 									key={chat.id}
 									onClick={() => onChatSelect(chat.id)}
-									className={`w-full text-left p-1 rounded-md transition-colors focus:outline-none focus:ring-0 ${activeChatId === chat.id
-										? "bg-gray-800 text-gray-200"
-										: "hover:bg-gray-800 text-gray-300"
-										}`}
+									className={`w-full text-left p-1 rounded-md transition-colors focus:outline-none focus:ring-0 ${
+										activeChatId === chat.id
+											? "bg-gray-800 text-gray-200"
+											: "hover:bg-gray-800 text-gray-300"
+									}`}
 								>
 									<div className="font-medium text-sm truncate mb-1 hover:pr-5 ">
 										{chat.title}
@@ -158,6 +165,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 																				onSuccess: () => {
 																					toast.success("Deleted!");
 																					toast.dismiss(t);
+																					setActiveChatId(null);
+																					setSelectedAgent("");
 																					refetch();
 																				},
 																			}
@@ -203,36 +212,38 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 						<div className="space-y-3">
 							{protocolData &&
-								protocolData.agents.filter((agent: any) => agent.name !== "Morpho").map((agent: any) => (
-									<div
-										key={agent.id}
-										className={
-											selectedAgent === agent.name.toLowerCase()
-												? "bg-[#fcc300] rounded-lg p-4 hover:bg-[#fbb300] transition-colors cursor-pointer text-black"
-												: `bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer`
-										}
-										onClick={() => {
-											setSelectedAgent(agent.name.toLowerCase());
-											setActiveChatId("agentType");
-											setAgentType(agent.name.toLowerCase());
-										}}
-									>
-										<div className="flex items-center space-x-3">
-											<div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-												{/* <span className="text-sm font-bold">M</span> */}
-												<img
-													src={agent.imageUrl}
-													alt={agent.name}
-													className="h-10 w-10 rounded-full"
-												/>
-											</div>
-											<div>
-												<h4 className="font-semibold">{agent.name}</h4>
-												{/* <p className="text-sm text-gray-400">Lending Protocol</p> */}
+								protocolData.agents
+									.filter((agent: any) => agent.name !== "Morpho")
+									.map((agent: any) => (
+										<div
+											key={agent.id}
+											className={
+												selectedAgent === agent.name.toLowerCase()
+													? "bg-[#fcc300] rounded-lg p-4 hover:bg-[#fbb300] transition-colors cursor-pointer text-black"
+													: `bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer`
+											}
+											onClick={() => {
+												setSelectedAgent(agent.name.toLowerCase());
+												setActiveChatId("agentType");
+												setAgentType(agent.name.toLowerCase());
+											}}
+										>
+											<div className="flex items-center space-x-3">
+												<div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+													{/* <span className="text-sm font-bold">M</span> */}
+													<img
+														src={agent.imageUrl}
+														alt={agent.name}
+														className="h-10 w-10 rounded-full"
+													/>
+												</div>
+												<div>
+													<h4 className="font-semibold">{agent.name}</h4>
+													{/* <p className="text-sm text-gray-400">Lending Protocol</p> */}
+												</div>
 											</div>
 										</div>
-									</div>
-								))}
+									))}
 
 							{/* <div className="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer">
 								<div className="flex items-center space-x-3">

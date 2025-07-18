@@ -63,6 +63,7 @@ const MainPage: React.FC = () => {
 				content: searchQuery.trim(),
 				sender: "user",
 				createdAt: new Date(),
+				txnHash: null,
 			};
 			setUserPrompt(userMessage);
 			handleSendAgentMessage(searchQuery.trim(), agentType);
@@ -72,14 +73,7 @@ const MainPage: React.FC = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [autoSearch, searchQuery]);
 	console.log("activeChatId", activeChatId);
-	const scrollContainerRef = useRef<HTMLDivElement>(null);
-	const scrollToBottom = () => {
-		if (scrollContainerRef.current) {
-			scrollContainerRef.current.scrollIntoView({
-				behavior: "smooth", // or "auto"
-			});
-		}
-	};
+
 	const { mutate: chatAgent } = useChatAgent();
 	const { refetch: refetchThreads } = useThreads(
 		localStorage.getItem("authToken") || "",
@@ -93,13 +87,14 @@ const MainPage: React.FC = () => {
 			content,
 			sender: "user",
 			createdAt: new Date(),
+			txnHash: null,
 		};
 
 		// Add user message to chat
 		const currentMessages = allChats || [];
 		const updatedMessages = [userMessage, ...currentMessages];
 		setAllChats([...updatedMessages]);
-		scrollToBottom();
+		// scrollToBottom();
 
 		// Simulate AI response
 		setIsTyping(true);
@@ -120,12 +115,13 @@ const MainPage: React.FC = () => {
 						sender: "agent",
 						createdAt: new Date(),
 						type: data.data.type,
+						userPrompt: data.data.userPrompt,
 					};
 
 					const finalMessages = [assistantMessage, ...updatedMessages];
 
 					setAllChats([...finalMessages]);
-					scrollToBottom();
+					// scrollToBottom();
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);
 
@@ -137,6 +133,7 @@ const MainPage: React.FC = () => {
 			}
 		);
 	};
+	console.log(activeChatId);
 	const handleSendAgentMessage = async (
 		content: string,
 		agentType?: string
@@ -146,13 +143,14 @@ const MainPage: React.FC = () => {
 			content,
 			sender: "user",
 			createdAt: new Date(),
+			txnHash: null,
 		};
 
 		// Add user message to chat
 		const currentMessages = allChats || [];
 		const updatedMessages = [userMessage, ...currentMessages];
 		setAllChats([...updatedMessages]);
-		scrollToBottom();
+		// scrollToBottom();
 
 		// Simulate AI response
 		setIsTyping(true);
@@ -176,12 +174,13 @@ const MainPage: React.FC = () => {
 						sender: "agent",
 						createdAt: new Date(),
 						type: data.data.type,
+						userPrompt: data.data.userPrompt,
 					};
 
 					const finalMessages = [assistantMessage, ...updatedMessages];
 
 					setAllChats([...finalMessages]);
-					scrollToBottom();
+					// scrollToBottom();
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);
 					// setTempThreadId(data.data.threadId);

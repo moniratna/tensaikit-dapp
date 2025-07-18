@@ -37,11 +37,11 @@ const ChatPage: React.FC<ChatPageProps> = ({
 			? true
 			: false
 	);
-	console.log(messages?.pageParams);
+	console.log("use use use", hasNextPage);
 	const threadMessages = messages?.pages.flatMap((page) => page.messages);
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages) {
-			setAllChats(threadMessages);
+			setAllChats([...threadMessages]);
 		}
 		if (activeChatId === "new") {
 			setAllChats([]);
@@ -54,7 +54,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 			container.scrollTop = container.scrollHeight;
 		}
 	}, [isTyping]);
-
+	console.log("checking all chats?", allChats);
 	if (!activeChatId || activeChatId === "agentType") {
 		return (
 			<>
@@ -66,12 +66,12 @@ const ChatPage: React.FC<ChatPageProps> = ({
 						</div>
 						<div className="space-y-3">
 							<h2 className="text-2xl font-bold text-[#ffc300]">
-								Welcome to Agent Kit
+								Welcome to Tensai DeFi Agent
 							</h2>
 							<p className="text-gray-600 leading-relaxed">
 								Your AI-powered assistant for DeFi protocols and blockchain
-								interactions. Start a new conversation to begin exploring the
-								decentralized finance ecosystem.
+								interactions on Katana. Start a new conversation to begin
+								exploring the decentralized finance ecosystem.
 							</p>
 						</div>
 						<div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
@@ -90,7 +90,6 @@ const ChatPage: React.FC<ChatPageProps> = ({
 							className="w-[50%] bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
 						>
 							<div className="text-left space-y-6 max-w-md p-5">
-
 								<div className="space-y-3">
 									<h2 className="text-2xl text-center font-bold text-[#ffc300]">
 										Chat Mode
@@ -112,7 +111,6 @@ const ChatPage: React.FC<ChatPageProps> = ({
 							className="w-[50%] bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
 						>
 							<div className="text-left space-y-6 p-5 max-w-md">
-
 								<div className="space-y-3">
 									<h2 className="text-2xl text-center font-bold text-[#ffc300]">
 										Sushi Agent Mode
@@ -131,9 +129,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 						</div>
 					</div>
 				</div>
-				<div className="flex-1 flex gap-36 items-center justify-center bg-[#1B012F]">
-
-				</div>
+				<div className="flex-1 flex gap-36 items-center justify-center bg-[#1B012F]"></div>
 			</>
 		);
 	}
@@ -150,8 +146,8 @@ const ChatPage: React.FC<ChatPageProps> = ({
 							</h2>
 							<p className="text-gray-600 leading-relaxed">
 								Your AI-powered assistant for DeFi protocols and blockchain
-								interactions. Start a new conversation to begin exploring the
-								decentralized finance ecosystem.
+								interactions on Katana. Start a new conversation to begin
+								exploring the decentralized finance ecosystem.
 							</p>
 						</div>
 						<div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
@@ -174,7 +170,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 				}}
 				className="flex-1 overflow-y-auto w-fit"
 				ref={messagesEndRef}
-			// onScroll={handleScroll}
+				// onScroll={handleScroll}
 			>
 				<div className="flex flex-col-reverse gap-4 p-6 w-full">
 					<InfiniteScroll
@@ -196,7 +192,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 						inverse={true} // <- Important: for bottom-up
 					>
 						{allChats.map((message) => (
-							<ChatMessage key={message.id} message={message} />
+							<ChatMessage key={message.id} message={message} page="chat" />
 						))}
 						{/* <div ref={messagesEndRef} /> */}
 					</InfiniteScroll>

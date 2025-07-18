@@ -6,15 +6,48 @@ import ApprovalPopup from "./ApprovalPopup";
 
 interface ChatMessageProps {
 	message: Message;
+	page: string;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, page }) => {
 	const isUser = message.sender === "user";
 	const [showPopup, setShowPopup] = useState(true);
+	const [popupOpened, setPopupOpened] = useState(false);
 	const copyToClipboard = () => {
 		navigator.clipboard.writeText(message.content);
 	};
+	// const [showPopup, setShowPopup] = React.useState(false);
+	const isSwapPrompt = (prompt?: string) => {
+		console.log(prompt);
+		if (prompt === null || prompt === undefined) {
+			return false;
+		}
+		const lowercasePrompt = prompt.toLowerCase();
 
+		return (
+			lowercasePrompt.includes("get quote") ||
+			lowercasePrompt.includes("swap quote") ||
+			lowercasePrompt.includes("swap") ||
+			lowercasePrompt.includes("swap") ||
+			lowercasePrompt.includes("fetch quote") ||
+			lowercasePrompt.includes("convert") ||
+			lowercasePrompt.includes("swapping") ||
+			lowercasePrompt.includes("exchange")
+		);
+	};
+	console.log(
+		"checking txn message",
+		!isSwapPrompt(message.userPrompt) && message.sender === "agent",
+		!isSwapPrompt(message.userPrompt) && message.sender === "user",
+		isSwapPrompt(message.userPrompt) && message.sender === "user"
+	);
+	console.log(
+		"tinga",
+		message,
+		(!isSwapPrompt(message.userPrompt) && message.sender === "agent") ||
+			(!isSwapPrompt(message.userPrompt) && message.sender === "user") ||
+			(isSwapPrompt(message.userPrompt) && message.sender === "user")
+	);
 	const formatTime = (timestamp: Date) => {
 		return new Date(timestamp).toLocaleTimeString([], {
 			hour: "2-digit",
@@ -76,10 +109,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 						}`}
 					>
 						<div className="prose dark:prose-invert max-w-none">
-							{(message.type === "SushiSwapQuoteActions_get_swap_quote" ||
+							{(isSwapPrompt(message.userPrompt) ||
+								message.type === "SushiSwapQuoteActions_get_swap_quote" ||
 								message.type ===
 									"MorphoWriteActionProvider_supply_loan_asset") &&
 							(message.txnHash === null || message.txnHash === undefined) &&
+							message.sender === "agent" &&
+							page === "agentChat" &&
 							showPopup ? (
 								<>
 									<p className="whitespace-pre-wrap w-full">
@@ -99,24 +135,25 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 											// 	/>
 											// )
 											// :
-											message.type ===
-											"SushiSwapQuoteActions_get_swap_quote" ? (
-												<ApprovalPopup
-													onClose={() => setShowPopup(false)}
-													messageId={Number(message.id)}
-												/>
-											) : null
+
+											<ApprovalPopup
+												onClose={() => setShowPopup(false)}
+												messageId={Number(message.id)}
+												setPopupOpened={setPopupOpened}
+											/>
 										}
 										{/* )} */}
 									</p>
 								</>
-							) : message.type === "SushiSwapQuoteActions_get_swap_quote" &&
-							  message.txnHash !== null ? (
+							) : message.txnHash === null ||
+							  message.txnHash === undefined ? null : (
 								<>
 									<p>
 										Your transaction has been confirmed on the blockchain.
 										<a
-											href={`https://explorer.tatara.katana.network/tx/${message.txnHash}`}
+											href={`${import.meta.env.VITE_KATANA_EXPLORER_URL}${
+												message.txnHash
+											}`}
 											target="_blank"
 											rel="noopener noreferrer"
 											className="text-blue-500 underline text-sm"
@@ -125,9 +162,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 										</a>
 									</p>
 								</>
-							) : null}
-							{message.type !== "SushiSwapQuoteActions_get_swap_quote" &&
-							message.type !== "MorphoWriteActionProvider_supply_loan_asset"
+							)}
+							{!popupOpened &&
+							(message.txnHash === null || message.txnHash === undefined)
 								? message.content.split("\n").map((line, index) => (
 										<p key={index} className={index > 0 ? "mt-2" : ""}>
 											{line}
