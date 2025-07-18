@@ -6,7 +6,7 @@ import iconLogo from "../assets/iconYellow.png";
 import { useAuth } from "../contexts/AuthContext";
 import useGEtAgentMessages from "../hooks/useGetAgentMessages";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Message } from "../types";
+// import { Message } from "../types";
 
 interface ChatPageProps {
 	agentType: string;
@@ -94,7 +94,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 				}}
 				className="flex-1 overflow-y-auto"
 				ref={messagesEndRef}
-			// onScroll={handleScroll}
+				// onScroll={handleScroll}
 			>
 				<div className="flex flex-col-reverse gap-4 p-6">
 					<InfiniteScroll

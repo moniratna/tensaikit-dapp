@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Message } from "../types";
 import { User, Bot, Copy } from "lucide-react";
 import ApprovalPopup from "./ApprovalPopup";
-import MorphoPopup from "./morphoPopup";
+// import MorphoPopup from "./morphoPopup";
 
 interface ChatMessageProps {
 	message: Message;

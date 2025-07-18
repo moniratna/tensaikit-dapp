@@ -11,6 +11,7 @@ import useFetchTokens from "../hooks/useFetchTokens";
 import useGetQuotes from "../hooks/useGetQuotes";
 import useSwapToken from "../hooks/useSwapToken";
 import { toast } from "sonner";
+import useFetchTokenPrice from "../hooks/useFetchTokenPrice";
 // import Link from "next/link";
 
 const renderTokenDropdown = (
@@ -20,8 +21,11 @@ const renderTokenDropdown = (
 	open: boolean,
 	setSelectedTokenData: (data: any) => void,
 	setOpen: (value: boolean) => void,
-	disableToken: string
+	disableToken: string,
+	mutationFn: (data: any, options?: any) => void,
+	setPrice: (price: number) => void
 ) => {
+	const retriveToken = localStorage.getItem("authToken");
 	const selected: any = tokenList.find((t: any) => t.symbol === selectedToken);
 
 	return (
@@ -57,6 +61,17 @@ const renderTokenDropdown = (
 											setSelectedToken(token.symbol);
 											setSelectedTokenData(token);
 											setOpen(false);
+											mutationFn(
+												{
+													tokenAddress: [token.address],
+													token: retriveToken,
+												},
+												{
+													onSuccess: (data: any) => {
+														setPrice(data.data[token.address]);
+													},
+												}
+											);
 										}}
 									>
 										<img
@@ -87,6 +102,7 @@ export default function ApprovalPopup({
 }) {
 	const retriveToken = localStorage.getItem("authToken");
 	const { data: tokenData, isLoading } = useFetchTokens(retriveToken);
+	const { mutate: tokenMutation } = useFetchTokenPrice();
 	const [sellToken, setSellToken] = useState("USDT");
 	const [buyToken, setBuyToken] = useState("AUSD");
 	const [buyOpen, setBuyOpen] = useState(false);
@@ -96,11 +112,14 @@ export default function ApprovalPopup({
 	type TokenType = {
 		address: string;
 		symbol: string;
+		decimals: number;
 		// add other properties if needed
 	};
 
 	const [selectedSell, setSelectedSell] = useState<TokenType | null>(null);
 	const [selectedBuy, setSelectedBuy] = useState<TokenType | null>(null);
+	const [sellTokenPrice, setSellTokenPrice] = useState(0);
+	const [buyTokenPrice, setBuyTokenPrice] = useState(0);
 	const [inputError, setInputError] = useState("");
 	const [txnHash, setTxnHash] = useState<string | null>(null);
 	const [isSwapping, setIsSwapping] = useState(false);
@@ -109,6 +128,10 @@ export default function ApprovalPopup({
 		data: quoteData,
 		isSuccess: quoteSuccess,
 	} = useGetQuotes();
+	console.log("selected token", selectedSell);
+
+	console.log("sell token price", sellTokenPrice);
+	console.log("buy token price", buyTokenPrice);
 
 	useEffect(() => {
 		if (tokenData && tokenData.data) {
@@ -124,6 +147,20 @@ export default function ApprovalPopup({
 			if (initialBuyToken) {
 				setSelectedBuy(initialBuyToken);
 			}
+
+			tokenMutation(
+				{
+					tokenAddress: [initialSellToken.address, initialBuyToken.address],
+					token: retriveToken || "",
+				},
+				{
+					onSuccess: (data: any) => {
+						console.log("i am initial buy");
+						setSellTokenPrice(data.data[initialSellToken.address]);
+						setBuyTokenPrice(data.data[initialBuyToken.address]);
+					},
+				}
+			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [tokenData]);
@@ -334,10 +371,16 @@ export default function ApprovalPopup({
 											<div>
 												<input
 													type="text"
-													className="bg-transparent border-none outline-none text-white w-24"
+													className="bg-transparent border-none outline-none text-white w-24 focus:outline-none"
 													value={amountIn}
 													onChange={handleAmountChange}
 												/>
+												<p className="text-gray-400 text-xs mt-1">
+													{sellTokenPrice &&
+														`$${(
+															Number(sellTokenPrice) * Number(amountIn)
+														).toFixed(2)}`}
+												</p>
 												{inputError && (
 													<p className="text-red-400 text-xs mt-1">
 														{inputError}
@@ -352,7 +395,9 @@ export default function ApprovalPopup({
 													sellOpen,
 													setSelectedSell,
 													setSellOpen,
-													buyToken
+													buyToken,
+													tokenMutation,
+													setSellTokenPrice
 												)}
 											</div>
 										</div>
@@ -368,6 +413,12 @@ export default function ApprovalPopup({
 										<div className="flex justify-between items-center text-lg font-medium">
 											<span className="bg-transparent border-none outline-none text-white w-24">
 												{amountOut.toFixed(8)}
+												<p className="text-gray-400 text-xs mt-1">
+													{buyTokenPrice &&
+														`$${(
+															Number(buyTokenPrice) * Number(amountOut)
+														).toFixed(2)}`}
+												</p>
 											</span>
 											{renderTokenDropdown(
 												!isLoading && tokenData && tokenData.data,
@@ -376,7 +427,9 @@ export default function ApprovalPopup({
 												buyOpen,
 												setSelectedBuy,
 												setBuyOpen,
-												sellToken
+												sellToken,
+												tokenMutation,
+												setBuyTokenPrice
 											)}
 										</div>
 										{/* <div className="text-sm text-gray-400 mt-1">$10.00</div> */}
@@ -388,7 +441,7 @@ export default function ApprovalPopup({
 											<span>Price impact</span>
 											<span>
 												{quoteSuccess ? (
-													quoteData.data.priceImpact.toFixed(4)
+													quoteData.data.priceImpact.toFixed(4) + "%"
 												) : (
 													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
 												)}
@@ -402,12 +455,7 @@ export default function ApprovalPopup({
 												{quoteSuccess ? (
 													`${(
 														Number(quoteData.data.assumedAmountOut) /
-														10 **
-															Number(
-																quoteData.data.tokens[
-																	quoteData.data.tokens.length - 1
-																].decimals
-															)
+														10 ** Number(selectedBuy?.decimals)
 													).toFixed(8)} ${buyToken}`
 												) : (
 													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
@@ -416,17 +464,20 @@ export default function ApprovalPopup({
 										</div>
 
 										<div className="flex justify-between">
-											<span>Fee (0.25%)</span>
+											<span>Swap Price </span>
 											<span>
 												{quoteSuccess ? (
-													"0.25%"
+													(
+														Number(quoteData.data.swapPrice) /
+														10 ** Number(selectedSell?.decimals)
+													).toFixed(8)
 												) : (
 													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
 												)}
 											</span>
 										</div>
 
-										<div className="flex justify-between">
+										{/* <div className="flex justify-between">
 											<span>Gas fee</span>
 											<span>
 												{quoteSuccess ? (
@@ -435,7 +486,7 @@ export default function ApprovalPopup({
 													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
 												)}
 											</span>
-										</div>
+										</div> */}
 
 										<div className="flex justify-between">
 											<span>Routing source</span>
