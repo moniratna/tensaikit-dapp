@@ -185,10 +185,7 @@ export default function ApprovalPopup({
 							// Handle the quote data as needed
 							setAmountOut(
 								Number(data.data.assumedAmountOut) /
-									10 **
-										Number(
-											data.data.tokens[data.data.tokens.length - 1].decimals
-										)
+									10 ** Number(selectedBuy.decimals)
 							);
 						},
 						onError: (error) => {
@@ -216,8 +213,7 @@ export default function ApprovalPopup({
 					onSuccess: (data) => {
 						setAmountOut(
 							Number(data.data.assumedAmountOut) /
-								10 **
-									Number(data.data.tokens[data.data.tokens.length - 1].decimals)
+								10 ** Number(selectedBuy.decimals)
 						);
 					},
 					onError: (error) => {
@@ -281,6 +277,17 @@ export default function ApprovalPopup({
 				},
 			}
 		);
+	};
+	const formatAmount = (amount: number) => {
+		if (amount < 0.0001) {
+			return amount.toFixed(8); // very small numbers
+		} else if (amount < 1) {
+			return amount.toFixed(6); // small numbers
+		} else if (amount < 1000) {
+			return amount.toFixed(4); // medium numbers
+		} else {
+			return amount.toFixed(2); // large numbers
+		}
 	};
 	return (
 		<>
@@ -416,7 +423,7 @@ export default function ApprovalPopup({
 								</div> */}
 										<div className="flex justify-between items-center text-lg font-medium">
 											<span className="bg-transparent border-none outline-none text-white w-24">
-												{amountOut.toFixed(8)}
+												{formatAmount(amountOut)}
 												<p className="text-gray-400 text-xs mt-1">
 													{buyTokenPrice &&
 														`$${(
@@ -445,7 +452,11 @@ export default function ApprovalPopup({
 											<span>Price impact</span>
 											<span>
 												{quoteSuccess ? (
-													quoteData.data.priceImpact.toFixed(4) + "%"
+													"-" +
+													Number(
+														quoteData.data.priceImpact.toFixed(4) * 100
+													).toFixed(2) +
+													"%"
 												) : (
 													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
 												)}
