@@ -14,6 +14,135 @@ import { toast } from "sonner";
 import useFetchTokenPrice from "../hooks/useFetchTokenPrice";
 // import Link from "next/link";
 
+const tokenList = [
+	{
+		address: "0xee7d8bcfb72bc1880d0cf19822eb0a2e6577ab62",
+		symbol: "WETH",
+		name: "Wrapped Ether",
+		decimals: 18,
+		approved: true,
+	},
+	{
+		address: "0x203a662b0bd271a6ed5a60edfbd04bfce608fd36",
+		symbol: "USDC",
+		name: "Vault Bridge USDC",
+		decimals: 6,
+		approved: true,
+	},
+	{
+		address: "0x0913da6da4b42f538b445599b46bb4622342cf52",
+		symbol: "WBTC",
+		name: "Vault Bridge WBTC",
+		decimals: 8,
+		approved: true,
+	},
+	{
+		address: "0x00000000efe302beaa2b3e6e1b18d08d69a9012a",
+		symbol: "AUSD",
+		name: "AUSD",
+		decimals: 6,
+		approved: true,
+	},
+	{
+		address: "0x2dca96907fde857dd3d816880a0df407eeb2d2f2",
+		symbol: "USDT",
+		name: "Vault Bridge USDT",
+		decimals: 6,
+		approved: true,
+	},
+	{
+		address: "0x9b8df6e244526ab5f6e6400d331db28c8fdddb55",
+		symbol: "uSOL",
+		name: "Solana (Universal)",
+		decimals: 18,
+		approved: true,
+	},
+	{
+		address: "0xb24e3035d1fcbc0e43cf3143c3fd92e53df2009b",
+		symbol: "POL",
+		name: "Polygon Ecosystem Token",
+		decimals: 18,
+		approved: true,
+	},
+	{
+		address: "0x7fb4d0f51544f24f385a421db6e7d4fc71ad8e5c",
+		symbol: "wstETH",
+		name: "Wrapped liquid staked Ether 2.0",
+		decimals: 18,
+		approved: true,
+	},
+	{
+		address: "0x6c16e26013f2431e8b2e1ba7067ecccad0db6c52",
+		symbol: "JitoSOL",
+		name: "Jito Staked SOL",
+		decimals: 18,
+		approved: true,
+	},
+	{
+		address: "0xecac9c5f704e954931349da37f60e39f515c11c1",
+		symbol: "LBTC",
+		name: "Lombard Staked Bitcoin",
+		decimals: 8,
+		approved: true,
+	},
+	{
+		address: "0xb0f70c0bd6fd87dbeb7c10dc692a2a6106817072",
+		symbol: "BTCK",
+		name: "Bitcoin on Katana",
+		decimals: 8,
+		approved: true,
+	},
+	{
+		address: "0x7f1f4b4b29f5058fa32cc7a97141b8d7e5abdc2d",
+		symbol: "KAT",
+		name: "Katana Network Token",
+		decimals: 18,
+		approved: true,
+	},
+	{
+		address: "0x9893989433e7a383cb313953e4c2365107dc19a7",
+		symbol: "weETH",
+		name: "Wrapped eETH",
+		decimals: 18,
+		approved: true,
+	},
+	{
+		address: "0xb0505e5a99abd03d94a1169e638b78edfed26ea4",
+		symbol: "uSUI",
+		name: "Sui (Universal)",
+		decimals: 18,
+		approved: true,
+	},
+	{
+		address: "0x17bff452dae47e07cea877ff0e1aba17eb62b0ab",
+		symbol: "SUSHI",
+		name: "SushiToken",
+		decimals: 18,
+		approved: true,
+	},
+	{
+		address: "0x62d6a123e8d19d06d68cf0d2294f9a3a0362c6b3",
+		symbol: "USDS",
+		name: "Vault Bridge USDS",
+		decimals: 18,
+		approved: true,
+	},
+	{
+		address: "0x476eacd417cd65421bd34fca054377658bb5e02b",
+		symbol: "YFI",
+		name: "yearn.finance",
+		decimals: 18,
+		approved: true,
+	},
+	{
+		address: "0x1e5efca3d0db2c6d5c67a4491845c43253eb9e4e",
+		symbol: "MORPHO",
+		name: "Morpho Token",
+		decimals: 18,
+		approved: true,
+	},
+];
+
 const renderTokenDropdown = (
 	tokenList: [],
 	selectedToken: string,
@@ -97,10 +226,12 @@ export default function ApprovalPopup({
 	onClose,
 	messageId,
 	setPopupOpened,
+	content,
 }: {
 	onClose: () => void;
 	messageId: number;
 	setPopupOpened: (value: boolean) => void;
+	content: string;
 }) {
 	const retriveToken = localStorage.getItem("authToken");
 	const { data: tokenData, isLoading } = useFetchTokens(retriveToken);
@@ -111,6 +242,44 @@ export default function ApprovalPopup({
 	const [sellOpen, setSellOpen] = useState(false);
 	const [amountIn, setAmountIn] = useState("1");
 	const [amountOut, setAmountOut] = useState(0);
+
+	const extractTwoTokenNames = (text: string) => {
+		const found = [];
+
+		// Convert to lower for matching
+		const lowerText = text.toLowerCase();
+
+		for (const token of tokenList) {
+			const { symbol } = token;
+
+			if (symbol && lowerText.includes(symbol.toLowerCase())) {
+				found.push(symbol);
+
+				if (found.length === 2) break;
+			}
+		}
+
+		if (found.length === 2) {
+			return {
+				fromToken: found[0],
+				toToken: found[1],
+			};
+		}
+
+		return null;
+	};
+	useEffect(() => {
+		if (content) {
+			const tokens = extractTwoTokenNames(content);
+			if (tokens?.fromToken) {
+				setSellToken(tokens.fromToken);
+			}
+			if (tokens?.toToken) {
+				setBuyToken(tokens.toToken);
+			}
+		}
+	}, [content]);
+
 	type TokenType = {
 		address: string;
 		symbol: string;
@@ -130,10 +299,7 @@ export default function ApprovalPopup({
 		data: quoteData,
 		isSuccess: quoteSuccess,
 	} = useGetQuotes();
-	console.log("selected token", selectedSell);
 
-	console.log("sell token price", sellTokenPrice);
-	console.log("buy token price", buyTokenPrice);
 	useEffect(() => {
 		setPopupOpened(true);
 	});
@@ -159,7 +325,6 @@ export default function ApprovalPopup({
 				},
 				{
 					onSuccess: (data: any) => {
-						console.log("i am initial buy");
 						setSellTokenPrice(data.data[initialSellToken.address]);
 						setBuyTokenPrice(data.data[initialBuyToken.address]);
 					},

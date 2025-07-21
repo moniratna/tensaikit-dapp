@@ -6,7 +6,9 @@ const useChatMessages = (id: number, token: string, enableFlag: boolean) => {
 		queryKey: ["chats", id],
 		queryFn: (ctx) => getMessages(id, ctx.pageParam, token),
 		getNextPageParam: (lastPage, allpages) => {
-			console.log("lastPage", lastPage, allpages);
+			if (lastPage.messages.length === 0) {
+				return undefined;
+			}
 			// If the API returns an empty array, stop pagination
 			return lastPage &&
 				lastPage.messages.length > 0 &&

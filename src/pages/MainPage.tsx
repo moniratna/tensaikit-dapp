@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChatThread } from "../types";
 import Sidebar from "../components/Sidebar";
 import ChatPage from "./ChatPage";
@@ -72,14 +72,13 @@ const MainPage: React.FC = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [autoSearch, searchQuery]);
-	console.log("activeChatId", activeChatId);
 
 	const { mutate: chatAgent } = useChatAgent();
 	const { refetch: refetchThreads } = useThreads(
 		localStorage.getItem("authToken") || "",
 		true
 	);
-	const handleSendMessage = async (content: string, agentType?: string) => {
+	const handleSendMessage = async (content: string) => {
 		if (!activeChatId) return;
 
 		const userMessage: any = {
@@ -133,7 +132,7 @@ const MainPage: React.FC = () => {
 			}
 		);
 	};
-	console.log(activeChatId);
+
 	const handleSendAgentMessage = async (
 		content: string,
 		agentType?: string

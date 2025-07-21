@@ -21,7 +21,6 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	handleSendMessage,
 	userPrompt,
 }) => {
-	console.log("checking user prompt", userPrompt);
 	const { allChats, setAllChats } = useAuth();
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const {
@@ -55,7 +54,6 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 		}
 	}, [isTyping]);
 
-	console.log("checkin all chats inside protocol", allChats);
 	if (!agentType && allChats.length === 0) {
 		return (
 			<div className="flex-1 flex items-center justify-center bg-[#1B012F]">

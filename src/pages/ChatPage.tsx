@@ -37,7 +37,6 @@ const ChatPage: React.FC<ChatPageProps> = ({
 			? true
 			: false
 	);
-	console.log("use use use", hasNextPage);
 	const threadMessages = messages?.pages.flatMap((page) => page.messages);
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages) {
@@ -54,7 +53,6 @@ const ChatPage: React.FC<ChatPageProps> = ({
 			container.scrollTop = container.scrollHeight;
 		}
 	}, [isTyping]);
-	console.log("checking all chats?", allChats);
 	if (!activeChatId || activeChatId === "agentType") {
 		return (
 			<>

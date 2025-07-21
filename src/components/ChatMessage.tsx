@@ -18,13 +18,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, page }) => {
 	};
 	// const [showPopup, setShowPopup] = React.useState(false);
 	const isSwapPrompt = (prompt?: string) => {
-		console.log(prompt);
 		if (prompt === null || prompt === undefined) {
 			return false;
 		}
 		const lowercasePrompt = prompt.toLowerCase();
 
-		return (
+		if (
 			lowercasePrompt.includes("get quote") ||
 			lowercasePrompt.includes("swap quote") ||
 			lowercasePrompt.includes("swap") ||
@@ -33,21 +32,34 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, page }) => {
 			lowercasePrompt.includes("convert") ||
 			lowercasePrompt.includes("swapping") ||
 			lowercasePrompt.includes("exchange")
-		);
+		) {
+			return true;
+		} else {
+			return false;
+		}
 	};
-	console.log(
-		"checking txn message",
-		!isSwapPrompt(message.userPrompt) && message.sender === "agent",
-		!isSwapPrompt(message.userPrompt) && message.sender === "user",
-		isSwapPrompt(message.userPrompt) && message.sender === "user"
-	);
-	console.log(
-		"tinga",
-		message,
-		(!isSwapPrompt(message.userPrompt) && message.sender === "agent") ||
-			(!isSwapPrompt(message.userPrompt) && message.sender === "user") ||
-			(isSwapPrompt(message.userPrompt) && message.sender === "user")
-	);
+	const isSwapPossible = (prompt?: string) => {
+		if (prompt === null || prompt === undefined) {
+			return false;
+		}
+		const lowercasePrompt = prompt.toLowerCase();
+		if (
+			lowercasePrompt.includes("don't have sufficient funds") ||
+			lowercasePrompt.includes("native balance of 0") ||
+			lowercasePrompt.includes("insufficient") ||
+			lowercasePrompt.includes("does not have") ||
+			lowercasePrompt.includes("no native Ether") ||
+			lowercasePrompt.includes("not enough") ||
+			lowercasePrompt.includes("unsuccessful") ||
+			lowercasePrompt.includes("failure") ||
+			lowercasePrompt.includes("don't have the capability") ||
+			lowercasePrompt.includes("not found")
+		) {
+			return false;
+		} else {
+			return true;
+		}
+	};
 	const formatTime = (timestamp: Date) => {
 		return new Date(timestamp).toLocaleTimeString([], {
 			hour: "2-digit",
@@ -109,10 +121,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, page }) => {
 						}`}
 					>
 						<div className="prose dark:prose-invert max-w-none">
-							{(isSwapPrompt(message.userPrompt) ||
-								message.type === "SushiSwapQuoteActions_get_swap_quote" ||
-								message.type ===
-									"MorphoWriteActionProvider_supply_loan_asset") &&
+							{isSwapPrompt(message.userPrompt) &&
+							isSwapPossible(message.content) &&
 							(message.txnHash === null || message.txnHash === undefined) &&
 							message.sender === "agent" &&
 							page === "agentChat" &&
@@ -140,6 +150,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, page }) => {
 												onClose={() => setShowPopup(false)}
 												messageId={Number(message.id)}
 												setPopupOpened={setPopupOpened}
+												content={message.content}
 											/>
 										}
 										{/* )} */}

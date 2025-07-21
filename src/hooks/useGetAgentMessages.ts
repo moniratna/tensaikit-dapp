@@ -11,9 +11,15 @@ const useGEtAgentMessages = (
 		queryFn: (ctx) => getAgentMessages(agentType, ctx.pageParam, token),
 		getNextPageParam: (lastPage, allpages) => {
 			// If the API returns an empty array, stop pagination
-			return lastPage && lastPage.messages.length > 0
-				? allpages.length + 1
-				: undefined;
+			if (lastPage.messages.length === 0) {
+				return undefined;
+			}
+			// If the API returns an empty array, stop pagination
+			return lastPage &&
+				lastPage.messages.length > 0 &&
+				lastPage.messages.length < 10
+				? undefined
+				: allpages.length + 1;
 		},
 		initialPageParam: 1,
 		// staleTime: Infinity,
