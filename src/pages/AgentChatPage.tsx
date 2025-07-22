@@ -57,7 +57,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 			const merged = [
 				...new Map([...allChats].map((msg: Message) => [msg.id, msg])).values(),
 			];
-			setAllChats([userPrompt as Message, ...merged]);
+			setAllChats([...merged]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [triggerPrompt]);
