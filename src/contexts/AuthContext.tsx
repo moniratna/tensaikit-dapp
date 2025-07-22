@@ -34,6 +34,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [selectedAgent, setSelectedAgent] = useState<string>("");
 	const [successSignup, setSuccessSignup] = useState(false);
 	const [isLogin, setIsLogin] = useState(true);
+	const [allTokens, setAllTokens] = useState<any[]>([]);
 	useEffect(() => {
 		// Check for existing token and validate session
 		const token = localStorage.getItem("authToken");
@@ -206,6 +207,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		successSignup,
 		isLogin,
 		setIsLogin,
+		allTokens,
+		setAllTokens,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface User {
 	id: string;
 	email: string;
@@ -15,6 +16,7 @@ export interface Message {
 	threadId: number;
 	txnHash?: string;
 	userPrompt?: string;
+	toolMessage?: any;
 }
 
 export interface ChatThread {
@@ -62,4 +64,6 @@ export interface AuthContextType {
 	successSignup: boolean;
 	isLogin: boolean;
 	setIsLogin: (isLogin: boolean) => void;
+	allTokens: any[];
+	setAllTokens: (tokens: any[]) => void;
 }

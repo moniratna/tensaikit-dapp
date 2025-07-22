@@ -12,136 +12,7 @@ import useGetQuotes from "../hooks/useGetQuotes";
 import useSwapToken from "../hooks/useSwapToken";
 import { toast } from "sonner";
 import useFetchTokenPrice from "../hooks/useFetchTokenPrice";
-// import Link from "next/link";
-
-const tokenList = [
-	{
-		address: "0xee7d8bcfb72bc1880d0cf19822eb0a2e6577ab62",
-		symbol: "WETH",
-		name: "Wrapped Ether",
-		decimals: 18,
-		approved: true,
-	},
-	{
-		address: "0x203a662b0bd271a6ed5a60edfbd04bfce608fd36",
-		symbol: "USDC",
-		name: "Vault Bridge USDC",
-		decimals: 6,
-		approved: true,
-	},
-	{
-		address: "0x0913da6da4b42f538b445599b46bb4622342cf52",
-		symbol: "WBTC",
-		name: "Vault Bridge WBTC",
-		decimals: 8,
-		approved: true,
-	},
-	{
-		address: "0x00000000efe302beaa2b3e6e1b18d08d69a9012a",
-		symbol: "AUSD",
-		name: "AUSD",
-		decimals: 6,
-		approved: true,
-	},
-	{
-		address: "0x2dca96907fde857dd3d816880a0df407eeb2d2f2",
-		symbol: "USDT",
-		name: "Vault Bridge USDT",
-		decimals: 6,
-		approved: true,
-	},
-	{
-		address: "0x9b8df6e244526ab5f6e6400d331db28c8fdddb55",
-		symbol: "uSOL",
-		name: "Solana (Universal)",
-		decimals: 18,
-		approved: true,
-	},
-	{
-		address: "0xb24e3035d1fcbc0e43cf3143c3fd92e53df2009b",
-		symbol: "POL",
-		name: "Polygon Ecosystem Token",
-		decimals: 18,
-		approved: true,
-	},
-	{
-		address: "0x7fb4d0f51544f24f385a421db6e7d4fc71ad8e5c",
-		symbol: "wstETH",
-		name: "Wrapped liquid staked Ether 2.0",
-		decimals: 18,
-		approved: true,
-	},
-	{
-		address: "0x6c16e26013f2431e8b2e1ba7067ecccad0db6c52",
-		symbol: "JitoSOL",
-		name: "Jito Staked SOL",
-		decimals: 18,
-		approved: true,
-	},
-	{
-		address: "0xecac9c5f704e954931349da37f60e39f515c11c1",
-		symbol: "LBTC",
-		name: "Lombard Staked Bitcoin",
-		decimals: 8,
-		approved: true,
-	},
-	{
-		address: "0xb0f70c0bd6fd87dbeb7c10dc692a2a6106817072",
-		symbol: "BTCK",
-		name: "Bitcoin on Katana",
-		decimals: 8,
-		approved: true,
-	},
-	{
-		address: "0x7f1f4b4b29f5058fa32cc7a97141b8d7e5abdc2d",
-		symbol: "KAT",
-		name: "Katana Network Token",
-		decimals: 18,
-		approved: true,
-	},
-	{
-		address: "0x9893989433e7a383cb313953e4c2365107dc19a7",
-		symbol: "weETH",
-		name: "Wrapped eETH",
-		decimals: 18,
-		approved: true,
-	},
-	{
-		address: "0xb0505e5a99abd03d94a1169e638b78edfed26ea4",
-		symbol: "uSUI",
-		name: "Sui (Universal)",
-		decimals: 18,
-		approved: true,
-	},
-	{
-		address: "0x17bff452dae47e07cea877ff0e1aba17eb62b0ab",
-		symbol: "SUSHI",
-		name: "SushiToken",
-		decimals: 18,
-		approved: true,
-	},
-	{
-		address: "0x62d6a123e8d19d06d68cf0d2294f9a3a0362c6b3",
-		symbol: "USDS",
-		name: "Vault Bridge USDS",
-		decimals: 18,
-		approved: true,
-	},
-	{
-		address: "0x476eacd417cd65421bd34fca054377658bb5e02b",
-		symbol: "YFI",
-		name: "yearn.finance",
-		decimals: 18,
-		approved: true,
-	},
-	{
-		address: "0x1e5efca3d0db2c6d5c67a4491845c43253eb9e4e",
-		symbol: "MORPHO",
-		name: "Morpho Token",
-		decimals: 18,
-		approved: true,
-	},
-];
+import { useAuth } from "../contexts/AuthContext";
 
 const renderTokenDropdown = (
 	tokenList: [],
@@ -226,60 +97,79 @@ export default function ApprovalPopup({
 	onClose,
 	messageId,
 	setPopupOpened,
-	content,
+	toolMessage,
 }: {
 	onClose: () => void;
 	messageId: number;
 	setPopupOpened: (value: boolean) => void;
-	content: string;
+	toolMessage: any;
 }) {
+	const { allTokens } = useAuth();
 	const retriveToken = localStorage.getItem("authToken");
 	const { data: tokenData, isLoading } = useFetchTokens(retriveToken);
 	const { mutate: tokenMutation } = useFetchTokenPrice();
-	const [sellToken, setSellToken] = useState("USDT");
-	const [buyToken, setBuyToken] = useState("AUSD");
+	const [sellToken, setSellToken] = useState<string>("");
+	const [buyToken, setBuyToken] = useState<string>("");
 	const [buyOpen, setBuyOpen] = useState(false);
 	const [sellOpen, setSellOpen] = useState(false);
 	const [amountIn, setAmountIn] = useState("1");
 	const [amountOut, setAmountOut] = useState(0);
 
-	const extractTwoTokenNames = (text: string) => {
+	const extractTwoTokenNames = (
+		tokenIn: string,
+		tokenOut: string,
+		tokenData: any
+	) => {
 		const found = [];
 
 		// Convert to lower for matching
-		const lowerText = text.toLowerCase();
+		const lowerTextTokenIn = tokenIn.toLowerCase();
+		const lowerTextTokenOut = tokenOut.toLowerCase();
 
-		for (const token of tokenList) {
-			const { symbol } = token;
+		for (const token of tokenData) {
+			const { address } = token;
 
-			if (symbol && lowerText.includes(symbol.toLowerCase())) {
-				found.push(symbol);
+			if (lowerTextTokenIn === address.toLowerCase()) {
+				found.push(token);
+			}
+		}
+		for (const token of tokenData) {
+			const { address } = token;
 
-				if (found.length === 2) break;
+			if (lowerTextTokenOut === address.toLowerCase()) {
+				found.push(token);
 			}
 		}
 
-		if (found.length === 2) {
-			return {
-				fromToken: found[0],
-				toToken: found[1],
-			};
-		}
-
-		return null;
+		return found;
 	};
 	useEffect(() => {
-		if (content) {
-			const tokens = extractTwoTokenNames(content);
-			if (tokens?.fromToken) {
-				setSellToken(tokens.fromToken);
+		console.log("toolMessage2", toolMessage);
+		if (toolMessage && allTokens) {
+			const tokenData = extractTwoTokenNames(
+				toolMessage.tokenIn,
+				toolMessage.tokenOut,
+				allTokens
+			);
+			// const tokenOut = extractTwoTokenNames(toolMessage.tokenOut, allTokens);
+			// console.log("tokenIn", tokenIn);
+			// console.log("tokenOut", tokenOut);
+			if (tokenData.length > 0) {
+				setSellToken(tokenData[0].symbol);
+				setSelectedSell(tokenData[0]);
+				setBuyToken(tokenData[1].symbol);
+				setSelectedBuy(tokenData[1]);
+			} else {
+				setSellToken("USDT");
+				setBuyToken("AUSD");
 			}
-			if (tokens?.toToken) {
-				setBuyToken(tokens.toToken);
-			}
-		}
-	}, [content]);
 
+			setAmountIn(toolMessage.amount);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [toolMessage]);
+	console.log("checkin sell token", sellToken);
+	console.log("checkin buy token", buyToken);
 	type TokenType = {
 		address: string;
 		symbol: string;
@@ -304,19 +194,19 @@ export default function ApprovalPopup({
 		setPopupOpened(true);
 	});
 	useEffect(() => {
-		if (tokenData && tokenData.data) {
-			const initialSellToken = tokenData.data.find(
+		if (allTokens && sellToken && buyToken) {
+			const initialSellToken = allTokens.find(
 				(token: any) => token.symbol === sellToken
 			);
-			const initialBuyToken = tokenData.data.find(
+			const initialBuyToken = allTokens.find(
 				(token: any) => token.symbol === buyToken
 			);
-			if (initialSellToken) {
-				setSelectedSell(initialSellToken);
-			}
-			if (initialBuyToken) {
-				setSelectedBuy(initialBuyToken);
-			}
+			// if (initialSellToken) {
+			// 	setSelectedSell(initialSellToken);
+			// }
+			// if (initialBuyToken) {
+			// 	setSelectedBuy(initialBuyToken);
+			// }
 
 			tokenMutation(
 				{
@@ -332,7 +222,7 @@ export default function ApprovalPopup({
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [tokenData]);
+	}, [allTokens, sellToken, buyToken]);
 
 	useEffect(() => {
 		// implement debounce for fetching quote
@@ -361,9 +251,10 @@ export default function ApprovalPopup({
 			}, 2000);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [amountIn, selectedSell, selectedBuy]);
+	}, [selectedBuy, amountIn, selectedSell]);
 
 	useEffect(() => {
+		console.log("checking bye sell", selectedBuy, selectedSell);
 		if (!selectedSell || !selectedBuy) return;
 
 		const interval = setInterval(() => {
@@ -376,6 +267,7 @@ export default function ApprovalPopup({
 				},
 				{
 					onSuccess: (data) => {
+						console.log("checking buy sell data", data);
 						setAmountOut(
 							Number(data.data.assumedAmountOut) /
 								10 ** Number(selectedBuy.decimals)
@@ -390,7 +282,7 @@ export default function ApprovalPopup({
 
 		return () => clearInterval(interval); // Cleanup
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedSell, selectedBuy, amountIn, retriveToken]);
+	}, [selectedSell, selectedBuy, amountIn]);
 
 	const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
@@ -454,6 +346,19 @@ export default function ApprovalPopup({
 			return amount.toFixed(2); // large numbers
 		}
 	};
+	console.log(
+		"sell token, buy token\n",
+		sellToken,
+		buyToken,
+		"Amount In\n",
+		amountIn,
+		"Amount Out\n",
+		amountOut,
+		"sell token Price\n",
+		sellTokenPrice,
+		"buy token Price\n",
+		buyTokenPrice
+	);
 	return (
 		<>
 			{isLoading ? (
@@ -565,7 +470,11 @@ export default function ApprovalPopup({
 											</div>
 											<div>
 												{renderTokenDropdown(
-													!isLoading && tokenData && tokenData.data,
+													!isLoading &&
+														tokenData &&
+														tokenData.data.filter(
+															(token: any) => token.symbol !== "uSUI"
+														),
 													sellToken,
 													setSellToken,
 													sellOpen,
@@ -592,12 +501,17 @@ export default function ApprovalPopup({
 												<p className="text-gray-400 text-xs mt-1">
 													{buyTokenPrice &&
 														`$${(
-															Number(buyTokenPrice) * Number(amountOut)
+															Number(buyTokenPrice.toFixed(4)) *
+															Number(amountOut.toFixed(4))
 														).toFixed(2)}`}
 												</p>
 											</span>
 											{renderTokenDropdown(
-												!isLoading && tokenData && tokenData.data,
+												!isLoading &&
+													tokenData &&
+													tokenData.data.filter(
+														(token: any) => token.symbol !== "uSUI"
+													),
 												buyToken,
 												setBuyToken,
 												buyOpen,

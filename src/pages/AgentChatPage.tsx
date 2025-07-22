@@ -75,7 +75,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 			</div>
 		);
 	}
-
+	console.log("allChats", allChats);
 	return (
 		<div className="flex-1 flex flex-col bg-[#1B012F] overflow-hidden w-full">
 			{/* Chat messages */}
@@ -137,6 +137,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 								key={message.id}
 								message={message}
 								page="agentChat"
+								toolMessage={message.toolMessage}
 							/>
 						))}
 					</InfiniteScroll>

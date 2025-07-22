@@ -8,6 +8,7 @@ import { useAuth } from "../contexts/AuthContext";
 import useChatAgent from "../hooks/useChatAgent";
 import useThreads from "../hooks/useThreads";
 import AgentChatPage from "./AgentChatPage";
+import useFetchTokens from "../hooks/useFetchTokens";
 
 const MainPage: React.FC = () => {
 	const {
@@ -19,8 +20,11 @@ const MainPage: React.FC = () => {
 		allChats,
 		setAllChats,
 		selectedAgent,
+		setAllTokens,
 	} = useAuth();
-
+	const { data: tokenData } = useFetchTokens(
+		localStorage.getItem("authToken") || ""
+	);
 	const [activeTab, setActiveTab] = useState<"chat" | "protocols">("chat");
 	const [autoSearch, setAutoSearch] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
@@ -174,6 +178,7 @@ const MainPage: React.FC = () => {
 						createdAt: new Date(),
 						type: data.data.type,
 						userPrompt: data.data.userPrompt,
+						toolMessage: data.data.toolMessage,
 					};
 
 					const finalMessages = [assistantMessage, ...updatedMessages];
@@ -191,7 +196,12 @@ const MainPage: React.FC = () => {
 			}
 		);
 	};
-
+	useEffect(() => {
+		if (tokenData) {
+			setAllTokens(tokenData.data);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [tokenData]);
 	return (
 		<div className="flex h-full bg-gray-100">
 			{isOpenSidebar ? (

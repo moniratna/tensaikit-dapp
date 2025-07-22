@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Message } from "../types";
 import { User, Bot, Copy } from "lucide-react";
@@ -7,9 +8,15 @@ import ApprovalPopup from "./ApprovalPopup";
 interface ChatMessageProps {
 	message: Message;
 	page: string;
+	toolMessage?: any;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, page }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({
+	message,
+	page,
+	toolMessage,
+}) => {
+	console.log("toolMessage\n", toolMessage);
 	const isUser = message.sender === "user";
 	const [showPopup, setShowPopup] = useState(true);
 	const [popupOpened, setPopupOpened] = useState(false);
@@ -53,7 +60,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, page }) => {
 			lowercasePrompt.includes("unsuccessful") ||
 			lowercasePrompt.includes("failure") ||
 			lowercasePrompt.includes("don't have the capability") ||
-			lowercasePrompt.includes("not found")
+			lowercasePrompt.includes("not found") ||
+			lowercasePrompt.includes("issue") ||
+			lowercasePrompt.includes("issue fetching") ||
+			lowercasePrompt.includes("try again")
 		) {
 			return false;
 		} else {
@@ -123,6 +133,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, page }) => {
 						<div className="prose dark:prose-invert max-w-none">
 							{isSwapPrompt(message.userPrompt) &&
 							isSwapPossible(message.content) &&
+							toolMessage !== undefined &&
+							toolMessage !== null &&
+							Object.keys(toolMessage).length > 0 &&
 							(message.txnHash === null || message.txnHash === undefined) &&
 							message.sender === "agent" &&
 							page === "agentChat" &&
@@ -150,7 +163,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, page }) => {
 												onClose={() => setShowPopup(false)}
 												messageId={Number(message.id)}
 												setPopupOpened={setPopupOpened}
-												content={message.content}
+												// content={message.content}
+												toolMessage={toolMessage}
 											/>
 										}
 										{/* )} */}
