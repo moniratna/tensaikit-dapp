@@ -190,12 +190,14 @@ export default function ApprovalPopup({
 		setPopupOpened(true);
 	});
 	useEffect(() => {
-		if (allTokens && sellToken && buyToken) {
+		if (allTokens && toolMessage) {
 			const initialSellToken = allTokens.find(
-				(token: any) => token.symbol === sellToken
+				(token: any) =>
+					token.address.toLowerCase() === toolMessage.tokenIn.toLowerCase()
 			);
 			const initialBuyToken = allTokens.find(
-				(token: any) => token.symbol === buyToken
+				(token: any) =>
+					token.address.toLowerCase() === toolMessage.tokenOut.toLowerCase()
 			);
 			// if (initialSellToken) {
 			// 	setSelectedSell(initialSellToken);
@@ -218,7 +220,7 @@ export default function ApprovalPopup({
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [allTokens, sellToken, buyToken]);
+	}, [allTokens, toolMessage]);
 
 	useEffect(() => {
 		// implement debounce for fetching quote
@@ -388,7 +390,7 @@ export default function ApprovalPopup({
 							{/* Optional: Add TX link */}
 							{txnHash && (
 								<a
-									href={`https://explorer.tatara.katana.network/tx/${txnHash}`}
+									href={`${import.meta.env.VITE_KATANA_EXPLORER_URL}${txnHash}`}
 									target="_blank"
 									rel="noopener noreferrer"
 									className="text-blue-500 underline text-sm"
