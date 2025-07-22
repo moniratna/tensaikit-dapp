@@ -6,6 +6,7 @@ import iconLogo from "../assets/iconYellow.png";
 import { useAuth } from "../contexts/AuthContext";
 import useGEtAgentMessages from "../hooks/useGetAgentMessages";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Message } from "../types";
 // import { Message } from "../types";
 
 interface ChatPageProps {
@@ -13,6 +14,7 @@ interface ChatPageProps {
 	isTyping: boolean;
 	handleSendMessage: (content: string) => void;
 	userPrompt?: object;
+	triggerPrompt?: boolean;
 }
 
 const AgentChatPage: React.FC<ChatPageProps> = ({
@@ -20,6 +22,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	isTyping,
 	handleSendMessage,
 	userPrompt,
+	triggerPrompt,
 }) => {
 	const { allChats, setAllChats } = useAuth();
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -39,21 +42,31 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	// Update messages
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages) {
-			if (userPrompt !== null) {
-				setAllChats([userPrompt, ...threadMessages]);
-			} else {
-				setAllChats(threadMessages);
-			}
+			const merged = [
+				...new Map(
+					[...allChats, ...threadMessages].map((msg: Message) => [msg.id, msg])
+				).values(),
+			];
+			setAllChats(userPrompt ? [...merged] : merged);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isLoadingMessages, messages, userPrompt]);
+	}, [isLoadingMessages, messages]);
+
+	useEffect(() => {
+		if (triggerPrompt && userPrompt) {
+			const merged = [
+				...new Map([...allChats].map((msg: Message) => [msg.id, msg])).values(),
+			];
+			setAllChats([userPrompt as Message, ...merged]);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [triggerPrompt]);
 	useEffect(() => {
 		const container = messagesEndRef.current;
 		if (container) {
 			container.scrollTop = container.scrollHeight;
 		}
 	}, [isTyping]);
-
 	if (!agentType && allChats.length === 0) {
 		return (
 			<div className="flex-1 flex items-center justify-center bg-[#1B012F]">
@@ -75,7 +88,6 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 			</div>
 		);
 	}
-	console.log("allChats", allChats);
 	return (
 		<div className="flex-1 flex flex-col bg-[#1B012F] overflow-hidden w-full">
 			{/* Chat messages */}

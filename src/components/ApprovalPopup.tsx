@@ -280,6 +280,38 @@ export default function ApprovalPopup({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedSell, selectedBuy, amountIn]);
 
+	useEffect(() => {
+		if (!toolMessage) return;
+
+		const interval = setInterval(() => {
+			if (allTokens && toolMessage) {
+				const initialSellToken = allTokens.find(
+					(token: any) =>
+						token.address.toLowerCase() === toolMessage.tokenIn.toLowerCase()
+				);
+				const initialBuyToken = allTokens.find(
+					(token: any) =>
+						token.address.toLowerCase() === toolMessage.tokenOut.toLowerCase()
+				);
+				tokenMutation(
+					{
+						tokenAddress: [initialSellToken.address, initialBuyToken.address],
+						token: retriveToken || "",
+					},
+					{
+						onSuccess: (data: any) => {
+							setSellTokenPrice(data.data[initialSellToken.address]);
+							setBuyTokenPrice(data.data[initialBuyToken.address]);
+						},
+					}
+				);
+			}
+		}, 10000); // 30 seconds
+
+		return () => clearInterval(interval); // Cleanup
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedSell, selectedBuy, amountIn]);
+
 	const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
 

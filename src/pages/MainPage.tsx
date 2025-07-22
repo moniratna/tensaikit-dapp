@@ -32,7 +32,7 @@ const MainPage: React.FC = () => {
 
 	const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
 	const [userPrompt, setUserPrompt] = useState<any>(null);
-
+	const [triggerPrompt, setTriggerPrompt] = useState(false);
 	const handleNewChat = () => {
 		const newChat: ChatThread = {
 			id: "new",
@@ -157,7 +157,7 @@ const MainPage: React.FC = () => {
 
 		// Simulate AI response
 		setIsTyping(true);
-
+		setTriggerPrompt(true);
 		// TODO: Replace with actual API call to your backend
 		chatAgent(
 			{
@@ -192,6 +192,8 @@ const MainPage: React.FC = () => {
 						refetchThreads();
 					}
 					setHasFetchedOnce(true);
+					setUserPrompt(null);
+					setTriggerPrompt(false);
 				},
 			}
 		);
@@ -229,6 +231,7 @@ const MainPage: React.FC = () => {
 								isTyping={isTyping}
 								handleSendMessage={handleSendAgentMessage}
 								userPrompt={userPrompt === null ? null : userPrompt}
+								triggerPrompt={triggerPrompt}
 							/>
 						) : (
 							<ProtocolsPage

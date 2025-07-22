@@ -23,8 +23,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 	activeTab,
 	onTabChange,
 }) => {
-	const { setSelectedAgent, selectedAgent, setActiveChatId, setAgentType } =
-		useAuth();
+	const {
+		setSelectedAgent,
+		selectedAgent,
+		setActiveChatId,
+		setAgentType,
+		setAllChats,
+	} = useAuth();
 	const [searchQuery, setSearchQuery] = useState("");
 	const { data: protocolData } = useFetchAgents(
 		localStorage.getItem("authToken") || ""
@@ -67,6 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 							onTabChange("chat");
 							setSelectedAgent("");
 							setActiveChatId(null);
+							setAllChats([]);
 						}}
 						className={`flex-1 flex items-center justify-center py-1 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${
 							activeTab === "chat"
@@ -81,6 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 						onClick={() => {
 							onTabChange("protocols");
 							setSelectedAgent("");
+							setAllChats([]);
 						}}
 						className={`flex-1 flex items-center justify-center py-2 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${
 							activeTab === "protocols"
@@ -128,7 +135,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 							{filteredChats.map((chat: any) => (
 								<button
 									key={chat.id}
-									onClick={() => onChatSelect(chat.id)}
+									onClick={() => {
+										onChatSelect(chat.id);
+										setAllChats([]);
+									}}
 									className={`w-full text-left p-1 rounded-md transition-colors focus:outline-none focus:ring-0 ${
 										activeChatId === chat.id
 											? "bg-gray-800 text-gray-200"

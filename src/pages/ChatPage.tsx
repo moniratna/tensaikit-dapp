@@ -6,6 +6,7 @@ import iconLogo from "../assets/iconYellow.png";
 import { useAuth } from "../contexts/AuthContext";
 import useChatMessages from "../hooks/useGetMessages";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Message } from "../types";
 
 interface ChatPageProps {
 	activeChatId: string | null;
@@ -40,7 +41,12 @@ const ChatPage: React.FC<ChatPageProps> = ({
 	const threadMessages = messages?.pages.flatMap((page) => page.messages);
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages) {
-			setAllChats([...threadMessages]);
+			const merged = [
+				...new Map(
+					[...allChats, ...threadMessages].map((msg: Message) => [msg.id, msg])
+				).values(),
+			];
+			setAllChats(merged);
 		}
 		if (activeChatId === "new") {
 			setAllChats([]);
