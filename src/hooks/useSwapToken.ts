@@ -32,32 +32,36 @@ const swapExecute = async (
 	amount: number,
 	messageId: number
 ) => {
-	try {
-		const retriveToken = localStorage.getItem("authToken");
-		const response = await axios.post(
-			`${import.meta.env.VITE_BACKEND_URL}/v1/api/execute-swap`,
-			{
-				tokenIn: tokenIn,
-				tokenOut: tokenOut,
-				amount: amount,
-				messageId: messageId,
+	// try {
+	const retriveToken = localStorage.getItem("authToken");
+	const response = await axios.post(
+		`${import.meta.env.VITE_BACKEND_URL}/v1/api/execute-swap`,
+		{
+			tokenIn: tokenIn,
+			tokenOut: tokenOut,
+			amount: amount,
+			messageId: messageId,
+		},
+		{
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token ? token : retriveToken}`,
 			},
-			{
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${token ? token : retriveToken}`,
-				},
-			}
-		);
-		if (response.status === 401) {
-			throw "Unauthorized";
 		}
-		const res_data = response.data;
-		return { data: res_data.data };
-	} catch (error: any) {
-		console.error("Fetch thread list failed:", error);
-		throw new Error(error);
+	);
+	if (response.status === 401) {
+		throw new Error("Unauthorized");
 	}
+	if (!response.data.success) {
+		console.log("error", response);
+		throw new Error(response.data.error); // ❗ must throw
+	}
+	const res_data = response.data;
+	return { data: res_data.data };
+	// } catch (error: any) {
+	// 	console.error("Fetch thread list failed:", error.message);
+	// 	throw new Error(error.message);
+	// }
 };
 
 export default useSwapToken;

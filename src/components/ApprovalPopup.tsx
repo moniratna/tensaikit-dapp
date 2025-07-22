@@ -144,16 +144,13 @@ export default function ApprovalPopup({
 		return found;
 	};
 	useEffect(() => {
-		console.log("toolMessage2", toolMessage);
 		if (toolMessage && allTokens) {
 			const tokenData = extractTwoTokenNames(
 				toolMessage.tokenIn,
 				toolMessage.tokenOut,
 				allTokens
 			);
-			// const tokenOut = extractTwoTokenNames(toolMessage.tokenOut, allTokens);
-			// console.log("tokenIn", tokenIn);
-			// console.log("tokenOut", tokenOut);
+
 			if (tokenData.length > 0) {
 				setSellToken(tokenData[0].symbol);
 				setSelectedSell(tokenData[0]);
@@ -168,8 +165,7 @@ export default function ApprovalPopup({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [toolMessage]);
-	console.log("checkin sell token", sellToken);
-	console.log("checkin buy token", buyToken);
+
 	type TokenType = {
 		address: string;
 		symbol: string;
@@ -226,7 +222,7 @@ export default function ApprovalPopup({
 
 	useEffect(() => {
 		// implement debounce for fetching quote
-		if (selectedSell && selectedBuy) {
+		if (selectedSell && selectedBuy && Number(amountIn) !== 0) {
 			setTimeout(() => {
 				fetchQuote(
 					{
@@ -254,7 +250,6 @@ export default function ApprovalPopup({
 	}, [selectedBuy, amountIn, selectedSell]);
 
 	useEffect(() => {
-		console.log("checking bye sell", selectedBuy, selectedSell);
 		if (!selectedSell || !selectedBuy) return;
 
 		const interval = setInterval(() => {
@@ -267,7 +262,6 @@ export default function ApprovalPopup({
 				},
 				{
 					onSuccess: (data) => {
-						console.log("checking buy sell data", data);
 						setAmountOut(
 							Number(data.data.assumedAmountOut) /
 								10 ** Number(selectedBuy.decimals)
@@ -327,9 +321,9 @@ export default function ApprovalPopup({
 					toast.success("Swap successful!");
 					setIsSwapping(false);
 				},
-				onError: (error) => {
+				onError: (error: any) => {
 					console.error("Error swapping tokens:", error);
-					toast.error("Swap failed!");
+					toast.error(error.response.data.error);
 					setIsSwapping(false);
 				},
 			}
@@ -346,19 +340,6 @@ export default function ApprovalPopup({
 			return amount.toFixed(2); // large numbers
 		}
 	};
-	console.log(
-		"sell token, buy token\n",
-		sellToken,
-		buyToken,
-		"Amount In\n",
-		amountIn,
-		"Amount Out\n",
-		amountOut,
-		"sell token Price\n",
-		sellTokenPrice,
-		"buy token Price\n",
-		buyTokenPrice
-	);
 	return (
 		<>
 			{isLoading ? (
@@ -501,8 +482,7 @@ export default function ApprovalPopup({
 												<p className="text-gray-400 text-xs mt-1">
 													{buyTokenPrice &&
 														`$${(
-															Number(buyTokenPrice.toFixed(4)) *
-															Number(amountOut.toFixed(4))
+															Number(buyTokenPrice) * Number(amountOut)
 														).toFixed(2)}`}
 												</p>
 											</span>
