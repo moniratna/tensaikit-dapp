@@ -236,6 +236,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												setSelectedAgent(agent.name.toLowerCase());
 												setActiveChatId("agentType");
 												setAgentType(agent.name.toLowerCase());
+												setAllChats([]);
 											}}
 										>
 											<div className="flex items-center space-x-3">
