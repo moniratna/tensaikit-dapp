@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useState } from "react";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, Wallet, X } from "lucide-react";
 // import Image from "next/image";
 // import { useSession } from "next-auth/react";
 // import { CustomSession } from "@/app/api/auth/[...nextauth]/options";
@@ -13,6 +13,7 @@ import useSwapToken from "../hooks/useSwapToken";
 import { toast } from "sonner";
 import useFetchTokenPrice from "../hooks/useFetchTokenPrice";
 import { useAuth } from "../contexts/AuthContext";
+import useFetchBalance from "../hooks/useFetchBalance";
 
 const renderTokenDropdown = (
 	tokenList: [],
@@ -180,6 +181,9 @@ export default function ApprovalPopup({
 	const [inputError, setInputError] = useState("");
 	const [txnHash, setTxnHash] = useState<string | null>(null);
 	const [isSwapping, setIsSwapping] = useState(false);
+	const [sellTokenBalance, setSellTokenBalance] = useState(0);
+	const [buyTokenBalance, setBuyTokenBalance] = useState(0);
+	const { mutate: tokenBalanceMutation } = useFetchBalance();
 	const {
 		mutate: fetchQuote,
 		data: quoteData,
@@ -213,15 +217,41 @@ export default function ApprovalPopup({
 				},
 				{
 					onSuccess: (data: any) => {
+						console.log("checking price", data);
 						setSellTokenPrice(data.data[initialSellToken.address]);
 						setBuyTokenPrice(data.data[initialBuyToken.address]);
+					},
+				}
+			);
+			tokenBalanceMutation(
+				{
+					token: retriveToken,
+					asset: initialSellToken.symbol,
+					chainId: 747474,
+				},
+				{
+					onSuccess: (data: any) => {
+						console.log("checking balance", data);
+						setSellTokenBalance(Number(data.data.tokenBalance));
+					},
+				}
+			);
+			tokenBalanceMutation(
+				{
+					token: retriveToken,
+					asset: initialBuyToken.symbol,
+					chainId: 747474,
+				},
+				{
+					onSuccess: (data: any) => {
+						setBuyTokenBalance(Number(data.data.tokenBalance));
 					},
 				}
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allTokens, toolMessage]);
-
+	console.log("sell buy bal", sellTokenBalance, buyTokenBalance);
 	useEffect(() => {
 		// implement debounce for fetching quote
 		if (selectedSell && selectedBuy && Number(amountIn) !== 0) {
@@ -374,6 +404,38 @@ export default function ApprovalPopup({
 			return amount.toFixed(2); // large numbers
 		}
 	};
+	useEffect(() => {
+		if (selectedSell) {
+			tokenBalanceMutation(
+				{
+					token: retriveToken,
+					asset: selectedSell.symbol,
+					chainId: 747474,
+				},
+				{
+					onSuccess: (data: any) => {
+						setSellTokenBalance(Number(data.data.tokenBalance));
+					},
+				}
+			);
+		}
+	}, [selectedSell]);
+	useEffect(() => {
+		if (selectedBuy) {
+			tokenBalanceMutation(
+				{
+					token: retriveToken,
+					asset: selectedBuy.symbol,
+					chainId: 747474,
+				},
+				{
+					onSuccess: (data: any) => {
+						setBuyTokenBalance(Number(data.data.tokenBalance));
+					},
+				}
+			);
+		}
+	}, [selectedBuy]);
 	return (
 		<>
 			{isLoading ? (
@@ -483,7 +545,7 @@ export default function ApprovalPopup({
 													</p>
 												)}
 											</div>
-											<div>
+											<div className="flex flex-col">
 												{renderTokenDropdown(
 													!isLoading &&
 														tokenData &&
@@ -499,6 +561,12 @@ export default function ApprovalPopup({
 													tokenMutation,
 													setSellTokenPrice
 												)}
+												<div className="p-1 flex flex-row items-center gap-2">
+													<div>
+														<Wallet color="gray" size={20} />
+													</div>
+													<div>{sellTokenBalance.toFixed(4)}</div>
+												</div>
 											</div>
 										</div>
 										{/* <div className="text-sm text-red-400 mt-1">Exceeds Balance</div> */}
@@ -520,21 +588,29 @@ export default function ApprovalPopup({
 														).toFixed(2)}`}
 												</p>
 											</span>
-											{renderTokenDropdown(
-												!isLoading &&
-													tokenData &&
-													tokenData.data.filter(
-														(token: any) => token.symbol !== "uSUI"
-													),
-												buyToken,
-												setBuyToken,
-												buyOpen,
-												setSelectedBuy,
-												setBuyOpen,
-												sellToken,
-												tokenMutation,
-												setBuyTokenPrice
-											)}
+											<div className="flex flex-col">
+												{renderTokenDropdown(
+													!isLoading &&
+														tokenData &&
+														tokenData.data.filter(
+															(token: any) => token.symbol !== "uSUI"
+														),
+													buyToken,
+													setBuyToken,
+													buyOpen,
+													setSelectedBuy,
+													setBuyOpen,
+													sellToken,
+													tokenMutation,
+													setBuyTokenPrice
+												)}
+												<div className="p-1 flex flex-row items-center gap-2">
+													<div>
+														<Wallet color="gray" size={20} />
+													</div>
+													<div>{buyTokenBalance.toFixed(4)}</div>
+												</div>
+											</div>
 										</div>
 										{/* <div className="text-sm text-gray-400 mt-1">$10.00</div> */}
 									</div>

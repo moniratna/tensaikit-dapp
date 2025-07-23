@@ -141,9 +141,9 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 						scrollableTarget="scrollableDiv"
 						inverse={true} // <- Important: for bottom-up
 					>
-						{allChats.map((message) => (
+						{allChats.map((message, index) => (
 							<ChatMessage
-								key={message.id}
+								key={index}
 								message={message}
 								page="agentChat"
 								toolMessage={message.toolMessage}

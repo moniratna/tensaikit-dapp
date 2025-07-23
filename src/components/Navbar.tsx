@@ -1,16 +1,34 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Menu, Copy, LogOut, User } from "lucide-react";
 import { Menu as HeadlessMenu, Transition } from "@headlessui/react";
 import logoWordMark from "../assets/logoWordMark.png";
 import { useAuth } from "../contexts/AuthContext";
 import { toast } from "sonner";
 import katana from "../assets/katana.webp";
+import useFetchBalance from "../hooks/useFetchBalance";
 
 const Navbar = () => {
 	const { user, logout, setIsOpenSidebar, isOpenSidebar } = useAuth();
+	const [balance, setBalance] = useState(0);
+	const { mutate } = useFetchBalance();
 	const copyToClipboard = (content: string) => {
 		navigator.clipboard.writeText(content);
 	};
+	useEffect(() => {
+		mutate(
+			{
+				token: localStorage.getItem("authToken"),
+				asset: null,
+				chainId: 747474,
+			},
+			{
+				onSuccess: (data) => {
+					console.log(data);
+					setBalance(Number(data.data.nativeBalance));
+				},
+			}
+		);
+	}, []);
 	return (
 		<header className="fixed top-0 left-0 right-0 z-50 bg-[#1B012F] text-white shadow-md px-4 py-3 flex items-center justify-between">
 			{/* Left: Logo & Sidebar Toggle */}
@@ -47,6 +65,9 @@ const Navbar = () => {
 								-4
 							)}`}
 					</p>
+				</div>
+				<div className="text-xs text-gray-400 flex items-center space-x-1 cursor-pointer">
+					{`Balance: ${balance}`}
 				</div>
 				<div className="text-xs text-gray-400 flex items-center space-x-1 cursor-pointer">
 					<img src={katana} className="h-5 w-5 rounded-lg" />
