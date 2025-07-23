@@ -63,6 +63,7 @@ const MainPage: React.FC = () => {
 		setActiveTab("chat");
 		// if (activeChatId !== chatId) {
 		setAllChats([]);
+		setHasFetchedOnce(false);
 		refetch();
 		// }
 	};
