@@ -136,7 +136,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 								<button
 									key={chat.id}
 									onClick={() => {
-										onChatSelect(chat.id);
+										if (chat.id !== activeChatId) {
+											onChatSelect(chat.id);
+										}
 									}}
 									className={`w-full text-left p-1 rounded-md transition-colors focus:outline-none focus:ring-0 ${
 										activeChatId === chat.id

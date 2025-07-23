@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
 import useFetchAgents from "../hooks/useFetchAgents";
 import { useAuth } from "../contexts/AuthContext";
+import useGEtAgentMessages from "../hooks/useGetAgentMessages";
 
 interface ProtocolPageProps {
 	setAutoSearch: (value: boolean) => void;
@@ -17,7 +18,7 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 	const retriveToken = localStorage.getItem("authToken");
 	const { data: agentData } = useFetchAgents(retriveToken);
 	const [expandedPrompts, setExpandedPrompts] = useState<number[]>([]);
-	const { setActiveChatId, setSelectedAgent } = useAuth();
+	const { setActiveChatId, setSelectedAgent, agentType } = useAuth();
 	const togglePrompts = (agentId: number) => {
 		setExpandedPrompts((prev) =>
 			prev.includes(agentId)
@@ -25,11 +26,17 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 				: [...prev, agentId]
 		);
 	};
+	const { refetch } = useGEtAgentMessages(
+		agentType,
+		localStorage.getItem("authToken") || "",
+		agentType !== "" && agentType !== null ? true : false
+	);
 	const handleStartAgent = (protocol: string) => {
 		if (protocol) {
 			setSelectedAgent(protocol.toLowerCase());
 			setActiveChatId("agentType");
 			setAgentType(protocol.toLowerCase());
+			refetch();
 		}
 	};
 

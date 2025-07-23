@@ -9,6 +9,7 @@ import useChatAgent from "../hooks/useChatAgent";
 import useThreads from "../hooks/useThreads";
 import AgentChatPage from "./AgentChatPage";
 import useFetchTokens from "../hooks/useFetchTokens";
+import useChatMessages from "../hooks/useGetMessages";
 
 const MainPage: React.FC = () => {
 	const {
@@ -33,6 +34,15 @@ const MainPage: React.FC = () => {
 	const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
 	const [userPrompt, setUserPrompt] = useState<any>(null);
 	const [triggerPrompt, setTriggerPrompt] = useState(false);
+	const { refetch } = useChatMessages(
+		Number(activeChatId),
+		localStorage.getItem("authToken") || "",
+		activeChatId !== "new" &&
+			activeChatId !== undefined &&
+			activeChatId !== "agentType"
+			? true
+			: false
+	);
 	const handleNewChat = () => {
 		const newChat: ChatThread = {
 			id: "new",
@@ -51,9 +61,10 @@ const MainPage: React.FC = () => {
 	const handleChatSelect = (chatId: string) => {
 		setActiveChatId(chatId);
 		setActiveTab("chat");
-		if (activeChatId !== chatId) {
-			setAllChats([]);
-		}
+		// if (activeChatId !== chatId) {
+		setAllChats([]);
+		refetch();
+		// }
 	};
 
 	const handleTabChange = (tab: "chat" | "protocols") => {

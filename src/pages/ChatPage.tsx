@@ -37,9 +37,9 @@ const ChatPage: React.FC<ChatPageProps> = ({
 			? true
 			: false
 	);
-	const threadMessages = messages?.pages.flatMap((page) => page.messages);
 	useEffect(() => {
-		if (!isLoadingMessages && threadMessages) {
+		const threadMessages = messages?.pages.flatMap((page) => page.messages);
+		if (!isLoadingMessages && threadMessages && messages) {
 			setAllChats([...allChats, ...threadMessages]);
 		}
 
