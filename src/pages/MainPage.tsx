@@ -51,6 +51,9 @@ const MainPage: React.FC = () => {
 	const handleChatSelect = (chatId: string) => {
 		setActiveChatId(chatId);
 		setActiveTab("chat");
+		if (activeChatId !== chatId) {
+			setAllChats([]);
+		}
 	};
 
 	const handleTabChange = (tab: "chat" | "protocols") => {

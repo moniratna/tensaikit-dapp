@@ -6,7 +6,6 @@ import iconLogo from "../assets/iconYellow.png";
 import { useAuth } from "../contexts/AuthContext";
 import useChatMessages from "../hooks/useGetMessages";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Message } from "../types";
 
 interface ChatPageProps {
 	activeChatId: string | null;
@@ -41,24 +40,22 @@ const ChatPage: React.FC<ChatPageProps> = ({
 	const threadMessages = messages?.pages.flatMap((page) => page.messages);
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages) {
-			const merged = [
-				...new Map(
-					[...allChats, ...threadMessages].map((msg: Message) => [msg.id, msg])
-				).values(),
-			];
-			setAllChats(merged);
+			setAllChats([...allChats, ...threadMessages]);
 		}
+
 		if (activeChatId === "new") {
 			setAllChats([]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLoadingMessages, activeChatId, messages]);
+
 	useEffect(() => {
 		const container = messagesEndRef.current;
 		if (container) {
 			container.scrollTop = container.scrollHeight;
 		}
 	}, [isTyping]);
+
 	if (!activeChatId || activeChatId === "agentType") {
 		return (
 			<>
@@ -195,8 +192,8 @@ const ChatPage: React.FC<ChatPageProps> = ({
 						scrollableTarget="scrollableDiv"
 						inverse={true} // <- Important: for bottom-up
 					>
-						{allChats.map((message) => (
-							<ChatMessage key={message.id} message={message} page="chat" />
+						{allChats.map((message, index) => (
+							<ChatMessage key={index} message={message} page="chat" />
 						))}
 						{/* <div ref={messagesEndRef} /> */}
 					</InfiniteScroll>

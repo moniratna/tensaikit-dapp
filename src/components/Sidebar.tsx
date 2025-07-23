@@ -137,7 +137,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 									key={chat.id}
 									onClick={() => {
 										onChatSelect(chat.id);
-										setAllChats([]);
 									}}
 									className={`w-full text-left p-1 rounded-md transition-colors focus:outline-none focus:ring-0 ${
 										activeChatId === chat.id
@@ -236,7 +235,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 												setSelectedAgent(agent.name.toLowerCase());
 												setActiveChatId("agentType");
 												setAgentType(agent.name.toLowerCase());
-												setAllChats([]);
 											}}
 										>
 											<div className="flex items-center space-x-3">

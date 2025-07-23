@@ -42,12 +42,9 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	// Update messages
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages) {
-			const merged = [
-				...new Map(
-					[...allChats, ...threadMessages].map((msg: Message) => [msg.id, msg])
-				).values(),
-			];
-			setAllChats(merged);
+			if (!isLoadingMessages && threadMessages) {
+				setAllChats([...allChats, ...threadMessages]);
+			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLoadingMessages, messages]);
@@ -57,7 +54,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 			const merged = [
 				...new Map([...allChats].map((msg: Message) => [msg.id, msg])).values(),
 			];
-			setAllChats([...merged]);
+			setAllChats([userPrompt as Message, ...merged]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [triggerPrompt]);

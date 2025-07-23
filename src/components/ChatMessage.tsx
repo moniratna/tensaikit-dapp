@@ -16,7 +16,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 	page,
 	toolMessage,
 }) => {
-	console.log("toolMessage\n", toolMessage);
 	const isUser = message.sender === "user";
 	const [showPopup, setShowPopup] = useState(true);
 	const [popupOpened, setPopupOpened] = useState(false);

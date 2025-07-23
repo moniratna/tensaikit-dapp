@@ -39,7 +39,6 @@ const AuthPage: React.FC = () => {
 				);
 			}
 		} catch (err: any) {
-			console.log("checkign error", err);
 			setError(err.message);
 		}
 	};

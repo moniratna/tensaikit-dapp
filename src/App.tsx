@@ -16,7 +16,6 @@ import AppLayout from "./components/AppLayout";
 const queryClient = new QueryClient({
 	queryCache: new QueryCache({
 		onError: (error: any) => {
-			console.log("Query error:", error.message);
 			if (error.message === "Unauthorized") {
 				toast.error("Session expired. Please log in again.");
 				localStorage.removeItem("authToken");
@@ -26,7 +25,6 @@ const queryClient = new QueryClient({
 	}),
 	mutationCache: new MutationCache({
 		onError: (error: any) => {
-			console.log("Query error:", error.message);
 			if (error.message === "Unauthorized") {
 				toast.error("Session expired. Please log in again.");
 				localStorage.removeItem("authToken");
