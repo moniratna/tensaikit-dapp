@@ -23,11 +23,11 @@ const Navbar = () => {
 			},
 			{
 				onSuccess: (data) => {
-					console.log(data);
 					setBalance(Number(data.data.nativeBalance));
 				},
 			}
 		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	return (
 		<header className="fixed top-0 left-0 right-0 z-50 bg-[#1B012F] text-white shadow-md px-4 py-3 flex items-center justify-between">
@@ -67,7 +67,7 @@ const Navbar = () => {
 					</p>
 				</div>
 				<div className="text-xs text-gray-400 flex items-center space-x-1 cursor-pointer">
-					{`Balance: ${balance}`}
+					{`Balance: ${balance.toFixed(2)}`}
 				</div>
 				<div className="text-xs text-gray-400 flex items-center space-x-1 cursor-pointer">
 					<img src={katana} className="h-5 w-5 rounded-lg" />

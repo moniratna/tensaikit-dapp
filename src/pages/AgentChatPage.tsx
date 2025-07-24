@@ -161,7 +161,9 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 						<div className="flex-1">
 							<div className="flex items-center gap-2 mb-2">
 								<span className="font-semibold text-gray-300">Assistant</span>
-								<span className="text-xs text-gray-500">typing...</span>
+								<span className="text-xs text-gray-500">
+									tensai is working on your request...
+								</span>
 							</div>
 							<div className="flex space-x-1">
 								<div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>

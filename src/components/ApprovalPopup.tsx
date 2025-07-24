@@ -217,7 +217,6 @@ export default function ApprovalPopup({
 				},
 				{
 					onSuccess: (data: any) => {
-						console.log("checking price", data);
 						setSellTokenPrice(data.data[initialSellToken.address]);
 						setBuyTokenPrice(data.data[initialBuyToken.address]);
 					},
@@ -231,7 +230,6 @@ export default function ApprovalPopup({
 				},
 				{
 					onSuccess: (data: any) => {
-						console.log("checking balance", data);
 						setSellTokenBalance(Number(data.data.tokenBalance));
 					},
 				}
@@ -251,7 +249,6 @@ export default function ApprovalPopup({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allTokens, toolMessage]);
-	console.log("sell buy bal", sellTokenBalance, buyTokenBalance);
 	useEffect(() => {
 		// implement debounce for fetching quote
 		if (selectedSell && selectedBuy && Number(amountIn) !== 0) {
@@ -419,6 +416,7 @@ export default function ApprovalPopup({
 				}
 			);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedSell]);
 	useEffect(() => {
 		if (selectedBuy) {
@@ -435,6 +433,7 @@ export default function ApprovalPopup({
 				}
 			);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedBuy]);
 	return (
 		<>
@@ -565,7 +564,7 @@ export default function ApprovalPopup({
 													<div>
 														<Wallet color="gray" size={20} />
 													</div>
-													<div>{sellTokenBalance.toFixed(4)}</div>
+													<div>{sellTokenBalance.toFixed(2)}</div>
 												</div>
 											</div>
 										</div>
@@ -608,7 +607,7 @@ export default function ApprovalPopup({
 													<div>
 														<Wallet color="gray" size={20} />
 													</div>
-													<div>{buyTokenBalance.toFixed(4)}</div>
+													<div>{buyTokenBalance.toFixed(2)}</div>
 												</div>
 											</div>
 										</div>
