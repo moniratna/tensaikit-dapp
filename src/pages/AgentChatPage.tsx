@@ -42,9 +42,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	// Update messages
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages) {
-			if (!isLoadingMessages && threadMessages) {
-				setAllChats([...allChats, ...threadMessages]);
-			}
+			setAllChats([...allChats, ...threadMessages]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLoadingMessages, messages]);

@@ -40,7 +40,11 @@ const ChatPage: React.FC<ChatPageProps> = ({
 	useEffect(() => {
 		const threadMessages = messages?.pages.flatMap((page) => page.messages);
 		if (!isLoadingMessages && threadMessages && messages) {
-			setAllChats([...allChats, ...threadMessages]);
+			if (allChats.length === 0) {
+				setAllChats([...allChats, ...threadMessages]);
+			} else {
+				setAllChats([...threadMessages]);
+			}
 		}
 
 		if (activeChatId === "new") {
