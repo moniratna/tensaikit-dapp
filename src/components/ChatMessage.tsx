@@ -175,8 +175,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 										{/* )} */}
 									</p>
 								</>
-							) : message.txnHash === null ||
-							  message.txnHash === undefined ? null : (
+							) : message.txnHash === null || message.txnHash === undefined ? (
+								message.content.split("\n").map((line, index) => (
+									<p key={index} className={index > 0 ? "mt-2" : ""}>
+										{line}
+									</p>
+								))
+							) : (
 								<>
 									<p>
 										Your transaction has been confirmed on the blockchain.
@@ -193,21 +198,18 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 									</p>
 								</>
 							)}
-							{!popupOpened &&
-							(toolMessage === undefined ||
-								toolMessage === null ||
-								(toolMessage !== null &&
-									Object.keys(toolMessage).length === 0) ||
-								(toolMessage !== null &&
-									!isValidEvmAddress(toolMessage.tokenIn) &&
-									!isValidEvmAddress(toolMessage.tokenOut))) &&
+
+							{/* {(toolMessage === undefined || toolMessage === null) &&
+							toolMessage === undefined &&
+							toolMessage === null &&
+							Object.keys(toolMessage).length === 0 &&
 							(message.txnHash === null || message.txnHash === undefined)
 								? message.content.split("\n").map((line, index) => (
 										<p key={index} className={index > 0 ? "mt-2" : ""}>
 											{line}
 										</p>
 								  ))
-								: null}
+								: null} */}
 						</div>
 					</div>
 
