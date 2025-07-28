@@ -37,11 +37,12 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 		agentType !== "" && agentType !== null ? true : false
 	);
 
-	const threadMessages = messages?.pages.flatMap((page) => page.messages);
+	// const threadMessages = messages?.pages.flatMap((page) => page.messages);
 
 	// Update messages
 	useEffect(() => {
-		if (!isLoadingMessages && threadMessages) {
+		const threadMessages = messages?.pages.flatMap((page) => page.messages);
+		if (!isLoadingMessages && threadMessages && messages) {
 			setAllChats([...allChats, ...threadMessages]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

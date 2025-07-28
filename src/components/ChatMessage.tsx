@@ -132,8 +132,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						<div className="prose dark:prose-invert max-w-none">
 							{isSwapPrompt(message.userPrompt) &&
 							isSwapPossible(message.content) &&
-							toolMessage !== undefined &&
-							toolMessage !== null &&
+							(toolMessage !== undefined || toolMessage !== null) &&
 							Object.keys(toolMessage).length > 0 &&
 							(message.txnHash === null || message.txnHash === undefined) &&
 							message.sender === "agent" &&
@@ -187,7 +186,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 									</p>
 								</>
 							)}
-							{!popupOpened &&
+							{(toolMessage === undefined ||
+								toolMessage === null ||
+								Object.keys(toolMessage).length === 0) &&
 							(message.txnHash === null || message.txnHash === undefined)
 								? message.content.split("\n").map((line, index) => (
 										<p key={index} className={index > 0 ? "mt-2" : ""}>
