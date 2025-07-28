@@ -193,8 +193,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 									</p>
 								</>
 							)}
-							{message.sender === "user" &&
-							!popupOpened &&
+							{!popupOpened &&
 							(toolMessage === undefined ||
 								toolMessage === null ||
 								(toolMessage !== null &&
