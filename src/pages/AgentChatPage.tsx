@@ -37,20 +37,24 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 		agentType !== "" && agentType !== null ? true : false
 	);
 
-	// const threadMessages = messages?.pages.flatMap((page) => page.messages);
+	const threadMessages = messages?.pages.flatMap((page) => page.messages);
 
 	// Update messages
 	useEffect(() => {
-		const threadMessages = messages?.pages.flatMap((page) => page.messages);
 		if (!isLoadingMessages && threadMessages && messages) {
 			console.log("Checking all chats,", allChats, threadMessages);
-			setAllChats((prev) => {
-				// Avoid duplicating if already present
-				const newMessages = threadMessages.filter(
-					(msg) => !prev.some((m) => m.id === msg.id)
-				);
-				return [...allChats, ...newMessages]; // Add at top
-			});
+			if (allChats.length === 0) {
+				setAllChats([...threadMessages]);
+			} else {
+				setAllChats((prev) => {
+					// Avoid duplicating if already present
+					const newMessages = threadMessages.filter(
+						(msg) => !prev.some((m) => m.id === msg.id)
+					);
+					return [...allChats, ...newMessages]; // Add at top
+				});
+			}
+
 			// setAllChats([...allChats, ...threadMessages]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

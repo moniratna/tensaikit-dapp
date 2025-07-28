@@ -10,6 +10,7 @@ import useThreads from "../hooks/useThreads";
 import AgentChatPage from "./AgentChatPage";
 import useFetchTokens from "../hooks/useFetchTokens";
 import useChatMessages from "../hooks/useGetMessages";
+import useGEtAgentMessages from "../hooks/useGetAgentMessages";
 
 const MainPage: React.FC = () => {
 	const {
@@ -42,6 +43,11 @@ const MainPage: React.FC = () => {
 			activeChatId !== "agentType"
 			? true
 			: false
+	);
+	const { refetch: refetchAgentMessage } = useGEtAgentMessages(
+		agentType,
+		localStorage.getItem("authToken") || "",
+		agentType !== "" && agentType !== null ? true : false
 	);
 	const handleNewChat = () => {
 		const newChat: ChatThread = {
@@ -77,6 +83,7 @@ const MainPage: React.FC = () => {
 
 	useEffect(() => {
 		if (autoSearch && searchQuery !== "") {
+			setAllChats([]);
 			const userMessage: any = {
 				id: Date.now().toString(),
 				content: searchQuery.trim(),
@@ -88,6 +95,7 @@ const MainPage: React.FC = () => {
 			handleSendAgentMessage(searchQuery.trim(), agentType);
 			setAutoSearch(false);
 			setSearchQuery("");
+			refetchAgentMessage();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [autoSearch, searchQuery]);

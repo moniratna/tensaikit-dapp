@@ -24,7 +24,6 @@ const useGEtAgentMessages = (
 		initialPageParam: 1,
 		// staleTime: Infinity,
 		enabled: enableFlag,
-		refetchOnWindowFocus: false,
 	});
 };
 export default useGEtAgentMessages;

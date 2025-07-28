@@ -69,10 +69,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 				<div className="flex bg-gray-800 rounded-lg p-1">
 					<button
 						onClick={() => {
+							setAllChats([]);
 							onTabChange("chat");
 							setSelectedAgent("");
 							setActiveChatId(null);
-							setAllChats([]);
 						}}
 						className={`flex-1 flex items-center justify-center py-1 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${
 							activeTab === "chat"
@@ -85,9 +85,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 					</button>
 					<button
 						onClick={() => {
+							setAllChats([]);
 							onTabChange("protocols");
 							setSelectedAgent("");
-							setAllChats([]);
 						}}
 						className={`flex-1 flex items-center justify-center py-2 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${
 							activeTab === "protocols"
@@ -234,6 +234,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 													: `bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer`
 											}
 											onClick={() => {
+												// setAllChats([]);
 												setSelectedAgent(agent.name.toLowerCase());
 												setActiveChatId("agentType");
 												setAgentType(agent.name.toLowerCase());
