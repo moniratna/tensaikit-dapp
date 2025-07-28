@@ -58,7 +58,7 @@ export interface AuthContextType {
 	agentType: string;
 	setAgentType: (type: string) => void;
 	allChats: Message[];
-	setAllChats: (messages: Message[]) => void;
+	setAllChats: React.Dispatch<React.SetStateAction<Message[]>>;
 	selectedAgent: string;
 	setSelectedAgent: (agent: string) => void;
 	successSignup: boolean;

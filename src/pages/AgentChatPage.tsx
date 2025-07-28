@@ -43,7 +43,15 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	useEffect(() => {
 		const threadMessages = messages?.pages.flatMap((page) => page.messages);
 		if (!isLoadingMessages && threadMessages && messages) {
-			setAllChats([...allChats, ...threadMessages]);
+			console.log("Checking all chats,", allChats, threadMessages);
+			setAllChats((prev) => {
+				// Avoid duplicating if already present
+				const newMessages = threadMessages.filter(
+					(msg) => !prev.some((m) => m.id === msg.id)
+				);
+				return [...allChats, ...newMessages]; // Add at top
+			});
+			// setAllChats([...allChats, ...threadMessages]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLoadingMessages, messages]);

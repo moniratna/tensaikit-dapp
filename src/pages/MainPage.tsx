@@ -136,7 +136,16 @@ const MainPage: React.FC = () => {
 						userPrompt: data.data.userPrompt,
 					};
 
-					const finalMessages = [assistantMessage, ...updatedMessages];
+					const userMessage: any = {
+						id: data.data.agentMessageId,
+						content,
+						sender: "user",
+						createdAt: new Date(),
+						txnHash: null,
+					};
+					const currentMessages = allChats || [];
+					const newUpdatedMessages = [userMessage, ...currentMessages];
+					const finalMessages = [assistantMessage, ...newUpdatedMessages];
 
 					setAllChats([...finalMessages]);
 					// scrollToBottom();
@@ -196,7 +205,16 @@ const MainPage: React.FC = () => {
 						toolMessage: data.data.toolMessage,
 					};
 
-					const finalMessages = [assistantMessage, ...updatedMessages];
+					const userMessage: any = {
+						id: data.data.agentMessageId,
+						content,
+						sender: "user",
+						createdAt: new Date(),
+						txnHash: null,
+					};
+					const currentMessages = allChats || [];
+					const newUpdatedMessages = [userMessage, ...currentMessages];
+					const finalMessages = [assistantMessage, ...newUpdatedMessages];
 
 					setAllChats([...finalMessages]);
 					// scrollToBottom();
