@@ -75,6 +75,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 			minute: "2-digit",
 		});
 	};
+	const isValidEvmAddress = (address: string) => {
+		return /^0x[a-fA-F0-9]{40}$/.test(address);
+	};
 
 	return (
 		<>
@@ -136,6 +139,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 							toolMessage !== undefined &&
 							toolMessage !== null &&
 							Object.keys(toolMessage).length > 0 &&
+							isValidEvmAddress(toolMessage.tokenIn) &&
+							isValidEvmAddress(toolMessage.tokenOut) &&
 							(message.txnHash === null || message.txnHash === undefined) &&
 							message.sender === "agent" &&
 							page === "agentChat" &&
@@ -188,10 +193,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 									</p>
 								</>
 							)}
-							{(toolMessage === undefined ||
+							{!popupOpened &&
+							(toolMessage === undefined ||
 								toolMessage === null ||
 								(toolMessage !== null &&
-									Object.keys(toolMessage).length === 0)) &&
+									Object.keys(toolMessage).length === 0) ||
+								(toolMessage !== null &&
+									!isValidEvmAddress(toolMessage.tokenIn) &&
+									!isValidEvmAddress(toolMessage.tokenOut))) &&
 							(message.txnHash === null || message.txnHash === undefined)
 								? message.content.split("\n").map((line, index) => (
 										<p key={index} className={index > 0 ? "mt-2" : ""}>

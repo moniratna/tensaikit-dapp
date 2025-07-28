@@ -124,22 +124,27 @@ export default function ApprovalPopup({
 		const found = [];
 
 		// Convert to lower for matching
-		const lowerTextTokenIn =
-			tokenIn.toLowerCase() === "eth" ? "weth" : tokenIn.toLowerCase();
-		const lowerTextTokenOut =
-			tokenOut.toLowerCase() === "eth" ? "weth" : tokenOut.toLowerCase();
-		console.log("check check", lowerTextTokenIn, lowerTextTokenOut, tokenData);
+		const lowerTextTokenIn = tokenIn.toLowerCase();
+		// === "eth" ? "weth" : tokenIn.toLowerCase();
+		const lowerTextTokenOut = tokenOut.toLowerCase();
+		//  === "eth" ? "weth" : tokenOut.toLowerCase();
+		console.log(
+			"check check inside extract",
+			lowerTextTokenIn,
+			lowerTextTokenOut,
+			tokenData
+		);
 		for (const token of tokenData) {
 			const { address, symbol } = token;
 
-			if (lowerTextTokenIn === symbol.toLowerCase()) {
+			if (lowerTextTokenIn === address.toLowerCase()) {
 				found.push(token);
 			}
 		}
 		for (const token of tokenData) {
 			const { address, symbol } = token;
 
-			if (lowerTextTokenOut === symbol.toLowerCase()) {
+			if (lowerTextTokenOut === address.toLowerCase()) {
 				found.push(token);
 			}
 		}
@@ -208,14 +213,14 @@ export default function ApprovalPopup({
 			toolMessage !== null &&
 			Object.keys(toolMessage).length > 0
 		) {
-			const tokenInLower =
-				toolMessage.tokenIn.trim().toLowerCase() === "eth"
-					? "weth"
-					: toolMessage.tokenIn.trim().toLowerCase();
-			const tokenOutLower =
-				toolMessage.tokenOut.trim().toLowerCase() === "eth"
-					? "weth"
-					: toolMessage.tokenOut.trim().toLowerCase();
+			const tokenInLower = toolMessage.tokenIn.trim().toLowerCase();
+			//  === "eth"
+			// 	? "weth"
+			// 	: toolMessage.tokenIn.trim().toLowerCase();
+			const tokenOutLower = toolMessage.tokenOut.trim().toLowerCase();
+			//  === "eth"
+			// 	? "weth"
+			// 	: toolMessage.tokenOut.trim().toLowerCase();
 
 			console.log(
 				"Looking for tokenIn:",
