@@ -188,7 +188,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 							)}
 							{(toolMessage === undefined ||
 								toolMessage === null ||
-								Object.keys(toolMessage).length === 0) &&
+								(toolMessage === null &&
+									Object.keys(toolMessage).length === 0)) &&
 							(message.txnHash === null || message.txnHash === undefined)
 								? message.content.split("\n").map((line, index) => (
 										<p key={index} className={index > 0 ? "mt-2" : ""}>
