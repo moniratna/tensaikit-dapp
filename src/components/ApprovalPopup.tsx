@@ -124,20 +124,22 @@ export default function ApprovalPopup({
 		const found = [];
 
 		// Convert to lower for matching
-		const lowerTextTokenIn = tokenIn.toLowerCase();
-		const lowerTextTokenOut = tokenOut.toLowerCase();
-
+		const lowerTextTokenIn =
+			tokenIn.toLowerCase() === "eth" ? "weth" : tokenIn.toLowerCase();
+		const lowerTextTokenOut =
+			tokenOut.toLowerCase() === "eth" ? "weth" : tokenOut.toLowerCase();
+		console.log("check check", lowerTextTokenIn, lowerTextTokenOut, tokenData);
 		for (const token of tokenData) {
-			const { address } = token;
+			const { address, symbol } = token;
 
-			if (lowerTextTokenIn === address.toLowerCase()) {
+			if (lowerTextTokenIn === symbol.toLowerCase()) {
 				found.push(token);
 			}
 		}
 		for (const token of tokenData) {
-			const { address } = token;
+			const { address, symbol } = token;
 
-			if (lowerTextTokenOut === address.toLowerCase()) {
+			if (lowerTextTokenOut === symbol.toLowerCase()) {
 				found.push(token);
 			}
 		}
@@ -145,7 +147,12 @@ export default function ApprovalPopup({
 		return found;
 	};
 	useEffect(() => {
-		if (toolMessage && allTokens) {
+		if (
+			toolMessage !== null &&
+			Object.keys(toolMessage).length > 0 &&
+			allTokens &&
+			allTokens.length > 0
+		) {
 			const tokenData = extractTwoTokenNames(
 				toolMessage.tokenIn,
 				toolMessage.tokenOut,
@@ -194,58 +201,83 @@ export default function ApprovalPopup({
 		setPopupOpened(true);
 	});
 	useEffect(() => {
-		if (allTokens && toolMessage) {
+		console.log("inside initial popup", toolMessage, allTokens);
+		if (
+			allTokens &&
+			allTokens.length > 0 &&
+			toolMessage !== null &&
+			Object.keys(toolMessage).length > 0
+		) {
+			const tokenInLower =
+				toolMessage.tokenIn.trim().toLowerCase() === "eth"
+					? "weth"
+					: toolMessage.tokenIn.trim().toLowerCase();
+			const tokenOutLower =
+				toolMessage.tokenOut.trim().toLowerCase() === "eth"
+					? "weth"
+					: toolMessage.tokenOut.trim().toLowerCase();
+
+			console.log(
+				"Looking for tokenIn:",
+				tokenInLower,
+				"tokenOut:",
+				tokenOutLower
+			);
+
 			const initialSellToken = allTokens.find(
-				(token: any) =>
-					token.address.toLowerCase() === toolMessage.tokenIn.toLowerCase()
+				(token: any) => token.symbol?.toLowerCase() === tokenInLower
 			);
+
 			const initialBuyToken = allTokens.find(
-				(token: any) =>
-					token.address.toLowerCase() === toolMessage.tokenOut.toLowerCase()
+				(token: any) => token.symbol?.toLowerCase() === tokenOutLower
 			);
+
+			console.log("Found initialSellToken:", initialSellToken);
+			console.log("Found initialBuyToken:", initialBuyToken);
 			// if (initialSellToken) {
 			// 	setSelectedSell(initialSellToken);
 			// }
 			// if (initialBuyToken) {
 			// 	setSelectedBuy(initialBuyToken);
 			// }
-
-			tokenMutation(
-				{
-					tokenAddress: [initialSellToken.address, initialBuyToken.address],
-					token: retriveToken || "",
-				},
-				{
-					onSuccess: (data: any) => {
-						setSellTokenPrice(data.data[initialSellToken.address]);
-						setBuyTokenPrice(data.data[initialBuyToken.address]);
+			if (initialBuyToken !== undefined && initialSellToken !== undefined) {
+				tokenMutation(
+					{
+						tokenAddress: [initialSellToken.address, initialBuyToken.address],
+						token: retriveToken || "",
 					},
-				}
-			);
-			tokenBalanceMutation(
-				{
-					token: retriveToken,
-					asset: initialSellToken.symbol,
-					chainId: 747474,
-				},
-				{
-					onSuccess: (data: any) => {
-						setSellTokenBalance(Number(data.data.tokenBalance));
+					{
+						onSuccess: (data: any) => {
+							setSellTokenPrice(data.data[initialSellToken.address]);
+							setBuyTokenPrice(data.data[initialBuyToken.address]);
+						},
+					}
+				);
+				tokenBalanceMutation(
+					{
+						token: retriveToken,
+						asset: initialSellToken.symbol,
+						chainId: 747474,
 					},
-				}
-			);
-			tokenBalanceMutation(
-				{
-					token: retriveToken,
-					asset: initialBuyToken.symbol,
-					chainId: 747474,
-				},
-				{
-					onSuccess: (data: any) => {
-						setBuyTokenBalance(Number(data.data.tokenBalance));
+					{
+						onSuccess: (data: any) => {
+							setSellTokenBalance(Number(data.data.tokenBalance));
+						},
+					}
+				);
+				tokenBalanceMutation(
+					{
+						token: retriveToken,
+						asset: initialBuyToken.symbol,
+						chainId: 747474,
 					},
-				}
-			);
+					{
+						onSuccess: (data: any) => {
+							setBuyTokenBalance(Number(data.data.tokenBalance));
+						},
+					}
+				);
+			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [allTokens, toolMessage]);
