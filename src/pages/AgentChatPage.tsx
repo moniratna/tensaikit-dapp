@@ -56,15 +56,12 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLoadingMessages, messages]);
 
-	// useEffect(() => {
-	// 	if (triggerPrompt && userPrompt) {
-	// 		const merged = [
-	// 			...new Map([...allChats].map((msg: Message) => [msg.id, msg])).values(),
-	// 		];
-	// 		setAllChats([userPrompt as Message, ...merged]);
-	// 	}
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [triggerPrompt]);
+	useEffect(() => {
+		if (triggerPrompt && userPrompt) {
+			setAllChats([...allChats]);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [triggerPrompt]);
 	useEffect(() => {
 		const container = messagesEndRef.current;
 		if (container) {
