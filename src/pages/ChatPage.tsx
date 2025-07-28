@@ -37,8 +37,8 @@ const ChatPage: React.FC<ChatPageProps> = ({
 			? true
 			: false
 	);
+	const threadMessages = messages?.pages.flatMap((page) => page.messages);
 	useEffect(() => {
-		const threadMessages = messages?.pages.flatMap((page) => page.messages);
 		if (!isLoadingMessages && threadMessages && messages) {
 			setAllChats((prev) => {
 				// Avoid duplicating if already present
@@ -49,11 +49,13 @@ const ChatPage: React.FC<ChatPageProps> = ({
 			});
 		}
 
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isLoadingMessages, messages]);
+	useEffect(() => {
 		if (activeChatId === "new") {
 			setAllChats([]);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isLoadingMessages, activeChatId, messages]);
+	}, [activeChatId]);
 
 	useEffect(() => {
 		const container = messagesEndRef.current;

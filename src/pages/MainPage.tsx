@@ -136,18 +136,22 @@ const MainPage: React.FC = () => {
 						userPrompt: data.data.userPrompt,
 					};
 
-					const userMessage: any = {
+					const newUserMessage: any = {
 						id: data.data.agentMessageId,
 						content,
 						sender: "user",
 						createdAt: new Date(),
 						txnHash: null,
 					};
-					const currentMessages = allChats || [];
-					const newUpdatedMessages = [userMessage, ...currentMessages];
+					const newCurrentMessages = allChats || [];
+					const newUpdatedMessages = [newUserMessage, ...newCurrentMessages];
 					const finalMessages = [assistantMessage, ...newUpdatedMessages];
+					if (allChats.length > 1) {
+						setAllChats([...finalMessages]);
+					} else {
+						setAllChats([]);
+					}
 
-					setAllChats([...finalMessages]);
 					// scrollToBottom();
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);
@@ -160,7 +164,7 @@ const MainPage: React.FC = () => {
 			}
 		);
 	};
-
+	console.log("chats", allChats);
 	const handleSendAgentMessage = async (
 		content: string,
 		agentType?: string
