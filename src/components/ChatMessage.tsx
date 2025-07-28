@@ -133,6 +133,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 							{isSwapPrompt(message.userPrompt) &&
 							isSwapPossible(message.content) &&
 							(toolMessage !== undefined || toolMessage !== null) &&
+							toolMessage !== undefined &&
+							toolMessage !== null &&
 							Object.keys(toolMessage).length > 0 &&
 							(message.txnHash === null || message.txnHash === undefined) &&
 							message.sender === "agent" &&
@@ -188,7 +190,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 							)}
 							{(toolMessage === undefined ||
 								toolMessage === null ||
-								(toolMessage === null &&
+								(toolMessage !== null &&
 									Object.keys(toolMessage).length === 0)) &&
 							(message.txnHash === null || message.txnHash === undefined)
 								? message.content.split("\n").map((line, index) => (
