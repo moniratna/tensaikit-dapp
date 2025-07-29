@@ -22,6 +22,7 @@ const MainPage: React.FC = () => {
 		allChats,
 		setAllChats,
 		selectedAgent,
+		setSelectedAgent,
 		setAllTokens,
 	} = useAuth();
 	const { data: tokenData } = useFetchTokens(
@@ -35,6 +36,7 @@ const MainPage: React.FC = () => {
 	const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
 	const [userPrompt, setUserPrompt] = useState<any>(null);
 	const [triggerPrompt, setTriggerPrompt] = useState(false);
+	console.log("active", activeChatId);
 	const { refetch } = useChatMessages(
 		Number(activeChatId),
 		localStorage.getItem("authToken") || "",
@@ -176,6 +178,11 @@ const MainPage: React.FC = () => {
 					}
 					setHasFetchedOnce(true);
 				},
+				onError: () => {
+					setIsTyping(false);
+					setActiveChatId(null);
+					setActiveTab("chat");
+				},
 			}
 		);
 	};
@@ -246,6 +253,12 @@ const MainPage: React.FC = () => {
 					setHasFetchedOnce(true);
 					setUserPrompt(null);
 					setTriggerPrompt(false);
+				},
+				onError: () => {
+					setSelectedAgent("");
+					setIsTyping(false);
+					setActiveChatId(null);
+					setActiveTab("protocols");
 				},
 			}
 		);

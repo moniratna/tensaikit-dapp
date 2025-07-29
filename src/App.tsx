@@ -12,6 +12,7 @@ import {
 import { toast, Toaster } from "sonner";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import AppLayout from "./components/AppLayout";
+import { PopupProvider } from "./contexts/PopupContext";
 
 const queryClient = new QueryClient({
 	queryCache: new QueryCache({
@@ -37,24 +38,26 @@ function App() {
 	return (
 		<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
 			<QueryClientProvider client={queryClient}>
-				<Toaster richColors />
-				<AuthProvider>
-					<Router>
-						<Routes>
-							<Route path="/auth" element={<AuthPage />} />
-							<Route
-								path="/"
-								element={
-									<ProtectedRoute>
-										{/* <Navbar />
+				<PopupProvider>
+					<Toaster richColors />
+					<AuthProvider>
+						<Router>
+							<Routes>
+								<Route path="/auth" element={<AuthPage />} />
+								<Route
+									path="/"
+									element={
+										<ProtectedRoute>
+											{/* <Navbar />
 										<MainPage /> */}
-										<AppLayout />
-									</ProtectedRoute>
-								}
-							/>
-						</Routes>
-					</Router>
-				</AuthProvider>
+											<AppLayout />
+										</ProtectedRoute>
+									}
+								/>
+							</Routes>
+						</Router>
+					</AuthProvider>
+				</PopupProvider>
 			</QueryClientProvider>
 		</GoogleOAuthProvider>
 	);
