@@ -99,11 +99,13 @@ export default function ApprovalPopup({
 	messageId,
 	setPopupOpened,
 	toolMessage,
+	isInView,
 }: {
 	onClose: () => void;
 	messageId: number;
 	setPopupOpened: (value: boolean) => void;
 	toolMessage: any;
+	isInView: boolean;
 }) {
 	const { allTokens } = useAuth();
 	const retriveToken = localStorage.getItem("authToken");
@@ -153,6 +155,7 @@ export default function ApprovalPopup({
 	};
 	useEffect(() => {
 		if (
+			isInView &&
 			toolMessage !== null &&
 			Object.keys(toolMessage).length > 0 &&
 			allTokens &&
@@ -177,7 +180,7 @@ export default function ApprovalPopup({
 			setAmountIn(toolMessage.amount);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [toolMessage]);
+	}, [isInView, toolMessage]);
 
 	type TokenType = {
 		address: string;
@@ -208,6 +211,7 @@ export default function ApprovalPopup({
 	useEffect(() => {
 		console.log("inside initial popup", toolMessage, allTokens);
 		if (
+			isInView &&
 			allTokens &&
 			allTokens.length > 0 &&
 			toolMessage !== null &&
@@ -285,10 +289,10 @@ export default function ApprovalPopup({
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [allTokens, toolMessage]);
+	}, [isInView, allTokens, toolMessage]);
 	useEffect(() => {
 		// implement debounce for fetching quote
-		if (selectedSell && selectedBuy && Number(amountIn) !== 0) {
+		if (isInView && selectedSell && selectedBuy && Number(amountIn) !== 0) {
 			setTimeout(() => {
 				fetchQuote(
 					{
@@ -313,7 +317,7 @@ export default function ApprovalPopup({
 			}, 2000);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedBuy, amountIn, selectedSell]);
+	}, [isInView, selectedBuy, amountIn, selectedSell]);
 
 	useEffect(() => {
 		if (!selectedSell || !selectedBuy) return;
