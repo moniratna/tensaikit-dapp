@@ -11,13 +11,13 @@ export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({
 	const [popupData, setPopupData] = useState<{
 		title: string;
 		description: string;
-		buttonText: string;
+		contactEmail: string;
 		icon?: "success" | "error" | "warning" | "info" | React.ReactNode;
 		onButtonClick?: () => void;
 	}>({
 		title: "",
 		description: "",
-		buttonText: "",
+		contactEmail: "",
 	});
 
 	useEffect(() => {
@@ -61,7 +61,7 @@ export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({
 			{children}
 			{isVisible && (
 				<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-					<div className="relative bg-[#1b012f] rounded-xl shadow-lg p-6 w-80 text-center">
+					<div className="relative bg-[#1b012f] rounded-xl shadow-lg p-6 w-[60%] text-center">
 						{/* Close Icon */}
 						<button
 							className="absolute top-3 right-3 text-gray-400 hover:text-white"
@@ -69,12 +69,21 @@ export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({
 						>
 							<X className="h-5 w-5" />
 						</button>
+						{renderIcon()}
 						<h2 className="text-xl text-[#ffc300] font-semibold mb-2">
 							{popupData.title}
 						</h2>
-						<p className="text-gray-400 mb-6">{popupData.description}</p>
+						<p className="text-gray-400 mb-6">
+							{popupData.description}{" "}
+							<a
+								href={`mailto:${popupData.contactEmail}`}
+								className="text-blue-400 hover:text-blue-600"
+							>
+								{popupData.contactEmail}
+							</a>
+						</p>
 						<div className="flex flex-row gap-8 justify-center">
-							<button
+							{/* <button
 								onClick={() => {
 									popupData.onButtonClick?.();
 									hidePopup();
@@ -82,7 +91,7 @@ export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({
 								className="bg-[#fcc300] text-black px-4 py-2 rounded hover:bg-[#fbb300] transition"
 							>
 								{popupData.buttonText}
-							</button>
+							</button> */}
 						</div>
 					</div>
 				</div>
