@@ -67,7 +67,7 @@ const Navbar = () => {
 					</p>
 				</div>
 				<div className="text-xs text-gray-400 flex items-center space-x-1 cursor-pointer">
-					{`Balance: ${balance.toFixed(2)}`}
+					<p title={`${balance}`}>{`Balance: ${balance.toFixed(4)}`}</p>
 				</div>
 				<div className="text-xs text-gray-400 flex items-center space-x-1 cursor-pointer">
 					<img src={katana} className="h-5 w-5 rounded-lg" />
