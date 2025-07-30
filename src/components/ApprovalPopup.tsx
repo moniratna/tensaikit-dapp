@@ -234,21 +234,16 @@ export default function ApprovalPopup({
 			);
 
 			const initialSellToken = allTokens.find(
-				(token: any) => token.symbol?.toLowerCase() === tokenInLower
+				(token: any) => token.address?.toLowerCase() === tokenInLower
 			);
 
 			const initialBuyToken = allTokens.find(
-				(token: any) => token.symbol?.toLowerCase() === tokenOutLower
+				(token: any) => token.address?.toLowerCase() === tokenOutLower
 			);
 
 			console.log("Found initialSellToken:", initialSellToken);
 			console.log("Found initialBuyToken:", initialBuyToken);
-			// if (initialSellToken) {
-			// 	setSelectedSell(initialSellToken);
-			// }
-			// if (initialBuyToken) {
-			// 	setSelectedBuy(initialBuyToken);
-			// }
+
 			if (initialBuyToken !== undefined && initialSellToken !== undefined) {
 				tokenMutation(
 					{
