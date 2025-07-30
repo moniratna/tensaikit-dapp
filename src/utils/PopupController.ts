@@ -2,8 +2,8 @@ import { ReactNode } from "react";
 
 type PopupOptions = {
 	title: string;
-	description: string;
-	contactEmail: string;
+	description?: string;
+	contactEmail?: string;
 	icon?: "success" | "error" | "warning" | "info" | ReactNode;
 	onButtonClick?: () => void;
 };

@@ -1,22 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { Message } from "../types";
-import { User, Bot, Copy } from "lucide-react";
+import { User, Bot, Copy, RefreshCcw } from "lucide-react";
 import ApprovalPopup from "./ApprovalPopup";
 import { useInView } from "react-intersection-observer";
+import { useAuth } from "../contexts/AuthContext";
 // import MorphoPopup from "./morphoPopup";
 
 interface ChatMessageProps {
+	id: string;
 	message: Message;
 	page: string;
 	toolMessage?: any;
+	handleSendRetryAgentMessage?: any;
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
+	id,
 	message,
 	page,
 	toolMessage,
+	handleSendRetryAgentMessage,
 }) => {
+	const { messageRetry } = useAuth();
+	console.log("message retry", messageRetry, id);
 	const isUser = message.sender === "user";
 	const [showPopup, setShowPopup] = useState(true);
 	const { ref, inView } = useInView({
@@ -129,7 +136,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 							? "prose prose-sm w-1/2 text-white self-end max-w-[60%]"
 							: "prose prose-sm max-w-none text-white leading-relaxed"
 					}
-				> */}
+						> */}
 					<div
 						className={`prose prose-sm text-white leading-relaxed rounded-lg ${
 							isUser
@@ -243,6 +250,22 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						</button> */}
 						</div>
 					)}
+					<div>
+						{messageRetry === id ? (
+							<div className="flex flex-row gap-2">
+								<p className="text-gray-300">
+									Something went wrong. Please retry.
+								</p>
+								<RefreshCcw
+									size={18}
+									className="h-5 text-white hover:text-blue-500 hover:cursor-pointer"
+									onClick={() => handleSendRetryAgentMessage(id)}
+								/>
+							</div>
+						) : (
+							""
+						)}
+					</div>
 				</div>
 			</div>
 		</>

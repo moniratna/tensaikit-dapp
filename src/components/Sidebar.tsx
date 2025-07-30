@@ -7,6 +7,7 @@ import useFetchAgents from "../hooks/useFetchAgents";
 import { toast } from "sonner";
 import useDeleteThread from "../hooks/useDeleteThread";
 import { useAuth } from "../contexts/AuthContext";
+import { PopupController } from "../utils/PopupController";
 
 interface SidebarProps {
 	activeChatId: string | null;
@@ -70,22 +71,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 					<button
 						onClick={() => {
 							setAllChats([]);
-							onTabChange("chat");
-							setSelectedAgent("");
-							setActiveChatId(null);
-						}}
-						className={`flex-1 flex items-center justify-center py-1 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${
-							activeTab === "chat"
-								? "bg-[#ffc300] text-black"
-								: "text-gray-300 hover:text-white hover:bg-gray-700"
-						}`}
-					>
-						<MessageSquare className="h-4 w-4 mr-2" />
-						Chats
-					</button>
-					<button
-						onClick={() => {
-							setAllChats([]);
 							onTabChange("protocols");
 							setSelectedAgent("");
 						}}
@@ -97,6 +82,31 @@ const Sidebar: React.FC<SidebarProps> = ({
 					>
 						<Grid3X3 className="h-4 w-4 mr-2" />
 						Protocols
+					</button>
+					<button
+						onClick={() => {
+							PopupController.trigger({
+								title: "Coming Soon!",
+								description: `Our chat feature is almost ready! Stay tuned for an interactive experience coming your way soon.`,
+								// contactEmail: "contact@tensaikit.xyz",
+								icon: "info",
+								onButtonClick: () => {
+									window.open("https://google.com", "_blank");
+								},
+							});
+							// setAllChats([]);
+							// onTabChange("chat");
+							// setSelectedAgent("");
+							// setActiveChatId(null);
+						}}
+						className={`flex-1 flex items-center justify-center py-1 px-3 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-0 ${
+							activeTab === "chat"
+								? "bg-[#ffc300] text-black"
+								: "text-gray-300 hover:text-white hover:bg-gray-700"
+						}`}
+					>
+						<MessageSquare className="h-4 w-4 mr-2" />
+						Chats
 					</button>
 				</div>
 			</div>

@@ -45,7 +45,7 @@ export const PopupProvider: React.FC<{ children: React.ReactNode }> = ({
 						<AlertTriangle className="h-12 w-12 text-yellow-500 mb-4 mx-auto" />
 					);
 				case "info":
-					return <Info className="h-12 w-12 text-blue-500 mb-4 mx-auto" />;
+					return <Info className="h-12 w-12 text-yellow-500 mb-4 mx-auto" />;
 				default:
 					return null;
 			}

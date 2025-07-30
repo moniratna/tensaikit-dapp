@@ -24,11 +24,12 @@ const MainPage: React.FC = () => {
 		selectedAgent,
 		setSelectedAgent,
 		setAllTokens,
+		setMessageRetry,
 	} = useAuth();
 	const { data: tokenData } = useFetchTokens(
 		localStorage.getItem("authToken") || ""
 	);
-	const [activeTab, setActiveTab] = useState<"chat" | "protocols">("chat");
+	const [activeTab, setActiveTab] = useState<"chat" | "protocols">("protocols");
 	const [autoSearch, setAutoSearch] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [isTyping, setIsTyping] = useState(false);
@@ -254,14 +255,92 @@ const MainPage: React.FC = () => {
 					setUserPrompt(null);
 					setTriggerPrompt(false);
 				},
-				onError: () => {
-					setSelectedAgent("");
+				onError: (error) => {
+					setMessageRetry(userMessage.id);
+					// console.log("inside error", error);
+					// const userMessage: any = {
+					// 	id: Date.now().toString(),
+					// 	content,
+					// 	sender: "user",
+					// 	createdAt: new Date(),
+					// 	txnHash: null,
+					// };
+
+					// // Add user message to chat
+					// const currentMessages = allChats || [];
+					// const updatedMessages = [userMessage, ...currentMessages];
+					// setAllChats([...updatedMessages]);
+					// scrollToBottom();
 					setIsTyping(false);
-					setActiveChatId(null);
-					setActiveTab("protocols");
+					// setActiveChatId(data.data.threadId);
+					// setTempThreadId(data.data.threadId);
 				},
 			}
 		);
+	};
+	const handleSendRetryAgentMessage = async (
+		id: string,
+		agentType?: string
+	) => {
+		const message = allChats.find((item) => item.id === id);
+		if (message) {
+			// Simulate AI response
+			setIsTyping(true);
+			setTriggerPrompt(true);
+			// TODO: Replace with actual API call to your backend
+			chatAgent(
+				{
+					token: localStorage.getItem("authToken") || "",
+					prompt: message.content,
+					threadId:
+						activeChatId === "new" || activeChatId === "agentType"
+							? undefined
+							: Number(activeChatId),
+					agentType: agentType,
+				},
+				{
+					onSuccess: (data: any) => {
+						setMessageRetry("");
+						const assistantMessage: any = {
+							id: data.data.messageId,
+							content: data.data.data,
+							sender: "agent",
+							createdAt: new Date(),
+							type: data.data.type,
+							userPrompt: data.data.userPrompt,
+							toolMessage: data.data.toolMessage,
+						};
+
+						const userMessage: any = {
+							id: data.data.agentMessageId,
+							content: message.content,
+							sender: "user",
+							createdAt: new Date(),
+							txnHash: null,
+						};
+						const currentMessages = allChats || [];
+						const newUpdatedMessages = [...currentMessages];
+						const finalMessages = [assistantMessage, ...newUpdatedMessages];
+
+						setAllChats([...finalMessages]);
+						// scrollToBottom();
+						setIsTyping(false);
+						setActiveChatId(data.data.threadId);
+						// setTempThreadId(data.data.threadId);
+						if (!hasFetchedOnce) {
+							refetchThreads();
+						}
+						setHasFetchedOnce(true);
+						setUserPrompt(null);
+						setTriggerPrompt(false);
+					},
+					onError: (error) => {
+						setMessageRetry(id);
+						setIsTyping(false);
+					},
+				}
+			);
+		}
 	};
 	useEffect(() => {
 		if (tokenData) {
@@ -297,6 +376,7 @@ const MainPage: React.FC = () => {
 								handleSendMessage={handleSendAgentMessage}
 								userPrompt={userPrompt === null ? null : userPrompt}
 								triggerPrompt={triggerPrompt}
+								handleSendRetryAgentMessage={handleSendRetryAgentMessage}
 							/>
 						) : (
 							<ProtocolsPage

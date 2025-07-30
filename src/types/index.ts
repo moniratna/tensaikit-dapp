@@ -66,4 +66,6 @@ export interface AuthContextType {
 	setIsLogin: (isLogin: boolean) => void;
 	allTokens: any[];
 	setAllTokens: (tokens: any[]) => void;
+	messageRetry: string;
+	setMessageRetry: (isRetry: string) => void;
 }

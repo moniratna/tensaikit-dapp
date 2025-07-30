@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import ChatMessage from "../components/ChatMessage";
 import ChatInput from "../components/ChatInput";
-import { Bot } from "lucide-react";
+import { Bot, RefreshCcw } from "lucide-react";
 import iconLogo from "../assets/iconYellow.png";
 import { useAuth } from "../contexts/AuthContext";
 import useGEtAgentMessages from "../hooks/useGetAgentMessages";
@@ -15,6 +15,7 @@ interface ChatPageProps {
 	handleSendMessage: (content: string) => void;
 	userPrompt?: object;
 	triggerPrompt?: boolean;
+	handleSendRetryAgentMessage?: (id: string) => void;
 }
 
 const AgentChatPage: React.FC<ChatPageProps> = ({
@@ -23,8 +24,9 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	handleSendMessage,
 	userPrompt,
 	triggerPrompt,
+	handleSendRetryAgentMessage,
 }) => {
-	const { allChats, setAllChats } = useAuth();
+	const { allChats, setAllChats, messageRetry } = useAuth();
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const {
 		data: messages,
@@ -151,9 +153,11 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 						{allChats.map((message, index) => (
 							<ChatMessage
 								key={index}
+								id={message.id}
 								message={message}
 								page="agentChat"
 								toolMessage={message.toolMessage}
+								handleSendRetryAgentMessage={handleSendRetryAgentMessage}
 							/>
 						))}
 					</InfiniteScroll>

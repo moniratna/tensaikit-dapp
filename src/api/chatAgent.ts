@@ -52,6 +52,10 @@ const chatAgent = async (
 			});
 			throw { data: data.msBeforeNext, message: "Limit Reached!" };
 		}
+		if (!response.ok) {
+			const errorData = await response.json();
+			throw new Error(errorData.message || "Unknown Error"); // <-- Important!
+		}
 		const res_data = await response.json();
 		return { data: res_data };
 	} catch (error: any) {
