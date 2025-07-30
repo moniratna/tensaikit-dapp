@@ -5,8 +5,8 @@ import axios from "axios";
 
 type GetBalanceVariables = {
 	token?: string | null;
-	buyToken: string | null;
-	sellToken: string | null;
+	buyToken?: string | null;
+	sellToken?: string | null;
 	chainId: number;
 };
 
@@ -18,16 +18,16 @@ const useFetchBalance = () => {
 			sellToken,
 			chainId,
 		}: GetBalanceVariables) => {
-			return fetchBalance(token, buyToken, sellToken, chainId);
+			return fetchBalance(token, chainId, buyToken, sellToken);
 		},
 	});
 };
 
 const fetchBalance = async (
 	token: string | null | undefined,
-	buyToken: string | null,
-	sellToken: string | null,
-	chainId: number
+	chainId: number,
+	buyToken?: string | null,
+	sellToken?: string | null
 ) => {
 	// try {
 	const retriveToken = localStorage.getItem("authToken");

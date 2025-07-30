@@ -36,6 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [isLogin, setIsLogin] = useState(true);
 	const [allTokens, setAllTokens] = useState<any[]>([]);
 	const [messageRetry, setMessageRetry] = useState<string>("");
+	const [userBalance, setUserBalance] = useState(0);
 	useEffect(() => {
 		// Check for existing token and validate session
 		const token = localStorage.getItem("authToken");
@@ -212,6 +213,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		setAllTokens,
 		messageRetry,
 		setMessageRetry,
+		userBalance,
+		setUserBalance,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -8,8 +8,15 @@ import katana from "../assets/katana.webp";
 import useFetchBalance from "../hooks/useFetchBalance";
 
 const Navbar = () => {
-	const { user, logout, setIsOpenSidebar, isOpenSidebar } = useAuth();
-	const [balance, setBalance] = useState(0);
+	const {
+		user,
+		logout,
+		setIsOpenSidebar,
+		isOpenSidebar,
+		userBalance,
+		setUserBalance,
+	} = useAuth();
+	// const [balance, setBalance] = useState(0);
 	const { mutate } = useFetchBalance();
 	const copyToClipboard = (content: string) => {
 		navigator.clipboard.writeText(content);
@@ -18,12 +25,11 @@ const Navbar = () => {
 		mutate(
 			{
 				token: localStorage.getItem("authToken"),
-				asset: null,
 				chainId: 747474,
 			},
 			{
 				onSuccess: (data) => {
-					setBalance(Number(data.data.nativeBalance));
+					setUserBalance(Number(data.data.nativeBalance));
 				},
 			}
 		);
@@ -33,15 +39,6 @@ const Navbar = () => {
 		<header className="fixed top-0 left-0 right-0 z-50 bg-[#1B012F] text-white shadow-md px-4 py-3 flex items-center justify-between">
 			{/* Left: Logo & Sidebar Toggle */}
 			<div className="flex items-center space-x-3">
-				<button
-					className="p-2 rounded focus:outline-none focus:ring-0 hover:bg-gray-700"
-					onClick={() => {
-						// Implement your sidebar toggle logic here
-						setIsOpenSidebar(!isOpenSidebar);
-					}}
-				>
-					<Menu className="w-5 h-5" />
-				</button>
 				<img src={logoWordMark} alt="Logo" className="h-7" />
 			</div>
 
@@ -67,7 +64,9 @@ const Navbar = () => {
 					</p>
 				</div>
 				<div className="text-xs text-gray-400 flex items-center space-x-1 cursor-pointer">
-					<p title={`${balance}`}>{`Balance: ${balance.toFixed(4)}`}</p>
+					<p title={`${userBalance}`}>{`Balance: ${(
+						Math.floor(userBalance * 10000) / 10000
+					).toFixed(4)}`}</p>
 				</div>
 				<div className="text-xs text-gray-400 flex items-center space-x-1 cursor-pointer">
 					<img src={katana} className="h-5 w-5 rounded-lg" />

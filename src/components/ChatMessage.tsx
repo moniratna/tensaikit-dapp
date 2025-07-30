@@ -23,7 +23,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 	handleSendRetryAgentMessage,
 }) => {
 	const { messageRetry } = useAuth();
-	console.log("message retry", messageRetry, id);
 	const isUser = message.sender === "user";
 	const [showPopup, setShowPopup] = useState(true);
 	const { ref, inView } = useInView({

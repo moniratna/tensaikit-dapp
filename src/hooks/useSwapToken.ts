@@ -53,7 +53,6 @@ const swapExecute = async (
 		throw new Error("Unauthorized");
 	}
 	if (response.status !== 200) {
-		console.log("error", response);
 		throw new Error(response.data.error); // ❗ must throw
 	}
 	const res_data = response.data;

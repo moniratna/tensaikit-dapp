@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { MessageSquare, Plus, Grid3X3, Search, Trash2 } from "lucide-react";
+import {
+	MessageSquare,
+	Plus,
+	Grid3X3,
+	Search,
+	Trash2,
+	Menu,
+} from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import useThreads from "../hooks/useThreads";
 import useFetchAgents from "../hooks/useFetchAgents";
@@ -30,6 +37,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 		setActiveChatId,
 		setAgentType,
 		setAllChats,
+		setIsOpenSidebar,
+		isOpenSidebar,
 	} = useAuth();
 	const [searchQuery, setSearchQuery] = useState("");
 	const { data: protocolData } = useFetchAgents(
@@ -65,9 +74,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 		<div className="w-64 bg-[#1B012F] text-white flex flex-col h-full border-r border-gray-800 shadow-lg">
 			{/* Header */}
 
-			<div className="p-4 border-b border-gray-700">
+			<div className="p-2 border-b border-gray-700">
 				{/* Tab Navigation */}
 				<div className="flex bg-gray-800 rounded-lg p-1">
+					<button
+						className="p-2 rounded focus:outline-none focus:ring-0 hover:bg-gray-700"
+						onClick={() => {
+							// Implement your sidebar toggle logic here
+							setIsOpenSidebar(!isOpenSidebar);
+						}}
+					>
+						<Menu className="w-5 h-5" />
+					</button>
 					<button
 						onClick={() => {
 							setAllChats([]);
@@ -282,45 +300,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 					</div>
 				)}
 			</div>
-
-			{/* User Section */}
-			{/* <div className="p-4 border-t border-gray-700">
-				<div className="flex items-center space-x-3 mb-3">
-					<div className="w-8 h-8 bg-gradient-to-r from-[#fbb300] to-[#fac900] rounded-full flex items-center justify-center">
-						<User className="h-4 w-4 text-white" />
-					</div>
-					<div className="flex-1 min-w-0">
-						<p className="text-sm font-medium truncate">{user?.name}</p>
-						<p className="text-xs text-gray-400 truncate">{user?.email}</p>
-					</div>
-				</div>
-
-				<div className="flex space-x-2">
-					<button
-						title={user?.walletAddress}
-						onClick={() => {
-							if (user?.walletAddress) {
-								navigator.clipboard.writeText(user.walletAddress);
-								toast("Wallet address copied to clipboard");
-							}
-						}}
-						className="flex-1 flex items-center justify-center py-2 px-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
-					>
-						<Copy className="h-4 w-4 mr-2" />
-						{user &&
-							`${user.walletAddress.slice(0, 5)}...${user.walletAddress.slice(
-								-4
-							)}`}
-					</button>
-					<button
-						onClick={logout}
-						className="flex-1 flex items-center justify-center py-2 px-3 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
-					>
-						<LogOut className="h-4 w-4 mr-2" />
-						Logout
-					</button>
-				</div>
-			</div> */}
 		</div>
 	);
 };

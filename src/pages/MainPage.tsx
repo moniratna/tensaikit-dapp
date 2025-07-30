@@ -11,6 +11,7 @@ import AgentChatPage from "./AgentChatPage";
 import useFetchTokens from "../hooks/useFetchTokens";
 import useChatMessages from "../hooks/useGetMessages";
 import useGEtAgentMessages from "../hooks/useGetAgentMessages";
+import ClosedSidebar from "../components/ClosedSidebar";
 
 const MainPage: React.FC = () => {
 	const {
@@ -257,23 +258,8 @@ const MainPage: React.FC = () => {
 				},
 				onError: (error) => {
 					setMessageRetry(userMessage.id);
-					// console.log("inside error", error);
-					// const userMessage: any = {
-					// 	id: Date.now().toString(),
-					// 	content,
-					// 	sender: "user",
-					// 	createdAt: new Date(),
-					// 	txnHash: null,
-					// };
 
-					// // Add user message to chat
-					// const currentMessages = allChats || [];
-					// const updatedMessages = [userMessage, ...currentMessages];
-					// setAllChats([...updatedMessages]);
-					// scrollToBottom();
 					setIsTyping(false);
-					// setActiveChatId(data.data.threadId);
-					// setTempThreadId(data.data.threadId);
 				},
 			}
 		);
@@ -358,7 +344,9 @@ const MainPage: React.FC = () => {
 					activeTab={activeTab}
 					onTabChange={handleTabChange}
 				/>
-			) : null}
+			) : (
+				<ClosedSidebar />
+			)}
 
 			<div className="flex-1 flex flex-col">
 				{activeTab === "chat" ? (

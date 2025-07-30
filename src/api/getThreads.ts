@@ -18,7 +18,6 @@ const getThreads = async (page: number, token: string) => {
 		const data = await response.json();
 		return { threads: data.data };
 	} catch (error: any) {
-		console.log(error);
 		console.error("Error fetching threads:", error);
 		throw new Error(error);
 	}

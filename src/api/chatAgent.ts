@@ -43,7 +43,7 @@ const chatAgent = async (
 			});
 			PopupController.trigger({
 				title: "Limit Reached!",
-				description: `You’ve reached your daily chat limit. To continue accessing TensaiKit, you can either upgrade your subscription plan or wait until tomorrow at ${formattedTime} to resume chatting. For subscription upgrades or assistance, please reach out us at`,
+				description: `You’ve reached your daily chat limit. To continue accessing TensaiKit, you can either upgrade your subscription plan or wait until tomorrow at ${formattedTime} to resume chatting. For upgrades or assistance, please reach out us at`,
 				contactEmail: "contact@tensaikit.xyz",
 				icon: "warning",
 				onButtonClick: () => {

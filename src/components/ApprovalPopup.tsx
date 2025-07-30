@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import useFetchTokenPrice from "../hooks/useFetchTokenPrice";
 import { useAuth } from "../contexts/AuthContext";
 import useFetchBalance from "../hooks/useFetchBalance";
+import useGasPrice from "../hooks/useGasPrice";
 
 const renderTokenDropdown = (
 	tokenList: [],
@@ -107,7 +108,7 @@ export default function ApprovalPopup({
 	toolMessage: any;
 	isInView: boolean;
 }) {
-	const { allTokens } = useAuth();
+	const { allTokens, userBalance } = useAuth();
 	const retriveToken = localStorage.getItem("authToken");
 	const { data: tokenData, isLoading } = useFetchTokens(retriveToken);
 	const { mutate: tokenMutation } = useFetchTokenPrice();
@@ -188,9 +189,10 @@ export default function ApprovalPopup({
 	const [inputError, setInputError] = useState("");
 	const [txnHash, setTxnHash] = useState<string | null>(null);
 	const [isSwapping, setIsSwapping] = useState(false);
-	const [sellTokenBalance, setSellTokenBalance] = useState(0);
-	const [buyTokenBalance, setBuyTokenBalance] = useState(0);
+	const [sellTokenBalance, setSellTokenBalance] = useState<string>("0");
+	const [buyTokenBalance, setBuyTokenBalance] = useState<string>("");
 	const { mutate: tokenBalanceMutation } = useFetchBalance();
+	const [networkFee, setNetworkFee] = useState<string | null>(null);
 	const {
 		mutate: fetchQuote,
 		data: quoteData,
@@ -242,8 +244,16 @@ export default function ApprovalPopup({
 					},
 					{
 						onSuccess: (data: any) => {
-							setBuyTokenBalance(Number(data.data.buyTokenBalance));
-							setSellTokenBalance(Number(data.data.sellTokenBalance));
+							setSellTokenBalance(
+								(
+									Math.floor(data.data.sellTokenBalance * 10000) / 10000
+								).toString()
+							);
+							setBuyTokenBalance(
+								(
+									Math.floor(data.data.buyTokenBalance * 10000) / 10000
+								).toString()
+							);
 						},
 					}
 				);
@@ -313,24 +323,24 @@ export default function ApprovalPopup({
 		if (!toolMessage) return;
 
 		const interval = setInterval(() => {
-			if (allTokens && toolMessage) {
-				const initialSellToken = allTokens.find(
-					(token: any) =>
-						token.address.toLowerCase() === toolMessage.tokenIn.toLowerCase()
-				);
-				const initialBuyToken = allTokens.find(
-					(token: any) =>
-						token.address.toLowerCase() === toolMessage.tokenOut.toLowerCase()
-				);
+			if (selectedSell && selectedBuy && toolMessage) {
+				// const initialSellToken = allTokens.find(
+				// 	(token: any) =>
+				// 		token.address.toLowerCase() === toolMessage.tokenIn.toLowerCase()
+				// );
+				// const initialBuyToken = allTokens.find(
+				// 	(token: any) =>
+				// 		token.address.toLowerCase() === toolMessage.tokenOut.toLowerCase()
+				// );
 				tokenMutation(
 					{
-						tokenAddress: [initialSellToken.address, initialBuyToken.address],
+						tokenAddress: [selectedSell.address, selectedBuy.address],
 						token: retriveToken || "",
 					},
 					{
 						onSuccess: (data: any) => {
-							setSellTokenPrice(data.data[initialSellToken.address]);
-							setBuyTokenPrice(data.data[initialBuyToken.address]);
+							setSellTokenPrice(data.data[selectedSell.address]);
+							setBuyTokenPrice(data.data[selectedBuy.address]);
 						},
 					}
 				);
@@ -414,14 +424,37 @@ export default function ApprovalPopup({
 				},
 				{
 					onSuccess: (data: any) => {
-						setSellTokenBalance(Number(data.data.sellTokenBalance));
-						setBuyTokenBalance(Number(data.data.buyTokenBalance));
+						setSellTokenBalance(
+							(
+								Math.floor(data.data.sellTokenBalance * 10000) / 10000
+							).toString()
+						);
+						setBuyTokenBalance(
+							(Math.floor(data.data.buyTokenBalance * 10000) / 10000).toString()
+						);
 					},
 				}
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedSell, selectedBuy]);
+	const { data: gasData, refetch: gasRefetch } = useGasPrice();
+	useEffect(() => {
+		gasRefetch();
+	}, [quoteSuccess]);
+	useEffect(() => {
+		if (quoteData && gasData) {
+			const fee =
+				(Number(quoteData.data.gasSpent) / 10 ** 9) *
+				(Number(gasData?.gasPrice) + Number(gasData?.priorityFee));
+			setNetworkFee(fee.toString());
+		}
+	}, [quoteData, gasData]);
+	console.log(
+		"check fee",
+		(Number(77000) / 10 ** 12) *
+			(Number(gasData?.gasPrice) + Number(gasData?.priorityFee))
+	);
 
 	return (
 		<>
@@ -552,7 +585,11 @@ export default function ApprovalPopup({
 													<div>
 														<Wallet color="gray" size={20} />
 													</div>
-													<div>{sellTokenBalance.toFixed(2)}</div>
+													<div>
+														{(
+															Math.floor(Number(sellTokenBalance) * 100) / 100
+														).toFixed(2)}
+													</div>
 												</div>
 											</div>
 										</div>
@@ -595,7 +632,11 @@ export default function ApprovalPopup({
 													<div>
 														<Wallet color="gray" size={20} />
 													</div>
-													<div>{buyTokenBalance.toFixed(2)}</div>
+													<div>
+														{(
+															Math.floor(Number(buyTokenBalance) * 100) / 100
+														).toFixed(2)}
+													</div>
 												</div>
 											</div>
 										</div>
@@ -628,6 +669,17 @@ export default function ApprovalPopup({
 														Number(quoteData.data.assumedAmountOut) /
 														10 ** Number(selectedBuy?.decimals)
 													).toFixed(8)} ${buyToken}`
+												) : (
+													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
+												)}
+											</span>
+										</div>
+										<div className="flex justify-between w-auto">
+											<span>Network fee</span>
+											<span> </span>
+											<span>
+												{quoteSuccess ? (
+													`${Number(networkFee).toFixed(10)} ETH`
 												) : (
 													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
 												)}
@@ -675,12 +727,18 @@ export default function ApprovalPopup({
 										className={`mt-4 w-full bg-[#fcc300] text-black hover:bg-[#faa300] py-2 rounded-md border border-gray-600 flex items-center justify-center gap-2 ${
 											quoteSuccess ? "cursor-pointer" : "cursor-not-allowed"
 										} ${
-											isSwapping
+											isSwapping ||
+											Number(amountIn) > Number(sellTokenBalance) ||
+											Number(networkFee) > Number(userBalance)
 												? "cursor-not-allowed bg-gray-600 hover:bg-gray-600"
 												: ""
 										}`}
 										onClick={handleSwap}
-										disabled={isSwapping}
+										disabled={
+											isSwapping ||
+											Number(amountIn) > Number(sellTokenBalance) ||
+											Number(networkFee) > Number(userBalance)
+										}
 									>
 										{isSwapping && (
 											<svg
@@ -706,6 +764,13 @@ export default function ApprovalPopup({
 										)}
 										{isSwapping ? "Swapping..." : "Place Swap"}
 									</button>
+									<div className="text-xs text-red-600">
+										{Number(amountIn) > Number(sellTokenBalance)
+											? "Insufficient balance for swap."
+											: Number(networkFee) > Number(userBalance)
+											? "Insufficient eth to pay gas fees."
+											: null}
+									</div>
 								</div>
 							</div>
 						</div>
