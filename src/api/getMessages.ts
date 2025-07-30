@@ -14,7 +14,6 @@ const getMessages = async (threadId: number, page: number, token: string) => {
 				},
 			}
 		);
-		console.log("checking response", response);
 		if (response.status === 401) {
 			throw "Unauthorized";
 		}

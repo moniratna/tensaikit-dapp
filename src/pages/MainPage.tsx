@@ -36,7 +36,7 @@ const MainPage: React.FC = () => {
 	const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
 	const [userPrompt, setUserPrompt] = useState<any>(null);
 	const [triggerPrompt, setTriggerPrompt] = useState(false);
-	console.log("active", activeChatId);
+
 	const { refetch } = useChatMessages(
 		Number(activeChatId),
 		localStorage.getItem("authToken") || "",
@@ -186,7 +186,7 @@ const MainPage: React.FC = () => {
 			}
 		);
 	};
-	console.log("chats", allChats);
+
 	const handleSendAgentMessage = async (
 		content: string,
 		agentType?: string

@@ -42,7 +42,6 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	// Update messages
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages && messages) {
-			console.log("Checking all chats,", allChats, threadMessages);
 			if (allChats.length === 0) {
 				setAllChats([...threadMessages]);
 			} else {

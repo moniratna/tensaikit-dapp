@@ -32,9 +32,8 @@ export default function MorphoPopup({
 	const [visibleVaults, setVisibleVaults] = useState([]);
 
 	const retriveToken = localStorage.getItem("authToken");
-	// const { data: tokenData, isLoading } = useFetchTokens(retriveToken);
+
 	const { data: markets, isLoading } = useFetchMarkets(retriveToken);
-	console.log(markets?.data.data.items);
 	useEffect(() => {
 		if (markets) {
 			const filteredMarkets =
@@ -42,13 +41,12 @@ export default function MorphoPopup({
 				markets?.data.data.items.filter(
 					(market: any) => market.collateralAsset !== null
 				);
-			console.log(filteredMarkets);
+
 			const visibleVaults =
 				!isLoading && filteredMarkets.length > 0 && showAll
 					? filteredMarkets
 					: filteredMarkets.slice(0, 5);
 			setVisibleVaults(visibleVaults);
-			console.log("filtered markets", filteredMarkets);
 		}
 	}, [markets, showAll]);
 

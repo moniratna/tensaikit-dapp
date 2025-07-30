@@ -5,21 +5,28 @@ import axios from "axios";
 
 type GetBalanceVariables = {
 	token?: string | null;
-	asset: string | null;
+	buyToken: string | null;
+	sellToken: string | null;
 	chainId: number;
 };
 
 const useFetchBalance = () => {
 	return useMutation<{ data: any }, Error, GetBalanceVariables>({
-		mutationFn: async ({ token, asset, chainId }: GetBalanceVariables) => {
-			return fetchBalance(token, asset, chainId);
+		mutationFn: async ({
+			token,
+			buyToken,
+			sellToken,
+			chainId,
+		}: GetBalanceVariables) => {
+			return fetchBalance(token, buyToken, sellToken, chainId);
 		},
 	});
 };
 
 const fetchBalance = async (
 	token: string | null | undefined,
-	asset: string | null,
+	buyToken: string | null,
+	sellToken: string | null,
 	chainId: number
 ) => {
 	// try {
@@ -27,7 +34,8 @@ const fetchBalance = async (
 	const response = await axios.post(
 		`${import.meta.env.VITE_BACKEND_URL}/v1/api/get-wallet-balance`,
 		{
-			asset: asset,
+			buyToken: buyToken,
+			sellToken: sellToken,
 			chainId: chainId,
 		},
 		{

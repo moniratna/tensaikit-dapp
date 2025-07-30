@@ -16,7 +16,6 @@ const getThreads = async (page: number, token: string) => {
 			throw "Unauthorized";
 		}
 		const data = await response.json();
-		console.log(data, response);
 		return { threads: data.data };
 	} catch (error: any) {
 		console.log(error);

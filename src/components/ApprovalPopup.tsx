@@ -127,24 +127,16 @@ export default function ApprovalPopup({
 
 		// Convert to lower for matching
 		const lowerTextTokenIn = tokenIn.toLowerCase();
-		// === "eth" ? "weth" : tokenIn.toLowerCase();
 		const lowerTextTokenOut = tokenOut.toLowerCase();
-		//  === "eth" ? "weth" : tokenOut.toLowerCase();
-		console.log(
-			"check check inside extract",
-			lowerTextTokenIn,
-			lowerTextTokenOut,
-			tokenData
-		);
 		for (const token of tokenData) {
-			const { address, symbol } = token;
+			const { address } = token;
 
 			if (lowerTextTokenIn === address.toLowerCase()) {
 				found.push(token);
 			}
 		}
 		for (const token of tokenData) {
-			const { address, symbol } = token;
+			const { address } = token;
 
 			if (lowerTextTokenOut === address.toLowerCase()) {
 				found.push(token);
@@ -209,7 +201,6 @@ export default function ApprovalPopup({
 		setPopupOpened(true);
 	});
 	useEffect(() => {
-		console.log("inside initial popup", toolMessage, allTokens);
 		if (
 			isInView &&
 			allTokens &&
@@ -218,20 +209,8 @@ export default function ApprovalPopup({
 			Object.keys(toolMessage).length > 0
 		) {
 			const tokenInLower = toolMessage.tokenIn.trim().toLowerCase();
-			//  === "eth"
-			// 	? "weth"
-			// 	: toolMessage.tokenIn.trim().toLowerCase();
-			const tokenOutLower = toolMessage.tokenOut.trim().toLowerCase();
-			//  === "eth"
-			// 	? "weth"
-			// 	: toolMessage.tokenOut.trim().toLowerCase();
 
-			console.log(
-				"Looking for tokenIn:",
-				tokenInLower,
-				"tokenOut:",
-				tokenOutLower
-			);
+			const tokenOutLower = toolMessage.tokenOut.trim().toLowerCase();
 
 			const initialSellToken = allTokens.find(
 				(token: any) => token.address?.toLowerCase() === tokenInLower
@@ -240,9 +219,6 @@ export default function ApprovalPopup({
 			const initialBuyToken = allTokens.find(
 				(token: any) => token.address?.toLowerCase() === tokenOutLower
 			);
-
-			console.log("Found initialSellToken:", initialSellToken);
-			console.log("Found initialBuyToken:", initialBuyToken);
 
 			if (initialBuyToken !== undefined && initialSellToken !== undefined) {
 				tokenMutation(
@@ -260,24 +236,14 @@ export default function ApprovalPopup({
 				tokenBalanceMutation(
 					{
 						token: retriveToken,
-						asset: initialSellToken.symbol,
+						buyToken: initialBuyToken.symbol,
+						sellToken: initialSellToken.symbol,
 						chainId: 747474,
 					},
 					{
 						onSuccess: (data: any) => {
-							setSellTokenBalance(Number(data.data.tokenBalance));
-						},
-					}
-				);
-				tokenBalanceMutation(
-					{
-						token: retriveToken,
-						asset: initialBuyToken.symbol,
-						chainId: 747474,
-					},
-					{
-						onSuccess: (data: any) => {
-							setBuyTokenBalance(Number(data.data.tokenBalance));
+							setBuyTokenBalance(Number(data.data.buyTokenBalance));
+							setSellTokenBalance(Number(data.data.sellTokenBalance));
 						},
 					}
 				);
@@ -438,39 +404,25 @@ export default function ApprovalPopup({
 		}
 	};
 	useEffect(() => {
-		if (selectedSell) {
+		if (selectedSell && selectedBuy) {
 			tokenBalanceMutation(
 				{
 					token: retriveToken,
-					asset: selectedSell.symbol,
+					buyToken: selectedBuy.symbol,
+					sellToken: selectedSell.symbol,
 					chainId: 747474,
 				},
 				{
 					onSuccess: (data: any) => {
-						setSellTokenBalance(Number(data.data.tokenBalance));
+						setSellTokenBalance(Number(data.data.sellTokenBalance));
+						setBuyTokenBalance(Number(data.data.buyTokenBalance));
 					},
 				}
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedSell]);
-	useEffect(() => {
-		if (selectedBuy) {
-			tokenBalanceMutation(
-				{
-					token: retriveToken,
-					asset: selectedBuy.symbol,
-					chainId: 747474,
-				},
-				{
-					onSuccess: (data: any) => {
-						setBuyTokenBalance(Number(data.data.tokenBalance));
-					},
-				}
-			);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedBuy]);
+	}, [selectedSell, selectedBuy]);
+
 	return (
 		<>
 			{isLoading ? (
