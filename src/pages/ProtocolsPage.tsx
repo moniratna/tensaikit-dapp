@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
 import useFetchAgents from "../hooks/useFetchAgents";
 import { useAuth } from "../contexts/AuthContext";
@@ -50,7 +50,6 @@ const ProtocolsPage: React.FC<ProtocolPageProps> = ({
 		// 	handleSendMessage(prompt.trim());
 		// }
 	};
-
 	return (
 		<div className="flex-1 overflow-y-auto bg-[#1B012F]">
 			<div className="max-w-6xl mx-auto p-6 space-y-8">

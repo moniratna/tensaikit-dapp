@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Mail, Lock, User } from "lucide-react";
@@ -8,9 +8,20 @@ import iconYellow from "../assets/iconYellow.png";
 import { GoogleLogin } from "@react-oauth/google";
 
 const AuthPage: React.FC = () => {
-	const { user, login, signup, loginWithGoogle, loading, isLogin, setIsLogin } =
-		useAuth();
+	const {
+		user,
+		login,
+		signup,
+		loginWithGoogle,
+		loading,
+		isLogin,
+		setIsLogin,
+		setSelectedAgent,
+	} = useAuth();
 
+	useEffect(() => {
+		setSelectedAgent("");
+	}, []);
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
