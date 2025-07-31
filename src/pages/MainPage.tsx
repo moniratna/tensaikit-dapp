@@ -26,7 +26,6 @@ const MainPage: React.FC = () => {
 		setSelectedAgent,
 		setAllTokens,
 		setMessageRetry,
-		setUserPrompt,
 	} = useAuth();
 	const { data: tokenData } = useFetchTokens(
 		localStorage.getItem("authToken") || ""
@@ -37,7 +36,7 @@ const MainPage: React.FC = () => {
 	const [isTyping, setIsTyping] = useState(false);
 
 	const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
-	// const [userPrompt, setUserPrompt] = useState<any>(null);
+	const [userPrompt, setUserPrompt] = useState<any>(null);
 	const [triggerPrompt, setTriggerPrompt] = useState(false);
 
 	const { refetch } = useChatMessages(
@@ -49,13 +48,13 @@ const MainPage: React.FC = () => {
 			? true
 			: false
 	);
-	// const { data: agentMessage, refetch: refetchAgentMessage } =
-	// 	useGEtAgentMessages(
-	// 		agentType,
-	// 		localStorage.getItem("authToken") || "",
-	// 		agentType !== "" && agentType !== null ? true : false
-	// 	);
-	// const threadMessages = agentMessage?.pages.flatMap((page) => page.messages);
+	const { data: agentMessage, refetch: refetchAgentMessage } =
+		useGEtAgentMessages(
+			agentType,
+			localStorage.getItem("authToken") || "",
+			agentType !== "" && agentType !== null ? true : false
+		);
+	const threadMessages = agentMessage?.pages.flatMap((page) => page.messages);
 	const handleNewChat = () => {
 		const newChat: ChatThread = {
 			id: "new",
@@ -88,30 +87,30 @@ const MainPage: React.FC = () => {
 		}
 	};
 
-	// useEffect(() => {
-	// 	if (autoSearch && searchQuery !== "") {
-	// 		refetchAgentMessage();
-	// 		const userMessage: any = {
-	// 			id: Date.now().toString(),
-	// 			content: searchQuery.trim(),
-	// 			sender: "user",
-	// 			createdAt: new Date(),
-	// 			txnHash: null,
-	// 		};
-	// 		setUserPrompt(userMessage);
-	// 		handleSendAgentMessage(searchQuery.trim(), agentType);
-	// 		setAutoSearch(false);
-	// 		setSearchQuery("");
-	// 	}
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [autoSearch, searchQuery]);
-	// useEffect(() => {
-	// 	if (threadMessages) {
-	// 		if (allChats.length === 0) {
-	// 			setAllChats([...threadMessages]);
-	// 		}
-	// 	}
-	// }, [agentMessage]);
+	useEffect(() => {
+		if (autoSearch && searchQuery !== "") {
+			// refetchAgentMessage();
+			const userMessage: any = {
+				id: Date.now().toString(),
+				content: searchQuery.trim(),
+				sender: "user",
+				createdAt: new Date(),
+				txnHash: null,
+			};
+			setUserPrompt(userMessage);
+			handleSendAgentMessage(searchQuery.trim(), agentType);
+			setAutoSearch(false);
+			setSearchQuery("");
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [autoSearch, searchQuery]);
+	useEffect(() => {
+		if (threadMessages) {
+			if (allChats.length === 0) {
+				setAllChats([...threadMessages]);
+			}
+		}
+	}, [agentMessage]);
 	const { mutate: chatAgent } = useChatAgent();
 	const { refetch: refetchThreads } = useThreads(
 		localStorage.getItem("authToken") || "",
@@ -129,10 +128,9 @@ const MainPage: React.FC = () => {
 		};
 
 		// Add user message to chat
-		// const currentMessages = allChats || [];
-		// const updatedMessages = [userMessage, ...currentMessages];
-		// setAllChats([...updatedMessages]);
-		setAllChats((prevChats) => [userMessage, ...prevChats]);
+		const currentMessages = allChats || [];
+		const updatedMessages = [userMessage, ...currentMessages];
+		setAllChats([...updatedMessages]);
 		// scrollToBottom();
 
 		// Simulate AI response
@@ -205,9 +203,8 @@ const MainPage: React.FC = () => {
 
 		// Add user message to chat
 		const currentMessages = allChats || [];
-		console.log("Current Messages:", currentMessages);
 		const updatedMessages = [userMessage, ...currentMessages];
-		setAllChats([...updatedMessages]);
+		setAllChats(updatedMessages);
 		// scrollToBottom();
 
 		// Simulate AI response
@@ -236,16 +233,16 @@ const MainPage: React.FC = () => {
 						toolMessage: data.data.toolMessage,
 					};
 
-					const newUserMessage: any = {
+					const userMessage: any = {
 						id: data.data.agentMessageId,
 						content,
 						sender: "user",
 						createdAt: new Date(),
 						txnHash: null,
 					};
-					const newCurrentMessages = allChats || [];
-					const newUpdatedMessages = [newUserMessage, ...newCurrentMessages];
-					const finalMessages = [assistantMessage, ...newUpdatedMessages];
+					const currentMessages = allChats || [];
+					const newUpdatedMessages = [userMessage, ...currentMessages];
+					const finalMessages = [assistantMessage, newUpdatedMessages];
 
 					setAllChats([...finalMessages]);
 					// scrollToBottom();
@@ -258,7 +255,6 @@ const MainPage: React.FC = () => {
 					setHasFetchedOnce(true);
 					setUserPrompt(null);
 					setTriggerPrompt(false);
-					// refetchAgentMessage();
 				},
 				onError: () => {
 					setMessageRetry(userMessage.id);
@@ -267,6 +263,7 @@ const MainPage: React.FC = () => {
 			}
 		);
 	};
+
 	const handleSendRetryAgentMessage = async (
 		id: string,
 		agentType?: string
@@ -365,6 +362,8 @@ const MainPage: React.FC = () => {
 								agentType={selectedAgent}
 								isTyping={isTyping}
 								handleSendMessage={handleSendAgentMessage}
+								userPrompt={userPrompt === null ? null : userPrompt}
+								triggerPrompt={triggerPrompt}
 								handleSendRetryAgentMessage={handleSendRetryAgentMessage}
 							/>
 						) : (
@@ -372,7 +371,6 @@ const MainPage: React.FC = () => {
 								setAutoSearch={setAutoSearch}
 								setSearchQuery={setSearchQuery}
 								setAgentType={setAgentType}
-								handleSendMessage={handleSendAgentMessage}
 							/>
 						)}
 					</>

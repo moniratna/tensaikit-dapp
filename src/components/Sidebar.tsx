@@ -88,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 					</button>
 					<button
 						onClick={() => {
-							// setAllChats([]);
+							setAllChats([]);
 							onTabChange("protocols");
 							setSelectedAgent("");
 						}}
