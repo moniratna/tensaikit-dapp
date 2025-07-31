@@ -108,13 +108,7 @@ const MainPage: React.FC = () => {
 	useEffect(() => {
 		if (threadMessages) {
 			if (allChats.length === 0) {
-				setAllChats((prev) => {
-					// Avoid duplicating if already present
-					const newMessages = threadMessages.filter(
-						(msg) => !prev.some((m) => m.id === msg.id)
-					);
-					return [...allChats, ...newMessages]; // Add at top
-				});
+				setAllChats([...threadMessages]);
 			}
 		}
 	}, [agentMessage]);
@@ -242,15 +236,15 @@ const MainPage: React.FC = () => {
 						toolMessage: data.data.toolMessage,
 					};
 
-					const userMessage: any = {
+					const newUserMessage: any = {
 						id: data.data.agentMessageId,
 						content,
 						sender: "user",
 						createdAt: new Date(),
 						txnHash: null,
 					};
-					const currentMessages = allChats || [];
-					const newUpdatedMessages = [userMessage, ...currentMessages];
+					const newCurrentMessages = allChats || [];
+					const newUpdatedMessages = [newUserMessage, ...newCurrentMessages];
 					const finalMessages = [assistantMessage, ...newUpdatedMessages];
 
 					setAllChats([...finalMessages]);
