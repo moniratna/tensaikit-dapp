@@ -79,7 +79,9 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 				const lastToolMessage = toolMessages.filter(
 					(msg) => Object.keys(msg.toolMessage).length > 0
 				)[0];
-				setActivePopupId(lastToolMessage.id);
+				if (lastToolMessage !== undefined) {
+					setActivePopupId(lastToolMessage.id);
+				}
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
