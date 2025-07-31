@@ -89,7 +89,7 @@ const MainPage: React.FC = () => {
 
 	useEffect(() => {
 		if (autoSearch && searchQuery !== "") {
-			refetchAgentMessage();
+			// refetchAgentMessage();
 			const userMessage: any = {
 				id: Date.now().toString(),
 				content: searchQuery.trim(),
@@ -204,7 +204,7 @@ const MainPage: React.FC = () => {
 		// Add user message to chat
 		const currentMessages = allChats || [];
 		const updatedMessages = [userMessage, ...currentMessages];
-		setAllChats([...updatedMessages]);
+		setAllChats(updatedMessages);
 		// scrollToBottom();
 
 		// Simulate AI response
@@ -242,7 +242,7 @@ const MainPage: React.FC = () => {
 					};
 					const currentMessages = allChats || [];
 					const newUpdatedMessages = [userMessage, ...currentMessages];
-					const finalMessages = [assistantMessage, ...newUpdatedMessages];
+					const finalMessages = [assistantMessage, newUpdatedMessages];
 
 					setAllChats([...finalMessages]);
 					// scrollToBottom();
@@ -263,6 +263,7 @@ const MainPage: React.FC = () => {
 			}
 		);
 	};
+
 	const handleSendRetryAgentMessage = async (
 		id: string,
 		agentType?: string
