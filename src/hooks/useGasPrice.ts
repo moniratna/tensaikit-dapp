@@ -26,12 +26,7 @@ const getGasPrice = async () => {
 			}
 		);
 		const res_data = response.data;
-		// const priorityRes = priorityData.data;
-		console.log(
-			"gas gas",
-			res_data.gasData.gas_prices.fast,
-			res_data.priorityData.fast.maxPriorityFee
-		);
+
 		return {
 			gasPrice: res_data.gasData.gas_prices.fast,
 			priorityFee: res_data.priorityData.fast.maxPriorityFee,

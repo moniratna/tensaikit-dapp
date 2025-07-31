@@ -256,9 +256,8 @@ const MainPage: React.FC = () => {
 					setUserPrompt(null);
 					setTriggerPrompt(false);
 				},
-				onError: (error) => {
+				onError: () => {
 					setMessageRetry(userMessage.id);
-
 					setIsTyping(false);
 				},
 			}

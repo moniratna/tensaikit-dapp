@@ -1,13 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import ChatMessage from "../components/ChatMessage";
 import ChatInput from "../components/ChatInput";
-import { Bot, RefreshCcw } from "lucide-react";
+import { Bot } from "lucide-react";
 import iconLogo from "../assets/iconYellow.png";
 import { useAuth } from "../contexts/AuthContext";
 import useGEtAgentMessages from "../hooks/useGetAgentMessages";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Message } from "../types";
-// import { Message } from "../types";
 
 interface ChatPageProps {
 	agentType: string;
@@ -26,7 +24,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	triggerPrompt,
 	handleSendRetryAgentMessage,
 }) => {
-	const { allChats, setAllChats, messageRetry } = useAuth();
+	const { allChats, setAllChats, setActivePopupId } = useAuth();
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const {
 		data: messages,
@@ -73,6 +71,19 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 			container.scrollTop = container.scrollHeight;
 		}
 	}, [isTyping]);
+	useEffect(() => {
+		if (allChats.length > 0) {
+			const toolMessages = allChats.filter((msg) => msg.toolMessage);
+
+			if (toolMessages.length > 0) {
+				const lastToolMessage = toolMessages.filter(
+					(msg) => Object.keys(msg.toolMessage).length > 0
+				)[0];
+				setActivePopupId(lastToolMessage.id);
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [allChats]);
 	if (!agentType && allChats.length === 0) {
 		return (
 			<div className="flex-1 flex items-center justify-center bg-[#1B012F]">

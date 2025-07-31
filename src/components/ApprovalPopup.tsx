@@ -2,10 +2,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { ChevronDown, Wallet, X } from "lucide-react";
-// import Image from "next/image";
-// import { useSession } from "next-auth/react";
-// import { CustomSession } from "@/app/api/auth/[...nextauth]/options";
-// import Cookies from "js-cookie";
 import Alert from "./Alert";
 import useFetchTokens from "../hooks/useFetchTokens";
 import useGetQuotes from "../hooks/useGetQuotes";
@@ -100,15 +96,13 @@ export default function ApprovalPopup({
 	messageId,
 	setPopupOpened,
 	toolMessage,
-	isInView,
 }: {
 	onClose: () => void;
 	messageId: number;
 	setPopupOpened: (value: boolean) => void;
 	toolMessage: any;
-	isInView: boolean;
 }) {
-	const { allTokens, userBalance } = useAuth();
+	const { allTokens, userBalance, activePopupId } = useAuth();
 	const retriveToken = localStorage.getItem("authToken");
 	const { data: tokenData, isLoading } = useFetchTokens(retriveToken);
 	const { mutate: tokenMutation } = useFetchTokenPrice();
@@ -148,7 +142,7 @@ export default function ApprovalPopup({
 	};
 	useEffect(() => {
 		if (
-			isInView &&
+			// Number(activePopupId) === messageId &&
 			toolMessage !== null &&
 			Object.keys(toolMessage).length > 0 &&
 			allTokens &&
@@ -173,7 +167,7 @@ export default function ApprovalPopup({
 			setAmountIn(toolMessage.amount);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isInView, toolMessage]);
+	}, [toolMessage]);
 
 	type TokenType = {
 		address: string;
@@ -204,7 +198,8 @@ export default function ApprovalPopup({
 	});
 	useEffect(() => {
 		if (
-			isInView &&
+			Number(activePopupId) === messageId &&
+			// isInView &&
 			allTokens &&
 			allTokens.length > 0 &&
 			toolMessage !== null &&
@@ -260,10 +255,15 @@ export default function ApprovalPopup({
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isInView, allTokens, toolMessage]);
+	}, [allTokens, toolMessage]);
 	useEffect(() => {
 		// implement debounce for fetching quote
-		if (isInView && selectedSell && selectedBuy && Number(amountIn) !== 0) {
+		if (
+			Number(activePopupId) === messageId &&
+			selectedSell &&
+			selectedBuy &&
+			Number(amountIn) !== 0
+		) {
 			setTimeout(() => {
 				fetchQuote(
 					{
@@ -288,10 +288,11 @@ export default function ApprovalPopup({
 			}, 2000);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isInView, selectedBuy, amountIn, selectedSell]);
+	}, [selectedBuy, amountIn, selectedSell]);
 
 	useEffect(() => {
-		if (!selectedSell || !selectedBuy) return;
+		if (Number(activePopupId) !== messageId || !selectedSell || !selectedBuy)
+			return;
 
 		const interval = setInterval(() => {
 			fetchQuote(
@@ -320,7 +321,7 @@ export default function ApprovalPopup({
 	}, [selectedSell, selectedBuy, amountIn]);
 
 	useEffect(() => {
-		if (!toolMessage) return;
+		if (Number(activePopupId) !== messageId || !toolMessage) return;
 
 		const interval = setInterval(() => {
 			if (selectedSell && selectedBuy && toolMessage) {
@@ -414,7 +415,7 @@ export default function ApprovalPopup({
 		}
 	};
 	useEffect(() => {
-		if (selectedSell && selectedBuy) {
+		if (Number(activePopupId) === messageId && selectedSell && selectedBuy) {
 			tokenBalanceMutation(
 				{
 					token: retriveToken,
@@ -441,20 +442,15 @@ export default function ApprovalPopup({
 	const { data: gasData, refetch: gasRefetch } = useGasPrice();
 	useEffect(() => {
 		gasRefetch();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [quoteSuccess]);
 	useEffect(() => {
 		if (quoteData && gasData) {
 			const fee =
-				(Number(quoteData.data.gasSpent) / 10 ** 9) *
-				(Number(gasData?.gasPrice) + Number(gasData?.priorityFee));
+				(Number(quoteData.data.gasSpent) / 10 ** 9) * Number(gasData?.gasPrice);
 			setNetworkFee(fee.toString());
 		}
 	}, [quoteData, gasData]);
-	console.log(
-		"check fee",
-		(Number(77000) / 10 ** 12) *
-			(Number(gasData?.gasPrice) + Number(gasData?.priorityFee))
-	);
 
 	return (
 		<>
@@ -648,14 +644,18 @@ export default function ApprovalPopup({
 										<div className="flex justify-between">
 											<span>Price impact</span>
 											<span>
-												{quoteSuccess ? (
-													"-" +
-													Number(
-														quoteData.data.priceImpact.toFixed(4) * 100
-													).toFixed(2) +
-													"%"
+												{Number(activePopupId) === messageId ? (
+													quoteSuccess ? (
+														"-" +
+														Number(
+															quoteData.data.priceImpact.toFixed(4) * 100
+														).toFixed(2) +
+														"%"
+													) : (
+														<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
+													)
 												) : (
-													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
+													"-" + Number(0).toFixed(2) + "%"
 												)}
 											</span>
 										</div>
@@ -664,13 +664,17 @@ export default function ApprovalPopup({
 											<span>Max. received</span>
 											<span> </span>
 											<span>
-												{quoteSuccess ? (
-													`${(
-														Number(quoteData.data.assumedAmountOut) /
-														10 ** Number(selectedBuy?.decimals)
-													).toFixed(8)} ${buyToken}`
+												{Number(activePopupId) === messageId ? (
+													quoteSuccess ? (
+														`${(
+															Number(quoteData.data.assumedAmountOut) /
+															10 ** Number(selectedBuy?.decimals)
+														).toFixed(8)} ${buyToken}`
+													) : (
+														<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
+													)
 												) : (
-													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
+													Number(0).toFixed(8)
 												)}
 											</span>
 										</div>
@@ -678,10 +682,14 @@ export default function ApprovalPopup({
 											<span>Network fee</span>
 											<span> </span>
 											<span>
-												{quoteSuccess ? (
-													`${Number(networkFee).toFixed(10)} ETH`
+												{Number(activePopupId) === messageId ? (
+													quoteSuccess ? (
+														`${Number(networkFee).toFixed(10)} ETH`
+													) : (
+														<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
+													)
 												) : (
-													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
+													`${Number(0).toFixed(10)} ETH`
 												)}
 											</span>
 										</div>
@@ -714,11 +722,7 @@ export default function ApprovalPopup({
 										<div className="flex justify-between">
 											<span>Routing source</span>
 											<span>
-												{quoteSuccess ? (
-													"SushiSwap API"
-												) : (
-													<div className="w-32 h-4 bg-gray-700 rounded animate-pulse" />
-												)}
+												{quoteSuccess ? "SushiSwap API" : "SushiSwap API"}
 											</span>
 										</div>
 									</div>
@@ -735,6 +739,7 @@ export default function ApprovalPopup({
 										}`}
 										onClick={handleSwap}
 										disabled={
+											Number(activePopupId) !== messageId ||
 											isSwapping ||
 											Number(amountIn) > Number(sellTokenBalance) ||
 											Number(networkFee) > Number(userBalance)

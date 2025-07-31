@@ -70,4 +70,6 @@ export interface AuthContextType {
 	setMessageRetry: (isRetry: string) => void;
 	userBalance: number;
 	setUserBalance: (balance: number) => void;
+	activePopupId: string | null;
+	setActivePopupId: (id: string | null) => void;
 }

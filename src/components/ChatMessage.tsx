@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Message } from "../types";
 import { User, Bot, Copy, RefreshCcw } from "lucide-react";
 import ApprovalPopup from "./ApprovalPopup";
-import { useInView } from "react-intersection-observer";
 import { useAuth } from "../contexts/AuthContext";
 // import MorphoPopup from "./morphoPopup";
 
@@ -25,10 +24,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 	const { messageRetry } = useAuth();
 	const isUser = message.sender === "user";
 	const [showPopup, setShowPopup] = useState(true);
-	const { ref, inView } = useInView({
-		threshold: 0.1, // Trigger when 10% of the element is visible
-		triggerOnce: false, // Set to true if you want to trigger only once
-	});
+
 	const [popupOpened, setPopupOpened] = useState(false);
 	const copyToClipboard = () => {
 		navigator.clipboard.writeText(message.content);
@@ -156,7 +152,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 							message.sender === "agent" &&
 							page === "agentChat" &&
 							showPopup ? (
-								<div ref={ref}>
+								<div>
 									<p className="whitespace-pre-wrap w-full">
 										{/* <button
 													className="text-blue-500 underline"
@@ -179,9 +175,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 												onClose={() => setShowPopup(false)}
 												messageId={Number(message.id)}
 												setPopupOpened={setPopupOpened}
-												// content={message.content}
 												toolMessage={toolMessage}
-												isInView={inView}
 											/>
 										}
 										{/* )} */}

@@ -55,6 +55,7 @@ const ChatPage: React.FC<ChatPageProps> = ({
 		if (activeChatId === "new") {
 			setAllChats([]);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [activeChatId]);
 
 	useEffect(() => {
@@ -201,7 +202,12 @@ const ChatPage: React.FC<ChatPageProps> = ({
 						inverse={true} // <- Important: for bottom-up
 					>
 						{allChats.map((message, index) => (
-							<ChatMessage key={index} message={message} page="chat" />
+							<ChatMessage
+								key={index}
+								id={message.id}
+								message={message}
+								page="chat"
+							/>
 						))}
 						{/* <div ref={messagesEndRef} /> */}
 					</InfiniteScroll>
