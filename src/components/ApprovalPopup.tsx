@@ -264,7 +264,7 @@ export default function ApprovalPopup({
 			selectedBuy &&
 			Number(amountIn) !== 0
 		) {
-			setTimeout(() => {
+			const debounceTimer = setTimeout(() => {
 				fetchQuote(
 					{
 						token: retriveToken,
@@ -286,6 +286,7 @@ export default function ApprovalPopup({
 					}
 				);
 			}, 2000);
+			return () => clearTimeout(debounceTimer); // Cleanup on unmount or when dependencies change
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedBuy, amountIn, selectedSell]);
