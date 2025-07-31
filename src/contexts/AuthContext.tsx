@@ -38,6 +38,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	const [messageRetry, setMessageRetry] = useState<string>("");
 	const [userBalance, setUserBalance] = useState(0);
 	const [activePopupId, setActivePopupId] = useState<string | null>(null);
+	const [userPrompt, setUserPrompt] = useState<any>(null);
 	useEffect(() => {
 		// Check for existing token and validate session
 		const token = localStorage.getItem("authToken");
@@ -218,6 +219,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		setUserBalance,
 		activePopupId,
 		setActivePopupId,
+		userPrompt,
+		setUserPrompt,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

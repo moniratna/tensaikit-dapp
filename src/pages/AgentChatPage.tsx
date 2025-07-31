@@ -10,9 +10,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 interface ChatPageProps {
 	agentType: string;
 	isTyping: boolean;
-	handleSendMessage: (content: string) => void;
-	userPrompt?: object;
-	triggerPrompt?: boolean;
+	handleSendMessage: (content: string, agentType: string) => void;
 	handleSendRetryAgentMessage?: (id: string) => void;
 }
 
@@ -20,11 +18,9 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	agentType,
 	isTyping,
 	handleSendMessage,
-	userPrompt,
-	triggerPrompt,
 	handleSendRetryAgentMessage,
 }) => {
-	const { allChats, setAllChats, setActivePopupId } = useAuth();
+	const { allChats, setAllChats, setActivePopupId, userPrompt } = useAuth();
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const {
 		data: messages,
@@ -60,11 +56,11 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	}, [isLoadingMessages, messages]);
 
 	useEffect(() => {
-		if (triggerPrompt && userPrompt) {
-			setAllChats([...allChats]);
+		if (userPrompt !== null) {
+			handleSendMessage(userPrompt.trim(), agentType);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [triggerPrompt]);
+	}, [userPrompt]);
 	useEffect(() => {
 		const container = messagesEndRef.current;
 		if (container) {

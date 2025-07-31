@@ -72,4 +72,6 @@ export interface AuthContextType {
 	setUserBalance: (balance: number) => void;
 	activePopupId: string | null;
 	setActivePopupId: (id: string | null) => void;
+	userPrompt: any;
+	setUserPrompt: (prompt: any) => void;
 }
