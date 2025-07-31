@@ -107,13 +107,15 @@ const MainPage: React.FC = () => {
 	// }, [autoSearch, searchQuery]);
 	useEffect(() => {
 		if (threadMessages) {
-			setAllChats((prev) => {
-				// Avoid duplicating if already present
-				const newMessages = threadMessages.filter(
-					(msg) => !prev.some((m) => m.id === msg.id)
-				);
-				return [...allChats, ...newMessages]; // Add at top
-			});
+			if (allChats.length === 0) {
+				setAllChats((prev) => {
+					// Avoid duplicating if already present
+					const newMessages = threadMessages.filter(
+						(msg) => !prev.some((m) => m.id === msg.id)
+					);
+					return [...allChats, ...newMessages]; // Add at top
+				});
+			}
 		}
 	}, [agentMessage]);
 	const { mutate: chatAgent } = useChatAgent();
