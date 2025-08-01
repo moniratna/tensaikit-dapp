@@ -17,6 +17,7 @@ export interface Message {
 	txnHash?: string;
 	userPrompt?: string;
 	toolMessage?: any;
+	isTemp?: boolean; // Temporary flag for optimistic UI updates
 }
 
 export interface ChatThread {

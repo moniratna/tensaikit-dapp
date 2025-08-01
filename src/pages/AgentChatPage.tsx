@@ -42,12 +42,22 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	// Update messages
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages && messages) {
-			setAllChats((prev) => {
-				// Avoid duplicating if already present
-				const newMessages = threadMessages.filter(
-					(msg) => !allChats.some((m) => m.id === msg.id)
-				);
-				return [...allChats, ...newMessages]; // Add at top
+			setAllChats((prevChats) => {
+				// Remove optimistic messages that have same content as the incoming messages
+				const incomingIds = threadMessages.map((msg) => msg.id);
+				const incomingContents = threadMessages.map((msg) => msg.content);
+
+				const filteredPrevChats = prevChats.filter((msg) => {
+					if (msg.isTemp && incomingContents.includes(msg.content)) {
+						return false; // Remove optimistic message if actual message is fetched
+					}
+					if (incomingIds.includes(msg.id)) {
+						return false; // Avoid duplicate by id
+					}
+					return true;
+				});
+
+				return [...filteredPrevChats, ...threadMessages];
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

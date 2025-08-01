@@ -199,6 +199,7 @@ const MainPage: React.FC = () => {
 			sender: "user",
 			createdAt: new Date(),
 			txnHash: null,
+			isTemp: true,
 		};
 
 		// Add user message to chat
@@ -239,6 +240,7 @@ const MainPage: React.FC = () => {
 						sender: "user",
 						createdAt: new Date(),
 						txnHash: null,
+						isTemp: true,
 					};
 					const newCurrentMessages = allChats || [];
 					const newUpdatedMessages = [newUserMessage, ...newCurrentMessages];
