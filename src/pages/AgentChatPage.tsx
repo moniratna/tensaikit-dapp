@@ -30,6 +30,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 		data: messages,
 		isLoading: isLoadingMessages,
 		fetchNextPage,
+		isFetched,
 		hasNextPage,
 	} = useGEtAgentMessages(
 		agentType,
@@ -41,23 +42,29 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 
 	// Update messages
 	useEffect(() => {
-		if (!isLoadingMessages && threadMessages && messages) {
-			setAllChats((prevChats) => {
-				// Remove optimistic messages that have same content as the incoming messages
-				const incomingIds = threadMessages.map((msg) => msg.id);
-				const incomingContents = threadMessages.map((msg) => msg.content);
+		if (!isLoadingMessages && threadMessages && messages && !isTyping) {
+			setAllChats((prev) => {
+				const filtered = prev.filter((msg) => !msg.isTemp);
 
-				const filteredPrevChats = prevChats.filter((msg) => {
-					if (msg.isTemp && incomingContents.includes(msg.content)) {
-						return false; // Remove optimistic message if actual message is fetched
-					}
-					if (incomingIds.includes(msg.id)) {
-						return false; // Avoid duplicate by id
-					}
-					return true;
-				});
+				// Avoid duplicating if already present
+				const newMessages = threadMessages.filter(
+					(msg) => !filtered.some((m) => m.id === msg.id)
+				);
+				return [...prev, ...newMessages]; // Add at top
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isLoadingMessages, messages]);
+	useEffect(() => {
+		if (!isLoadingMessages && threadMessages && messages && isTyping) {
+			setAllChats((prev) => {
+				// const filtered = prev.filter((msg) => !msg.isTemp);
 
-				return [...filteredPrevChats, ...threadMessages];
+				// Avoid duplicating if already present
+				const newMessages = threadMessages.filter(
+					(msg) => !prev.some((m) => m.id === msg.id)
+				);
+				return [...prev, ...newMessages]; // Add at top
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -167,16 +174,29 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 						scrollableTarget="scrollableDiv"
 						inverse={true} // <- Important: for bottom-up
 					>
-						{allChats.map((message, index) => (
-							<ChatMessage
-								key={index}
-								id={message.id}
-								message={message}
-								page="agentChat"
-								toolMessage={message.toolMessage}
-								handleSendRetryAgentMessage={handleSendRetryAgentMessage}
-							/>
-						))}
+						{!isTyping
+							? threadMessages &&
+							  threadMessages.map((message, index) => (
+									<ChatMessage
+										key={index}
+										id={message.id}
+										message={message}
+										page="agentChat"
+										toolMessage={message.toolMessage}
+										handleSendRetryAgentMessage={handleSendRetryAgentMessage}
+									/>
+							  ))
+							: threadMessages &&
+							  [userPrompt, ...threadMessages].map((message, index) => (
+									<ChatMessage
+										key={index}
+										id={message.id}
+										message={message}
+										page="agentChat"
+										toolMessage={message.toolMessage}
+										handleSendRetryAgentMessage={handleSendRetryAgentMessage}
+									/>
+							  ))}
 					</InfiniteScroll>
 				</div>
 			</div>

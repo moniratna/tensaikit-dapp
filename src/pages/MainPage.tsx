@@ -48,12 +48,11 @@ const MainPage: React.FC = () => {
 			? true
 			: false
 	);
-	// const { data: agentMessage, refetch: refetchAgentMessage } =
-	// 	useGEtAgentMessages(
-	// 		agentType,
-	// 		localStorage.getItem("authToken") || "",
-	// 		agentType !== "" && agentType !== null ? true : false
-	// 	);
+	const { refetch: refetchAgentMessage } = useGEtAgentMessages(
+		agentType,
+		localStorage.getItem("authToken") || "",
+		agentType !== "" && agentType !== null ? true : false
+	);
 	// const threadMessages = agentMessage?.pages.flatMap((page) => page.messages);
 	const handleNewChat = () => {
 		const newChat: ChatThread = {
@@ -96,6 +95,7 @@ const MainPage: React.FC = () => {
 				sender: "user",
 				createdAt: new Date(),
 				txnHash: null,
+				isTemp: true,
 			};
 			setUserPrompt(userMessage);
 			handleSendAgentMessage(searchQuery.trim(), agentType);
@@ -201,7 +201,7 @@ const MainPage: React.FC = () => {
 			txnHash: null,
 			isTemp: true,
 		};
-
+		setUserPrompt(userMessage);
 		// Add user message to chat
 		const currentMessages = allChats || [];
 		const updatedMessages = [userMessage, ...currentMessages];
@@ -240,13 +240,13 @@ const MainPage: React.FC = () => {
 						sender: "user",
 						createdAt: new Date(),
 						txnHash: null,
-						isTemp: false,
 					};
 					const newCurrentMessages = allChats || [];
 					const newUpdatedMessages = [newUserMessage, ...newCurrentMessages];
 					const finalMessages = [assistantMessage, ...newUpdatedMessages];
 
 					setAllChats([...finalMessages]);
+					refetchAgentMessage();
 					// scrollToBottom();
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);
