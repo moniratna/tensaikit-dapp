@@ -174,7 +174,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 						scrollableTarget="scrollableDiv"
 						inverse={true} // <- Important: for bottom-up
 					>
-						{!isTyping
+						{!isTyping && !isLoadingMessages
 							? threadMessages &&
 							  threadMessages.map((message, index) => (
 									<ChatMessage

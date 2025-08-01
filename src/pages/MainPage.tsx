@@ -224,6 +224,7 @@ const MainPage: React.FC = () => {
 			},
 			{
 				onSuccess: (data: any) => {
+					refetchAgentMessage();
 					const assistantMessage: any = {
 						id: data.data.messageId,
 						content: data.data.data,
@@ -246,7 +247,7 @@ const MainPage: React.FC = () => {
 					const finalMessages = [assistantMessage, ...newUpdatedMessages];
 
 					setAllChats([...finalMessages]);
-					refetchAgentMessage();
+
 					// scrollToBottom();
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);
