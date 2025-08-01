@@ -45,9 +45,9 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 			setAllChats((prev) => {
 				// Avoid duplicating if already present
 				const newMessages = threadMessages.filter(
-					(msg) => !prev.some((m) => m.id === msg.id)
+					(msg) => !allChats.some((m) => m.id === msg.id)
 				);
-				return [...prev, ...newMessages]; // Add at top
+				return [...allChats, ...newMessages]; // Add at top
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -157,9 +157,9 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 						scrollableTarget="scrollableDiv"
 						inverse={true} // <- Important: for bottom-up
 					>
-						{allChats.map((message) => (
+						{allChats.map((message, index) => (
 							<ChatMessage
-								key={message.id}
+								key={index}
 								id={message.id}
 								message={message}
 								page="agentChat"
