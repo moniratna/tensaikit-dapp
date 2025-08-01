@@ -39,7 +39,10 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	);
 
 	const threadMessages = messages?.pages.flatMap((page) => page.messages);
-
+	const combinedMessages =
+		isTyping && threadMessages
+			? [userPrompt, ...threadMessages]
+			: threadMessages;
 	// Update messages
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages && messages && !isTyping) {
@@ -174,29 +177,17 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 						scrollableTarget="scrollableDiv"
 						inverse={true} // <- Important: for bottom-up
 					>
-						{!isTyping && !isLoadingMessages
-							? threadMessages &&
-							  threadMessages.map((message, index) => (
-									<ChatMessage
-										key={index}
-										id={message.id}
-										message={message}
-										page="agentChat"
-										toolMessage={message.toolMessage}
-										handleSendRetryAgentMessage={handleSendRetryAgentMessage}
-									/>
-							  ))
-							: threadMessages &&
-							  [userPrompt, ...threadMessages].map((message, index) => (
-									<ChatMessage
-										key={index}
-										id={message.id}
-										message={message}
-										page="agentChat"
-										toolMessage={message.toolMessage}
-										handleSendRetryAgentMessage={handleSendRetryAgentMessage}
-									/>
-							  ))}
+						{combinedMessages &&
+							combinedMessages.map((message, index) => (
+								<ChatMessage
+									key={index}
+									id={message.id}
+									message={message}
+									page="agentChat"
+									toolMessage={message.toolMessage}
+									handleSendRetryAgentMessage={handleSendRetryAgentMessage}
+								/>
+							))}
 					</InfiniteScroll>
 				</div>
 			</div>
