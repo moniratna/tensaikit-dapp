@@ -240,7 +240,7 @@ const MainPage: React.FC = () => {
 						sender: "user",
 						createdAt: new Date(),
 						txnHash: null,
-						isTemp: true,
+						isTemp: false,
 					};
 					const newCurrentMessages = allChats || [];
 					const newUpdatedMessages = [newUserMessage, ...newCurrentMessages];
