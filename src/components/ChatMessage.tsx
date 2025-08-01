@@ -140,9 +140,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 						}`}
 					>
 						<div className="prose dark:prose-invert max-w-none">
-							{isSwapPrompt(message.userPrompt) &&
-							isSwapPossible(message.content) &&
-							(toolMessage !== undefined || toolMessage !== null) &&
+							{(toolMessage !== undefined || toolMessage !== null) &&
 							toolMessage !== undefined &&
 							toolMessage !== null &&
 							Object.keys(toolMessage).length > 0 &&
