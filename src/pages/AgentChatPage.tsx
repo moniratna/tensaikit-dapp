@@ -11,6 +11,7 @@ interface ChatPageProps {
 	agentType: string;
 	isTyping: boolean;
 	handleSendMessage: (content: string) => void;
+	setUserPrompt: (prompt: string | null) => void;
 	userPrompt?: object;
 	triggerPrompt?: boolean;
 	handleSendRetryAgentMessage?: (id: string) => void;
@@ -20,6 +21,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 	agentType,
 	isTyping,
 	handleSendMessage,
+	setUserPrompt,
 	userPrompt,
 	triggerPrompt,
 	handleSendRetryAgentMessage,
@@ -43,6 +45,11 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 		isTyping && threadMessages
 			? [userPrompt, ...threadMessages]
 			: threadMessages;
+	useEffect(() => {
+		if (isFetched && threadMessages && messages && !isTyping) {
+			setUserPrompt(null);
+		}
+	}, [threadMessages]);
 	// Update messages
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages && messages && !isTyping) {

@@ -256,7 +256,6 @@ const MainPage: React.FC = () => {
 						refetchThreads();
 					}
 					setHasFetchedOnce(true);
-					setUserPrompt(null);
 					setTriggerPrompt(false);
 				},
 				onError: () => {
@@ -364,6 +363,7 @@ const MainPage: React.FC = () => {
 								agentType={selectedAgent}
 								isTyping={isTyping}
 								handleSendMessage={handleSendAgentMessage}
+								setUserPrompt={setUserPrompt}
 								userPrompt={userPrompt === null ? null : userPrompt}
 								triggerPrompt={triggerPrompt}
 								handleSendRetryAgentMessage={handleSendRetryAgentMessage}
