@@ -88,16 +88,17 @@ const MainPage: React.FC = () => {
 
 	useEffect(() => {
 		if (autoSearch && searchQuery !== "") {
-			// refetchAgentMessage();
-			const userMessage: any = {
-				id: Date.now().toString(),
-				content: searchQuery.trim(),
-				sender: "user",
-				createdAt: new Date(),
-				txnHash: null,
-				isTemp: true,
-			};
-			setUserPrompt(userMessage);
+			refetchAgentMessage();
+			setIsTyping(true);
+			// const userMessage: any = {
+			// 	id: Date.now().toString(),
+			// 	content: searchQuery.trim(),
+			// 	sender: "user",
+			// 	createdAt: new Date(),
+			// 	txnHash: null,
+			// 	isTemp: true,
+			// };
+			// setUserPrompt(userMessage);
 			handleSendAgentMessage(searchQuery.trim(), agentType);
 			setAutoSearch(false);
 			setSearchQuery("");
@@ -201,6 +202,7 @@ const MainPage: React.FC = () => {
 			txnHash: null,
 			isTemp: true,
 		};
+		setIsTyping(true);
 		setUserPrompt(userMessage);
 		// Add user message to chat
 		const currentMessages = allChats || [];
@@ -209,7 +211,7 @@ const MainPage: React.FC = () => {
 		// scrollToBottom();
 
 		// Simulate AI response
-		setIsTyping(true);
+
 		setTriggerPrompt(true);
 		// TODO: Replace with actual API call to your backend
 		chatAgent(
@@ -249,7 +251,7 @@ const MainPage: React.FC = () => {
 					setAllChats([...finalMessages]);
 
 					// scrollToBottom();
-					setIsTyping(false);
+
 					setActiveChatId(data.data.threadId);
 					// setTempThreadId(data.data.threadId);
 					if (!hasFetchedOnce) {
@@ -257,6 +259,7 @@ const MainPage: React.FC = () => {
 					}
 					setHasFetchedOnce(true);
 					setTriggerPrompt(false);
+					setIsTyping(false);
 				},
 				onError: () => {
 					setMessageRetry(userMessage.id);

@@ -45,11 +45,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 		isTyping && threadMessages
 			? [userPrompt, ...threadMessages]
 			: threadMessages;
-	useEffect(() => {
-		if (isFetched && threadMessages && messages && !isTyping) {
-			setUserPrompt(null);
-		}
-	}, [threadMessages]);
+
 	// Update messages
 	useEffect(() => {
 		if (!isLoadingMessages && threadMessages && messages && !isTyping) {
