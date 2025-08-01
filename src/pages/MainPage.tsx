@@ -48,13 +48,13 @@ const MainPage: React.FC = () => {
 			? true
 			: false
 	);
-	const { data: agentMessage, refetch: refetchAgentMessage } =
-		useGEtAgentMessages(
-			agentType,
-			localStorage.getItem("authToken") || "",
-			agentType !== "" && agentType !== null ? true : false
-		);
-	const threadMessages = agentMessage?.pages.flatMap((page) => page.messages);
+	// const { data: agentMessage, refetch: refetchAgentMessage } =
+	// 	useGEtAgentMessages(
+	// 		agentType,
+	// 		localStorage.getItem("authToken") || "",
+	// 		agentType !== "" && agentType !== null ? true : false
+	// 	);
+	// const threadMessages = agentMessage?.pages.flatMap((page) => page.messages);
 	const handleNewChat = () => {
 		const newChat: ChatThread = {
 			id: "new",
@@ -89,7 +89,7 @@ const MainPage: React.FC = () => {
 
 	useEffect(() => {
 		if (autoSearch && searchQuery !== "") {
-			refetchAgentMessage();
+			// refetchAgentMessage();
 			const userMessage: any = {
 				id: Date.now().toString(),
 				content: searchQuery.trim(),
@@ -104,13 +104,13 @@ const MainPage: React.FC = () => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [autoSearch, searchQuery]);
-	useEffect(() => {
-		if (threadMessages) {
-			if (allChats.length === 0) {
-				setAllChats([...threadMessages]);
-			}
-		}
-	}, [agentMessage]);
+	// useEffect(() => {
+	// 	if (threadMessages) {
+	// 		if (allChats.length === 0) {
+	// 			setAllChats([...threadMessages]);
+	// 		}
+	// 	}
+	// }, [agentMessage]);
 	const { mutate: chatAgent } = useChatAgent();
 	const { refetch: refetchThreads } = useThreads(
 		localStorage.getItem("authToken") || "",

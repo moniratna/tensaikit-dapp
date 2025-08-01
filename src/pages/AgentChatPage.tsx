@@ -49,8 +49,6 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 				);
 				return [...allChats, ...newMessages]; // Add at top
 			});
-
-			// setAllChats([...allChats, ...threadMessages]);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLoadingMessages, messages]);
