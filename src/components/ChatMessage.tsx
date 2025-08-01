@@ -263,4 +263,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 	);
 };
 
-export default ChatMessage;
+// export default ChatMessage;
+const areEqual = (prevProps: ChatMessageProps, nextProps: ChatMessageProps) => {
+	return (
+		prevProps.id === nextProps.id &&
+		prevProps.message.content === nextProps.message.content &&
+		prevProps.message.txnHash === nextProps.message.txnHash &&
+		JSON.stringify(prevProps.toolMessage) ===
+			JSON.stringify(nextProps.toolMessage) &&
+		prevProps.handleSendRetryAgentMessage ===
+			nextProps.handleSendRetryAgentMessage
+	);
+};
+
+export default React.memo(ChatMessage, areEqual);

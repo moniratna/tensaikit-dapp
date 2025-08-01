@@ -32,7 +32,6 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 		data: messages,
 		isLoading: isLoadingMessages,
 		fetchNextPage,
-		isFetched,
 		hasNextPage,
 	} = useGEtAgentMessages(
 		agentType,
@@ -183,7 +182,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 						{combinedMessages &&
 							combinedMessages.map((message, index) => (
 								<ChatMessage
-									key={index}
+									key={message.id}
 									id={message.id}
 									message={message}
 									page="agentChat"
