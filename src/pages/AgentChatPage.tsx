@@ -47,7 +47,7 @@ const AgentChatPage: React.FC<ChatPageProps> = ({
 				const newMessages = threadMessages.filter(
 					(msg) => !prev.some((m) => m.id === msg.id)
 				);
-				return [...allChats, ...newMessages]; // Add at top
+				return [...prev, ...newMessages]; // Add at top
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

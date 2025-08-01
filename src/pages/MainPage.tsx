@@ -244,11 +244,7 @@ const MainPage: React.FC = () => {
 					const newUpdatedMessages = [newUserMessage, ...newCurrentMessages];
 					const finalMessages = [assistantMessage, ...newUpdatedMessages];
 
-					if (allChats.length > 1) {
-						setAllChats([...finalMessages]);
-					} else {
-						setAllChats([]);
-					}
+					setAllChats([...finalMessages]);
 					// scrollToBottom();
 					setIsTyping(false);
 					setActiveChatId(data.data.threadId);
