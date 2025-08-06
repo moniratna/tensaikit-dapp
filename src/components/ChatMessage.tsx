@@ -4,6 +4,7 @@ import { Message } from "../types";
 import { User, Bot, Copy, RefreshCcw } from "lucide-react";
 import ApprovalPopup from "./ApprovalPopup";
 import { useAuth } from "../contexts/AuthContext";
+import MorphoPopup from "./MorphoPopup";
 // import MorphoPopup from "./morphoPopup";
 
 interface ChatMessageProps {
@@ -169,11 +170,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 											// )
 											// :
 
-											<ApprovalPopup
+											<MorphoPopup
 												onClose={() => setShowPopup(false)}
 												messageId={Number(message.id)}
-												setPopupOpened={setPopupOpened}
-												toolMessage={toolMessage}
+												// setPopupOpened={setPopupOpened}
+												// toolMessage={toolMessage}
 											/>
 										}
 										{/* )} */}

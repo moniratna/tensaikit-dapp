@@ -251,39 +251,37 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 						<div className="space-y-3">
 							{protocolData &&
-								protocolData.agents
-									.filter((agent: any) => agent.name !== "Morpho")
-									.map((agent: any) => (
-										<div
-											key={agent.id}
-											className={
-												selectedAgent === agent.name.toLowerCase()
-													? "bg-[#fcc300] rounded-lg p-4 hover:bg-[#fbb300] transition-colors cursor-pointer text-black"
-													: `bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer`
-											}
-											onClick={() => {
-												// setAllChats([]);
-												setSelectedAgent(agent.name.toLowerCase());
-												setActiveChatId("agentType");
-												setAgentType(agent.name.toLowerCase());
-											}}
-										>
-											<div className="flex items-center space-x-3">
-												<div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-													{/* <span className="text-sm font-bold">M</span> */}
-													<img
-														src={agent.imageUrl}
-														alt={agent.name}
-														className="h-10 w-10 rounded-full"
-													/>
-												</div>
-												<div>
-													<h4 className="font-semibold">{agent.name}</h4>
-													{/* <p className="text-sm text-gray-400">Lending Protocol</p> */}
-												</div>
+								protocolData.agents.map((agent: any) => (
+									<div
+										key={agent.id}
+										className={
+											selectedAgent === agent.name.toLowerCase()
+												? "bg-[#fcc300] rounded-lg p-4 hover:bg-[#fbb300] transition-colors cursor-pointer text-black"
+												: `bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer`
+										}
+										onClick={() => {
+											// setAllChats([]);
+											setSelectedAgent(agent.name.toLowerCase());
+											setActiveChatId("agentType");
+											setAgentType(agent.name.toLowerCase());
+										}}
+									>
+										<div className="flex items-center space-x-3">
+											<div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+												{/* <span className="text-sm font-bold">M</span> */}
+												<img
+													src={agent.imageUrl}
+													alt={agent.name}
+													className="h-10 w-10 rounded-full"
+												/>
+											</div>
+											<div>
+												<h4 className="font-semibold">{agent.name}</h4>
+												{/* <p className="text-sm text-gray-400">Lending Protocol</p> */}
 											</div>
 										</div>
-									))}
+									</div>
+								))}
 
 							{/* <div className="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer">
 								<div className="flex items-center space-x-3">

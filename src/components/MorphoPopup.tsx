@@ -12,6 +12,7 @@ import useGetQuotes from "../hooks/useGetQuotes";
 import useSwapToken from "../hooks/useSwapToken";
 import { toast } from "sonner";
 import useFetchMarkets from "../hooks/useFetchMarkets";
+import useFetchVaults from "../hooks/useFetchVaults";
 const allVaults = Array.from({ length: 20 }, (_, i) => ({
 	name: `Vault ${i + 1}`,
 	icon: "/icons/usdc.svg",
@@ -33,19 +34,19 @@ export default function MorphoPopup({
 
 	const retriveToken = localStorage.getItem("authToken");
 
-	const { data: markets, isLoading } = useFetchMarkets(retriveToken);
+	const { data: markets, isLoading } = useFetchVaults(retriveToken);
 	useEffect(() => {
 		if (markets) {
-			const filteredMarkets =
-				!isLoading &&
-				markets?.data.data.items.filter(
-					(market: any) => market.collateralAsset !== null
-				);
+			// 		const filteredMarkets =
+			// 			!isLoading &&
+			// 			markets?.data.data.items.filter(
+			// 				(market: any) => market.collateralAsset !== null
+			// 			);
 
 			const visibleVaults =
-				!isLoading && filteredMarkets.length > 0 && showAll
-					? filteredMarkets
-					: filteredMarkets.slice(0, 5);
+				!isLoading && markets?.data.data.items.length > 0 && showAll
+					? markets?.data.data.items
+					: markets?.data.data.items.slice(0, 5);
 			setVisibleVaults(visibleVaults);
 		}
 	}, [markets, showAll]);
@@ -83,44 +84,47 @@ export default function MorphoPopup({
 
 				{/* Table Header */}
 				<div className="grid grid-cols-5 text-sm text-gray-400 py-3 border-b border-gray-700 mt-2">
-					<div className="col-span-2">Collateral</div>
-					<div>Loan</div>
-					<div>LLTV</div>
+					<div className="col-span-2">Vault</div>
+					<div>Deposit Asset</div>
+					<div>Total Supply</div>
 
 					<div></div>
 				</div>
 
 				{/* Vault Rows */}
-				{visibleVaults.map((market: any, idx: any) => (
-					<div
-						key={idx}
-						className="grid grid-cols-5 items-center py-4 border-b border-gray-700 text-sm"
-					>
-						{/* Vault Info */}
-						<div className="col-span-2 flex items-center gap-2">
-							{/* <img src={vault.icon} alt={vault.name} className="w-5 h-5" /> */}
-							<span>{market.collateralAsset.symbol}</span>
-						</div>
-						<div>
-							{/* <img src={vault.icon} alt={vault.name} className="w-5 h-5" /> */}
-							<span>{market.loanAsset.symbol}</span>
-						</div>
-						<div>
-							{/* <img src={vault.icon} alt={vault.name} className="w-5 h-5" /> */}
-							<span>{(Number(market.lltv) / 10 ** 16).toFixed(2)}%</span>
-						</div>
+				{markets &&
+					visibleVaults.map((market: any, idx: any) => (
+						<div
+							key={idx}
+							className="grid grid-cols-5 items-center py-4 border-b border-gray-700 text-sm"
+						>
+							{/* Vault Info */}
+							<div className="col-span-2 flex items-center gap-2">
+								{/* <img src={vault.icon} alt={vault.name} className="w-5 h-5" /> */}
+								<span>{market.name}</span>
+							</div>
+							<div>
+								{/* <img src={vault.icon} alt={vault.name} className="w-5 h-5" /> */}
+								<span>{market.asset.symbol}</span>
+							</div>
+							<div>
+								{/* <img src={vault.icon} alt={vault.name} className="w-5 h-5" /> */}
+								<span>
+									{(Number(market.state.totalSupply) / 10 ** 16).toFixed(2)}
+								</span>
+							</div>
 
-						{/* Supply */}
-						{/* <div>
+							{/* Supply */}
+							{/* <div>
 						<div>{market.supply}</div>
 						<div className="text-gray-400">{vault.supplyShort}</div>
 					</div> */}
 
-						{/* APY */}
-						{/* <div className="text-green-400 font-medium">{vault.apy}</div> */}
+							{/* APY */}
+							{/* <div className="text-green-400 font-medium">{vault.apy}</div> */}
 
-						{/* Curator */}
-						{/* <div className="flex items-center gap-2">
+							{/* Curator */}
+							{/* <div className="flex items-center gap-2">
 						<img
 							src={vault.curatorIcon}
 							alt={vault.curator}
@@ -129,14 +133,14 @@ export default function MorphoPopup({
 						<span className="truncate">{vault.curator}</span>
 					</div> */}
 
-						{/* Supply Button */}
-						<div className="text-right">
-							<button className="bg-[#2c2c2c] px-4 py-2 rounded-full hover:bg-[#3c3c3c]">
-								Supply
-							</button>
+							{/* Supply Button */}
+							<div className="text-right">
+								<button className="bg-[#2c2c2c] px-4 py-2 rounded-full hover:bg-[#3c3c3c]">
+									Supply
+								</button>
+							</div>
 						</div>
-					</div>
-				))}
+					))}
 
 				{/* See More / See Less */}
 				{allVaults.length > 5 && (
