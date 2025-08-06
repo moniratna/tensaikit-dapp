@@ -13,6 +13,9 @@ import useSwapToken from "../hooks/useSwapToken";
 import { toast } from "sonner";
 import useFetchMarkets from "../hooks/useFetchMarkets";
 import useFetchVaults from "../hooks/useFetchVaults";
+import katanaLogo from "../assets/katana.webp";
+import DepositPopup from "./DepositPopup";
+import useFetchBalance from "../hooks/useFetchBalance";
 const allVaults = Array.from({ length: 20 }, (_, i) => ({
 	name: `Vault ${i + 1}`,
 	icon: "/icons/usdc.svg",
@@ -50,7 +53,17 @@ export default function MorphoPopup({
 			setVisibleVaults(visibleVaults);
 		}
 	}, [markets, showAll]);
-
+	function formatNumber(num: number) {
+		if (num >= 1e9) {
+			return (num / 1e9).toFixed(2).replace(/\.00$/, "") + "B";
+		} else if (num >= 1e6) {
+			return (num / 1e6).toFixed(2).replace(/\.00$/, "") + "M";
+		} else if (num >= 1e3) {
+			return (num / 1e3).toFixed(2).replace(/\.00$/, "") + "K";
+		} else {
+			return num.toFixed(2);
+		}
+	}
 	type TokenType = {
 		id: string;
 		symbol: string;
@@ -60,13 +73,34 @@ export default function MorphoPopup({
 
 	const [selectedSell, setSelectedSell] = useState<TokenType | null>(null);
 	const [selectedBuy, setSelectedBuy] = useState<TokenType | null>(null);
-
+	const [showPopup, setShowPopup] = useState(false);
+	const [selectedMarket, setSelectedMarket] = useState<any>(null);
+	const { mutate: tokenBalanceMutation } = useFetchBalance();
+	const [tokenBalance, setTokenBalance] = useState<number | null>(null);
+	useEffect(() => {
+		if (selectedMarket !== null) {
+			tokenBalanceMutation(
+				{
+					token: localStorage.getItem("authToken") || "",
+					buyToken: selectedMarket.asset.symbol,
+					chainId: 747474,
+				},
+				{
+					onSuccess: (data) => {
+						setTokenBalance(
+							Number(Math.floor(data.data.buyTokenBalance * 10000) / 10000)
+						);
+					},
+				}
+			);
+		}
+	});
 	return (
 		<>
 			<div className="p-2">
 				Please let me know how would you like to proceed
 			</div>
-			<div className="bg-[#1c1c1c] text-white max-w-6xl mx-auto p-4 rounded-lg shadow-md">
+			<div className="bg-[#1c1c1c] text-white max-w-7xl mx-auto p-4 rounded-lg shadow-md">
 				{/* Header */}
 				<div className="flex items-center justify-between pb-4 border-b border-gray-700">
 					<div className="flex items-center gap-2">
@@ -77,17 +111,22 @@ export default function MorphoPopup({
 						/>
 						<h2 className="text-xl font-semibold">Morpho</h2>
 					</div>
-					<button className="bg-[#2c2c2c] px-3 py-1 rounded-full text-sm">
+					<div className="flex flex-row gap-4 bg-[#2c2c2c] px-3 py-1 rounded-full text-sm">
+						<img
+							src={katanaLogo}
+							alt="Morpho"
+							className="w-6 h-6 rounded-full"
+						/>
 						Katana
-					</button>
+					</div>
 				</div>
 
 				{/* Table Header */}
-				<div className="grid grid-cols-5 text-sm text-gray-400 py-3 border-b border-gray-700 mt-2">
+				<div className="grid grid-cols-6 text-xs gap-4 text-gray-400 py-3 border-b border-gray-700 mt-2">
 					<div className="col-span-2">Vault</div>
-					<div>Deposit Asset</div>
-					<div>Total Supply</div>
-
+					<div>Asset</div>
+					<div>Deposits</div>
+					<div>APY</div>
 					<div></div>
 				</div>
 
@@ -96,11 +135,15 @@ export default function MorphoPopup({
 					visibleVaults.map((market: any, idx: any) => (
 						<div
 							key={idx}
-							className="grid grid-cols-5 items-center py-4 border-b border-gray-700 text-sm"
+							className="grid grid-cols-6 items-center py-4 border-b border-gray-700 text-sm gap-4"
 						>
 							{/* Vault Info */}
 							<div className="col-span-2 flex items-center gap-2">
-								{/* <img src={vault.icon} alt={vault.name} className="w-5 h-5" /> */}
+								<img
+									src={market.metadata.image}
+									alt={market.name}
+									className="w-5 h-5"
+								/>
 								<span>{market.name}</span>
 							</div>
 							<div>
@@ -110,8 +153,12 @@ export default function MorphoPopup({
 							<div>
 								{/* <img src={vault.icon} alt={vault.name} className="w-5 h-5" /> */}
 								<span>
-									{(Number(market.state.totalSupply) / 10 ** 16).toFixed(2)}
+									{formatNumber(Number(market.state.totalSupply) / 10 ** 18)}
 								</span>
+							</div>
+							<div>
+								{/* <img src={vault.icon} alt={vault.name} className="w-5 h-5" /> */}
+								<span>{(Number(market.state.apy) * 100).toFixed(2)} %</span>
 							</div>
 
 							{/* Supply */}
@@ -135,7 +182,13 @@ export default function MorphoPopup({
 
 							{/* Supply Button */}
 							<div className="text-right">
-								<button className="bg-[#2c2c2c] px-4 py-2 rounded-full hover:bg-[#3c3c3c]">
+								<button
+									className="bg-[#2c2c2c] px-4 py-2 rounded-full hover:bg-[#3c3c3c]"
+									onClick={() => {
+										setSelectedMarket(market);
+										setShowPopup(true);
+									}}
+								>
 									Supply
 								</button>
 							</div>
@@ -146,7 +199,7 @@ export default function MorphoPopup({
 				{allVaults.length > 5 && (
 					<div className="flex justify-center py-3">
 						<button
-							className="text-sm text-gray-300 hover:underline flex items-center gap-1"
+							className="text-sm text-gray-300 hover:underline flex items-center gap-1 focus:outline-none focus:ring-0"
 							onClick={() => setShowAll((prev) => !prev)}
 						>
 							{showAll ? "See Less" : "See More"}
@@ -159,6 +212,16 @@ export default function MorphoPopup({
 					</div>
 				)}
 			</div>
+			{showPopup ? (
+				<DepositPopup
+					setShowPopup={setShowPopup}
+					token={selectedMarket.token}
+					imageUrl={selectedMarket.metadata.image}
+					apy={selectedMarket.state.apy}
+					balance={tokenBalance?.toString() || "0.00"}
+					onDepositClick={() => console.log("deposit")}
+				/>
+			) : null}
 		</>
 	);
 }
