@@ -260,7 +260,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 												: `bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors cursor-pointer`
 										}
 										onClick={() => {
-											// setAllChats([]);
+											setAllChats([]);
 											setSelectedAgent(agent.name.toLowerCase());
 											setActiveChatId("agentType");
 											setAgentType(agent.name.toLowerCase());

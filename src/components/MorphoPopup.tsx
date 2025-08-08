@@ -77,12 +77,14 @@ export default function MorphoPopup({
 	const [selectedMarket, setSelectedMarket] = useState<any>(null);
 	const { mutate: tokenBalanceMutation } = useFetchBalance();
 	const [tokenBalance, setTokenBalance] = useState<number | null>(null);
+
 	useEffect(() => {
 		if (selectedMarket !== null) {
+			console.log("selectedMarket", selectedMarket);
 			tokenBalanceMutation(
 				{
 					token: localStorage.getItem("authToken") || "",
-					buyToken: selectedMarket.asset.symbol,
+					buyToken: selectedMarket.asset.name,
 					chainId: 747474,
 				},
 				{
@@ -94,7 +96,7 @@ export default function MorphoPopup({
 				}
 			);
 		}
-	});
+	}, [selectedMarket]);
 	return (
 		<>
 			<div className="p-2">
@@ -215,11 +217,11 @@ export default function MorphoPopup({
 			{showPopup ? (
 				<DepositPopup
 					setShowPopup={setShowPopup}
-					token={selectedMarket.token}
+					marketId={selectedMarket.id}
+					token={selectedMarket.asset.symbol}
 					imageUrl={selectedMarket.metadata.image}
 					apy={selectedMarket.state.apy}
 					balance={tokenBalance?.toString() || "0.00"}
-					onDepositClick={() => console.log("deposit")}
 				/>
 			) : null}
 		</>

@@ -86,7 +86,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 	const isValidEvmAddress = (address: string) => {
 		return /^0x[a-fA-F0-9]{40}$/.test(address);
 	};
-
+	console.log("checking message", message);
 	return (
 		<>
 			<div
@@ -160,23 +160,22 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 													Show Approval Popup
 												</button> */}
 										{/* {showPopup && ( */}
-										{
-											// message.type ===
-											// "MorphoWriteActionProvider_supply_loan_asset" ? (
-											// 	<MorphoPopup
-											// 		onClose={() => setShowPopup(false)}
-											// 		messageId={Number(message.id)}
-											// 	/>
-											// )
-											// :
-
+										{message.type ===
+										"MorphoWriteActionProvider_supply_loan_asset" ? (
 											<MorphoPopup
 												onClose={() => setShowPopup(false)}
 												messageId={Number(message.id)}
 												// setPopupOpened={setPopupOpened}
 												// toolMessage={toolMessage}
 											/>
-										}
+										) : (
+											<ApprovalPopup
+												onClose={() => setShowPopup(false)}
+												messageId={Number(message.id)}
+												setPopupOpened={setPopupOpened}
+												toolMessage={toolMessage}
+											/>
+										)}
 										{/* )} */}
 									</p>
 								</div>
